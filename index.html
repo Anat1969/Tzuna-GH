@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מזון, גוף ונפש</title>
+<meta name="description" content="כל מזון בשלוש שכבות: ידוע, נאמר, מאמינים. הכרה, הבנה ושימוש, בלי ייעוץ ובלי מינונים.">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+<script src="https://appofapp-gh.vercel.app/ai-menu.js" defer></script>
+</head>
+<body>
+<div class="app-shell" dir="rtl">
+  <header class="topbar">
+    <div class="topbar-in">
+      <a class="brand" href="#/" aria-label="מזון, גוף ונפש: דף הבית">
+        <span id="brand-mark"></span>
+        <span><b>מזון, גוף ונפש</b><small>ידוע · נאמר · מאמינים</small></span>
+      </a>
+      <nav class="tabs" aria-label="ניווט ראשי" id="tabs"></nav>
+      <div class="search" role="search">
+        <input id="q" type="search" placeholder="חיפוש מזון, צמח או מקור" aria-label="חיפוש" autocomplete="off" enterkeyhint="search">
+        <button class="x" type="button" id="q-x" aria-label="ניקוי החיפוש" title="ניקוי (Esc)">&times;</button>
+      </div>
+      <ai-menu chat="https://claude.ai/code/session_018qeN17pb9LqXcs5gNnyUZN"></ai-menu>
+    </div>
+  </header>
+  <main id="view" class="view" tabindex="-1"></main>
+  <footer class="statusbar">
+    <span class="legend" id="legend"></span>
+    <span>כלי ללמידה. <b>לא מאבחן, לא מטפל ולא מחליף רופא.</b> <a href="#/help">מתי לפנות לעזרה</a></span>
+  </footer>
+</div>
+<noscript><p style="padding:24px">האפליקציה צריכה JavaScript. כל התוכן נמצא גם ב-<a href="docs/">docs</a>.</p></noscript>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
