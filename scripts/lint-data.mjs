@@ -11,6 +11,7 @@ import { SYNERGIES } from "../js/data/synergies.js";
 import { DISCOVERIES } from "../js/data/discoveries.js";
 import { PARTS } from "../js/data/plant.js";
 import { METHODS } from "../js/data/methods.js";
+import { MEDICINE, MEDICINE_BASE } from "../js/data/medicine.js";
 import { existsSync } from "node:fs";
 
 const FORBIDDEN = ["מרפא", "מרפאת", "מנקה רעלים", "מאזן הורמונים", "מחזק חיסון", "מוריד לחץ דם", "מוריד סוכר", "עוצמתי", "מטפל", "מבריא", "מבטיח"];
@@ -143,6 +144,14 @@ for (const r of RECIPES) {
   if (r.note) checkText(`${w}.note`, r.note);
   for (const al of r.extraAllergens || []) if (!ALLERGENS[al]) err(w, `אלרגן לא מוכר "${al}"`);
   if (r.foods.includes("fava") && !/G6PD/.test(r.note || "")) err(w, "מתכון עם פול בלי אזהרת G6PD");
+}
+
+// גשר לרפואה: מזון קיים, כתובת של "רפואה", ותווית בלי מילה אסורה.
+for (const [id, arr] of Object.entries(MEDICINE)) {
+  const w = `medicine:${id}`;
+  if (!ids.has(id)) err(w, `מזון לא קיים "${id}"`);
+  if (!MEDICINE_BASE.startsWith("https://refua-gh.vercel.app/")) err(w, "כתובת בסיס לא של רפואה");
+  for (const m of arr) { checkText(w, m.he); if (!/^#s=[a-z]+&v=[a-z]+&[ad]=[a-z-]+$/.test(m.href)) err(w, `נתיב לא חוקי "${m.href}"`); }
 }
 
 const counts = FOODS.reduce((a, f) => { for (const k of ["known", "said", "believed"]) a[k] += f.layers[k].length; return a; }, { known: 0, said: 0, believed: 0 });

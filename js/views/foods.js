@@ -10,6 +10,7 @@ import { recipesWith, RECIPES } from "../data/recipes.js";
 import { SCIENCE } from "../data/science.js";
 import { synergiesFor } from "../data/synergies.js";
 import { evMeter } from "../ui.js";
+import { medicineFor } from "../data/medicine.js";
 
 export const title = "מזון";
 
@@ -96,6 +97,7 @@ function sheetHTML(f) {
   const meal = f.meal ? `<dt>ארוחה</dt><dd>${rich(f.meal === "before" ? "**קודם** הארוחה, לפי הרמב\"ם" : "**תכף אחרי** הארוחה, לפי הרמב\"ם")}</dd>` : "";
   const allergens = f.allergens.length ? `<dt>אלרגנים</dt><dd><b>${esc(f.allergens.map((a) => ALLERGENS[a]).join(", "))}</b></dd>` : "";
   const recs = recipesWith(f.id);
+  const med = medicineFor(f.id);
   const months = f.months.length ? `${monthsBar(f)}<p class="hint">${esc(f.season_kind)}: <b>${esc(f.months.map((m) => MONTHS[m - 1]).join(", "))}</b></p>` : `<p style="font-size:14px">${rich("**כל השנה**, ביבוא.")}</p>`;
   const srcIds = [...(SCIENCE[f.id]?.studied || []).map((x) => x.src), ...synergiesFor(f.id).map((x) => x.src), f.recognize.src, f.use.src, pr.body?.src, pr.soul?.src, ...(pr.with || []).map((x) => x.src), ...(pr.without || []).map((x) => x.src),
     ...LAYERS.flatMap((l) => f.layers[l.key].map((x) => x.src)), "season-est"];
@@ -120,6 +122,7 @@ function sheetHTML(f) {
         <dl class="row-kv"><dt>מבנה</dt><dd>${rich(f.recognize.t)}</dd><dt>במטבח</dt><dd>${rich(f.use.t)}</dd>${meal}${allergens}</dl>
         <div style="margin-top:10px">${months}</div>
         ${recs.length ? `<div style="margin-top:10px"><span class="label">מתכונים</span><div class="recipe-links" style="margin-top:4px">${recs.map((r) => `<a class="press btn" style="text-decoration:none;padding:6px 12px;font-size:13px" href="#/recipes?id=${r.id}">${esc(r.he)}</a>`).join("")}</div></div>` : ""}
+        ${med.length ? `<div class="med-links" style="margin-top:10px"><span class="label">ברפואה</span><div class="recipe-links" style="margin-top:4px">${med.map((m) => `<a class="press btn" style="text-decoration:none;padding:6px 12px;font-size:13px" href="${esc(m.url)}" target="_blank" rel="noopener" aria-label="${esc(m.he)}, באפליקציה רפואה, נפתח בלשונית חדשה">${esc(m.he)}</a>`).join("")}</div></div>` : ""}
       </section>
       ${sourcesBox(srcIds)}
     </div>`;

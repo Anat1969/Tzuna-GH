@@ -116,3 +116,10 @@
 - `js/data/synergies.js`: `{a, b, mate, kind: boost|block, title, how, suggest, ev, src, dishes}`. מוצג בגיליון, במתכון ובהשוואה.
 - `js/data/discoveries.js`: גילויים מהצלבת הדאטה, `type: עובדה | פרשנות`, ו-`pair` שנפתח בהשוואה.
 - `methods.js`: `context: {culture, geo, climate}`, `layer: "believed"` לשיטה שלא נבדקה, `TRAITS`, `MATRIX`, `METHOD_INSIGHTS`.
+
+## גשר לרפואה, `js/data/medicine.js`
+אפליקציה אחות: "רפואה" (https://refua-gh.vercel.app). היא מקשרת לכאן דרך `#/foods?id=<id>`, ומכאן חוזרים אליה.
+- `MEDICINE[foodId]`: מערך של `{he, href}`. `he` הוא רק שם הכרטיס ברפואה, `href` הוא הנתיב שם (`#s=…&v=…&d=…` או `&a=…`).
+- אין כאן טענה רפואית ואין מקור: העובדות והמקורות נמצאים ברפואה.
+- הגיליון מציג בלוק "ברפואה" באזור "הכרה ושימוש", ונפתח בלשונית חדשה.
+- הבודק מוודא שהמזון קיים, שהנתיב חוקי ושהתווית בלי מילה אסורה.
