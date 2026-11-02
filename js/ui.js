@@ -1,7 +1,7 @@
 // עזרי ממשק משותפים: טקסט עשיר, שכבות, מקורות, אייקוני קו.
 import { SOURCES, EVIDENCE } from "./data/sources.js";
 
-export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]));
+export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&apos;" }[c]));
 
 // **מודגש**, ==תובנה==, ומספרים מודגשים אוטומטית בכיוון LTR מבודד.
 const NUM = /(\d[\d,.]*%?)/g;
@@ -53,8 +53,9 @@ export function stratum(key, items) {
   }
   return items.map((x) => {
     let meta = "";
-    if (key === "known") meta = `${evMeter(x.ev)}<span class="src">${srcLine(x.src)}</span>`;
-    if (key === "said") meta = `<span class="src"><b style="font-weight:600">${esc(x.trad)}</b>, ${x.ref ? refLink(x) : srcLine(x.src)}</span>`;
+    // מקורות לא מוצגים ליד הטענה (החלטת ענת, 02.11.2026): הם מרוכזים במקום אחד, מקופל.
+    if (key === "known") meta = evMeter(x.ev);
+    if (key === "said") meta = `<span class="src">${esc(x.trad)}${x.ref ? `, ${esc(x.ref)}` : ""}</span>`;
     if (key === "believed") meta = `<span class="status-pill">${esc(x.status)}</span>`;
     return `<div class="stratum st-${key}"><div class="st-name">${L.he}</div><div class="st-text">${rich(x.t)}</div><div class="st-meta">${meta}</div></div>`;
   }).join("");
@@ -77,3 +78,10 @@ export const triangle = (color = "var(--red)") => `<svg class="tri" viewBox="0 0
 export const legendHTML = () => LAYERS.map((l) => `<span><i class="layer-mark lm-${l.key}"></i>${l.he}</span>`).join("") + `<span><i class="layer-mark lm-red" style="border-top-style:solid"></i>רשימה אדומה</span>`;
 
 export function nowMonth() { return new Date().getMonth() + 1; }
+
+// כל המקורות של פריט, לרשימה אחת מקופלת בתחתית.
+export function sourcesBox(ids) {
+  const uniq = [...new Set(ids.flatMap((s) => (Array.isArray(s) ? s : [s])).filter(Boolean))];
+  if (!uniq.length) return "";
+  return `<details class="sources-box"><summary>מקורות (<bdi>${uniq.length}</bdi>)</summary><ol>${uniq.map((id) => `<li>${srcLine(id)}</li>`).join("")}</ol></details>`;
+}

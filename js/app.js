@@ -5,7 +5,8 @@ import { APP_MARK } from "./plates.js";
 import { classify, showSafety } from "./safety.js";
 import * as home from "./views/home.js";
 import * as foods from "./views/foods.js";
-import * as tree from "./views/tree.js";
+import * as plant from "./views/plant.js";
+import * as methods from "./views/methods.js";
 import * as seasons from "./views/seasons.js";
 import * as compare from "./views/compare.js";
 import * as redlist from "./views/redlist.js";
@@ -13,10 +14,10 @@ import * as help from "./views/help.js";
 import * as method from "./views/method.js";
 import * as recipes from "./views/recipes.js";
 
-const VIEWS = { home, foods, tree, seasons, recipes, compare, redlist, help, method };
+const VIEWS = { home, foods, plant, methods, seasons, recipes, compare, redlist, help, method };
+const ALIASES = { tree: "plant" };
 const NAV = [
-  ["foods", "מזון"], ["tree", "עץ הזית"], ["seasons", "עונות"], ["recipes", "מתכונים"], ["compare", "השוואה"],
-  ["method", "<span class=\"long\">שיטה ומקורות</span><span class=\"short\" style=\"display:none\">מקורות</span>"], ["redlist", "<span class=\"long2\">רשימה אדומה</span><span class=\"short2\" style=\"display:none\">אדומה</span>", "tab-red"], ["help", "עזרה"]
+  ["foods", "מזון"], ["plant", "צמח וגוף"], ["methods", "שיטות"], ["seasons", "עונות"], ["recipes", "מתכונים"], ["compare", "השוואה"]
 ];
 
 const $ = (s) => document.querySelector(s);
@@ -29,7 +30,8 @@ $("#legend").innerHTML = legendHTML();
 $("#tabs").innerHTML = NAV.map(([id, he, cls]) => `<a class="tab ${cls || ""}" href="#/${id}" data-view="${id}">${he}</a>`).join("");
 
 function render() {
-  const { view, params } = parse();
+  const { view: raw, params } = parse();
+  const view = ALIASES[raw] || raw;
   const name = VIEWS[view] ? view : "home";
   document.querySelectorAll(".tab").forEach((t) => { if (t.dataset.view === name) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); });
   // אותה תצוגה עם פרמטרים חדשים: עדכון במקום, בלי לבנות מחדש.

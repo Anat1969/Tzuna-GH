@@ -2,6 +2,7 @@
 import { FOODS, CATEGORIES, ALLERGENS, byId } from "../data/foods.js";
 import { rich, stratum, LAYERS, esc, MONTHS } from "../ui.js";
 import { plate } from "../plates.js";
+import { foodImage } from "./foods.js";
 import { patch } from "../route.js";
 
 export const title = "השוואה";
@@ -24,7 +25,7 @@ function shared(x, y) {
   const commonRef = [...ref(x)].filter((r) => ref(y).has(r));
   if (commonRef.length) out.push(`שניהם באותו מקור: **${commonRef.join(", ")}**.`);
   const meds = [x, y].filter((f) => f.safety.flags.includes("medication_interaction"));
-  if (meds.length) out.push(`**אינטראקציה עם תרופות**: ${meds.map((f) => f.he).join(" ו")}. לבדוק עם רוקח.`);
+  if (meds.length) out.push(`**התנגשות עם תרופות**: ${meds.map((f) => f.he).join(" ו")}.`);
   const kx = x.layers.known.length, ky = y.layers.known.length;
   if (!kx || !ky) out.push(`לא לכל אחד יש **שכבת ידוע**: ${[x, y].filter((f) => !f.layers.known.length).map((f) => f.he).join(", ")} נשען על מסורת בלבד.`);
   return out.length ? out : ["אין קשר מתועד ביניהם. ההשוואה מראה הבדלים בלבד."];
@@ -41,7 +42,7 @@ function table() {
   const row = (label, fx) => `<div class="rh">${label}</div><div>${fx(x)}</div><div>${fx(y)}</div>`;
   return `<div class="cmp">
     <div class="rh ch"></div>
-    ${[x, y].map((f) => `<div class="ch"><a href="#/foods?id=${f.id}" style="display:flex;gap:10px;align-items:center;text-decoration:none;color:inherit"><span style="width:56px;height:56px;background:var(--herb);border:1px solid var(--rule);display:grid;place-items:center;flex:0 0 auto">${plate(f)}</span><span><b style="font-size:19px">${esc(f.he)}</b><br><span class="latin">${esc(f.la)}</span></span></a></div>`).join("")}
+    ${[x, y].map((f) => `<div class="ch"><a href="#/foods?id=${f.id}" style="display:flex;gap:10px;align-items:center;text-decoration:none;color:inherit"><span style="width:56px;height:56px;background:var(--herb);border:1px solid var(--rule);display:grid;place-items:center;flex:0 0 auto">${foodImage(f)}</span><span><b style="font-size:19px">${esc(f.he)}</b><br><span class="latin">${esc(f.la)}</span></span></a></div>`).join("")}
     ${row("משפחה", (f) => `${esc(f.family)} <span class="latin">${esc(f.family_la)}</span>`)}
     ${row("נאכל", (f) => `<b>${esc(f.part)}</b>`)}
     ${row("עונה", months)}
@@ -74,7 +75,6 @@ export function mount(el, params) {
       <div class="panel-body scroll-in" style="flex:1">
         <p class="shared lines" id="shared"></p>
         <div class="sec"><div class="sec-h"><h3>זוגות מעניינים</h3></div><div class="chips">${PAIRS.map(([x, y, t]) => `<button class="chip" data-pair="${x},${y}">${esc(byId(x).he)} ו${esc(byId(y).he)}: ${t}</button>`).join("")}</div></div>
-        <p class="src" style="margin-top:14px">${rich("כל שורה ב\"מה משותף\" **נגזרת מהדאטה**: משפחה, עונה, פסוק והוראת הרמב\"ם. אין כאן ציון או דירוג.")}</p>
       </div>
     </aside>
   </div>`;

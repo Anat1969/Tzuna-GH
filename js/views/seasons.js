@@ -2,6 +2,8 @@
 import { FOODS, CATEGORIES } from "../data/foods.js";
 import { rich, esc, iconBtn, MONTHS, nowMonth } from "../ui.js";
 import { plate } from "../plates.js";
+import { foodImage } from "./foods.js";
+import { MONTHS_SHORT } from "../ui.js";
 import { patch } from "../route.js";
 
 export const title = "עונות";
@@ -37,7 +39,17 @@ function rambamFor(m) {
   return { kind: "עונת מעבר", q: "\"ועל דרך זו הולך ועושה... בכל מקום ומקום הראוי לו.\"" };
 }
 
-let root, month;
+let root, month, mode;
+
+// מפה שנתית: מזון בכל שורה, חודש בכל עמודה, ממוין לפי תחילת העונה. קריאה ליניארית לאורך השנה.
+const LINEAR = [...SEASONAL].sort((a, b) => a.months[0] - b.months[0] || a.months.length - b.months.length);
+function gridHTML() {
+  const now = nowMonth();
+  return `<div class="yg" role="table" aria-label="מפה שנתית">
+    <span class="yg-h"></span>${MONTHS_SHORT.map((m, i) => `<button class="yg-m ${i + 1 === month ? "sel" : ""} ${i + 1 === now ? "now" : ""}" data-m="${i + 1}" aria-pressed="${i + 1 === month}" aria-label="${MONTHS[i]}"><span class="ml">${m}</span><span class="mn">${i + 1}</span></button>`).join("")}
+    ${LINEAR.map((f) => `<a class="yg-name" href="#/foods?id=${f.id}"><span class="yg-ph">${foodImage(f)}</span><b>${esc(f.he)}</b></a>${MONTHS.map((_, i) => `<i class="${f.months.includes(i + 1) ? "on" : ""} ${i + 1 === month ? "col" : ""}" title="${esc(f.he)}: ${MONTHS[i]}"></i>`).join("")}`).join("")}
+  </div>`;
+}
 
 function wheelSVG() {
   const now = nowMonth();
@@ -70,17 +82,19 @@ function asideHTML() {
   return `<div class="panel-head"><div><span class="label">${r.kind}</span><h2 class="sheet-name" id="m-title">${MONTHS[month - 1]}${month === nowMonth() ? ` <span class="label" style="background:var(--marker);color:var(--ink);padding:1px 6px">החודש</span>` : ""}</h2></div>
       <div class="ops">${iconBtn("prev", "החודש הקודם", "data-mstep=\"-1\"")}${iconBtn("next", "החודש הבא", "data-mstep=\"1\"")}</div></div>
     <div class="panel-body scroll-in" style="flex:1">
-      <div class="stratum st-said"><div class="st-name">נאמר</div><div class="st-text">${esc(r.q)}</div><div class="st-meta"><span class="src"><b style="font-weight:600">הרמב"ם</b>, הלכות דעות ד ח</span></div></div>
+      <p class="unique" style="margin-top:0">${rich(`**${inSeason.length}** מזונות בשדה ב${MONTHS[month - 1]}.`)}</p>
+      <div class="stratum st-said"><div class="st-name">נאמר</div><div class="st-text">${esc(r.q)}</div><div class="st-meta"><span class="src">הרמב"ם, הלכות דעות ד ח</span></div></div>
       <div class="sec"><div class="sec-h"><h3>בשדה עכשיו</h3><span class="label"><bdi class="num">${inSeason.length}</bdi> פריטים</span></div>
-        <div class="month-list">${inSeason.map((f) => `<a class="month-item" href="#/foods?id=${f.id}">${plate(f)}<span><b>${esc(f.he)}</b> <span class="latin">${esc(f.la)}</span></span><span class="kind">${esc(f.season_kind)}</span></a>`).join("") || `<p class="src">אין פריטים בעונה בחודש הזה.</p>`}</div>
+        <div class="month-list">${inSeason.map((f) => `<a class="month-item" href="#/foods?id=${f.id}">${foodImage(f)}<span><b>${esc(f.he)}</b> <span class="latin">${esc(f.la)}</span></span><span class="kind">${esc(f.season_kind)}</span></a>`).join("") || `<p class="src">אין פריטים בעונה בחודש הזה.</p>`}</div>
       </div>
       <div class="sec"><div class="sec-h"><h3>כל השנה</h3><span class="label">יבוא</span></div><p style="font-size:13.5px">${always.map((f) => `<a href="#/foods?id=${f.id}">${esc(f.he)}</a>`).join(", ")}</p></div>
-      <p class="src" style="margin-top:12px">${rich("העונות הן **הערכה כללית** לישראל, לא נתון. לאימות מול מועצת הצמחים.")}</p>
     </div>`;
 }
 
 function render() {
-  root.querySelector("#wheel").innerHTML = wheelSVG();
+  root.querySelector("#wheel").innerHTML = mode === "wheel" ? wheelSVG() : gridHTML();
+  root.querySelector("#wheel").classList.toggle("is-grid", mode !== "wheel");
+  root.querySelectorAll("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
   root.querySelector("#m-aside").innerHTML = asideHTML();
 }
 
@@ -93,9 +107,11 @@ function setMonth(m) {
 export function mount(el, params) {
   root = el;
   month = Number(params.m) >= 1 && Number(params.m) <= 12 ? Number(params.m) : nowMonth();
+  mode = params.v === "wheel" ? "wheel" : "grid";
   root.innerHTML = `<div class="view-in focus-aside">
     <section class="panel" aria-labelledby="w-title">
-      <div class="gallery-tools"><div><h1 class="view-title" id="w-title">גלגל העונות</h1><p class="view-sub">${rich("כל טבעת היא **מזון אחד**, כמו טבעות בגזע. קו כהה: בעונה בחודש שנבחר.")}</p></div>
+      <div class="gallery-tools"><div><h1 class="view-title" id="w-title">העונות</h1><p class="view-sub">${rich("**מפה שנתית** לקריאה לאורך השנה, או **גלגל** שבו כל טבעת היא מזון.")}</p></div>
+        <span class="chips" role="group" aria-label="תצוגה"><button class="chip" data-mode="grid">מפה שנתית</button><button class="chip" data-mode="wheel">גלגל</button></span>
         <span class="legend" style="font-size:12px;color:var(--ink-soft)"><span><i class="layer-mark" style="border-color:#1A1A18"></i>בעונה</span><span><i class="layer-mark" style="border-color:#D9D8D3"></i>בחודש אחר</span><span><i class="layer-mark" style="border-color:var(--marker);border-top-width:6px"></i>היום</span></span></div>
       <div class="wheel-wrap" id="wheel" style="flex:1;border:0;box-shadow:none"></div>
     </section>
@@ -103,6 +119,7 @@ export function mount(el, params) {
   </div>`;
   render();
   root.addEventListener("click", (e) => {
+    const md = e.target.closest("[data-mode]"); if (md) { mode = md.dataset.mode; patch({ v: mode === "wheel" ? "wheel" : undefined }); return render(); }
     const s = e.target.closest("[data-m]"); if (s) return setMonth(Number(s.dataset.m));
     const st = e.target.closest("[data-mstep]"); if (st) return setMonth(month + Number(st.dataset.mstep));
   });

@@ -40,7 +40,8 @@ function serve() {
   ok(await p.locator('ai-menu .logo').isVisible(), 'כפתור הלוגו A&I גלוי בסרגל');
   ok(!(await p.locator('header >> text=העתקת קישור').first().isVisible().catch(() => false)), 'אין כפתורי פיתוח חופשיים בסרגל');
   ok(await p.evaluate(() => document.documentElement.dir === 'rtl' && getComputedStyle(document.querySelector('.view-in')).direction === 'rtl'), 'RTL בשורש ובתצוגה');
-  ok(await p.locator('.statusbar >> text=לא מאבחן').isVisible(), 'הצהרה במסך הראשון');
+  ok(!(await p.locator('.statusbar >> text=לא מאבחן').count()), 'בלי הצהרות ואזהרות בשורת המצב');
+  ok(await p.locator('.statusbar a.quiet-link[href="#/method"]').count() === 1, 'קישור שקט אחד למקורות והערות');
 
   console.log('דף הבית');
   for (const k of ['known', 'said', 'believed']) {
@@ -55,7 +56,7 @@ function serve() {
   await go('');
   await p.click('[data-mode="quiz"]');
   ok((await p.textContent('#demo-explain')).includes('מתוך'), 'מבחן דקה: הציון נשמר אחרי רענון');
-  for (const [door, view] of [['הכר', 'foods'], ['הבן', 'tree'], ['השתמש', 'seasons']]) {
+  for (const [door, view] of [['הכר', 'foods'], ['הבן', 'plant'], ['השתמש', 'seasons']]) {
     await go('');
     await p.click(`.door:has-text("${door}")`);
     await p.waitForTimeout(300);
@@ -63,7 +64,7 @@ function serve() {
   }
 
   console.log('ניווט');
-  for (const v of ['foods', 'tree', 'seasons', 'recipes', 'compare', 'method', 'redlist', 'help']) {
+  for (const v of ['foods', 'plant', 'methods', 'seasons', 'recipes', 'compare']) {
     await p.click(`.tab[data-view="${v}"]`);
     await p.waitForTimeout(400);
     ok(await p.locator(`.tab[data-view="${v}"][aria-current="page"]`).count() === 1 && (await p.locator('#view').innerText()).length > 50, `לשונית ${v} נפתחת ומסומנת`);
@@ -73,11 +74,14 @@ function serve() {
 
   console.log('מזון');
   await go('#/foods');
-  ok(await p.locator('.food-card').count() === 33, '33 גיליונות בגלריה');
+  ok(await p.locator('.food-card').count() === 34, '34 גיליונות בגלריה');
   ok(!(await p.locator('.food-card >> text=ג\'עדה').count()), 'צמח מהרשימה האדומה לא בגלריה');
   await p.click('.food-card[data-id="fig"]');
   ok((await hash()).includes('id=fig') && (await p.textContent('#sheet-title')).includes('תאנה'), 'בחירת כרטיס פותחת גיליון ושומרת בכתובת');
   ok(await p.locator('#sheet .stratum').count() >= 3, 'הגיליון מציג שלוש שכבות');
+  ok(await p.locator('#sheet .unique').count() === 1 && await p.locator('#sheet .t-body').count() === 1 && await p.locator('#sheet .t-soul').count() === 1, 'ייחודיות, גוף ונפש בגיליון');
+  ok(!(await p.locator('#sheet .safety-line, #sheet .tone-red').count()), 'בלי אזהרות שימוש בגיליון');
+  ok(await p.locator('#sheet details.sources-box:not([open])').count() === 1, 'מקורות מקופלים במקום אחד');
   await p.click('#sheet [data-step="1"]');
   ok((await p.textContent('#sheet-title')).includes('רימון'), 'כפתור "הבא" עובר לפריט הבא');
   await p.click('#sheet [data-step="-1"]');
@@ -93,18 +97,18 @@ function serve() {
   await p.click('[data-rem="nuts"]');
   ok(await p.locator('.food-card').count() === 4, 'בורר: "−" מסיר');
   await p.click('[data-cat="legumes"]');
-  ok(await p.locator('.food-card').count() === 33, 'בורר: לחיצה על הבחירה היחידה מחזירה להכול');
+  ok(await p.locator('.food-card').count() === 34, 'בורר: לחיצה על הבחירה היחידה מחזירה להכול');
   await p.click('[data-cat="seven"]');
   await p.click('[data-cat=""]');
-  ok(await p.locator('.food-card').count() === 33, 'בורר: "הכול" מאפס');
+  ok(await p.locator('.food-card').count() === 34, 'בורר: "הכול" מאפס');
 
   console.log('חיפוש ובטיחות');
   await p.fill('#q', 'תאנה');
   await p.waitForTimeout(200);
   ok(await p.locator('.food-card.hit').count() >= 1 && await p.locator('.food-card.dim').count() > 10, 'חיפוש מדגיש התאמות ומעמעם את השאר');
-  await p.fill('#q', 'אור');
+  await p.fill('#q', 'סוכ');
   await p.waitForTimeout(200);
-  ok(await p.locator('.food-card.hit').count() === 0, 'מילה קצרה חייבת להיות שלמה ("אור" לא תופס "תאוריה")');
+  ok(await p.locator('.food-card.hit').count() === 0, 'מילה קצרה חייבת להיות שלמה ("סוכ" לא תופס "סוכר")');
   await p.click('#q-x');
   ok((await p.inputValue('#q')) === '' && await p.locator('.food-card.dim').count() === 0, 'איקס מאפס את החיפוש');
   for (const [q, expect] of [['כאב בחזה', '101'], ['הבן שלי בלע תרופה', '04-7771900'], ['הפסקתי לקחת את הכדורים', 'רופא'], ['מה המינון של מרווה', 'אין כאן מינונים'], ['כמה קלוריות בתמר', 'לא סופרים']]) {
@@ -120,32 +124,41 @@ function serve() {
   ok(!(await p.locator('#safety-overlay').count()), 'מונח מחקרי ("דיאטה ים תיכונית") לא מקפיץ אזהרה');
   await p.click('#q-x');
 
-  console.log('סינון אישי');
-  await p.click('#btn-personal');
-  await p.click('[data-al="gluten"]');
-  ok((await p.textContent('#saved')) === 'נשמר', 'חיווי "נשמר"');
-  ok(await p.locator('.food-card[data-id="wheat"] .warn').count() === 1, 'אלרגן מסומן על הכרטיס');
-  await p.click('[data-gr="pregnancy"]');
-  await go('#/foods?id=sage');
-  ok(await p.locator('.food-card[data-id="wheat"] .warn').count() === 1, 'הסינון נשמר אחרי רענון');
-  ok((await p.locator('#sheet').innerText()).includes('לא מתאים בלי ייעוץ'), 'הריון + צמח מרוכז: "לא מתאים בלי ייעוץ"');
-  await go('#/foods?id=turmeric');
-  await p.click('#sheet a[href*="redlist"]');
-  await p.waitForTimeout(400);
-  ok(await p.locator('#red-turmeric-supp.is-target').count() === 1, 'קישור מכורכום לרשימה האדומה מסמן את הרשומה');
+  console.log('התנגשויות');
+  await go('#/foods?id=lentil');
+  ok((await p.locator('#sheet .t-without').innerText()).includes('תה שחור'), 'עדשים: "לא הולך עם" תה שחור (ספיגת ברזל)');
+  ok((await p.locator('#sheet .t-with').innerText()).includes('לימון'), 'עדשים: "הולך עם" לימון');
+  await go('#/foods?id=grapefruit');
+  ok((await p.locator('#sheet .t-without').innerText()).includes('תרופות'), 'אשכולית: התנגשות עם תרופות כתוכן');
 
-  console.log('עץ הזית');
-  await go('#/tree', 3000);
-  ok(await p.locator('#tree-canvas, .tree-fallback').count() >= 1, 'במה תלת־ממדית או איור גיבוי');
-  for (const id of ['leaf', 'oil', 'trunk', 'roots', 'fruit']) {
-    await p.click(`.hotspot[data-pt="${id}"]`, { force: true });
-    await p.waitForTimeout(250);
-    ok((await hash()).includes('p=' + id) && await p.locator(`#tree-detail [data-pt="${id}"][aria-pressed="true"]`).count() === 1, `נקודה ${id} נפתחת`);
+  console.log('צמח וגוף');
+  await go('#/plant');
+  for (const id of ['stem', 'leaf', 'flower', 'fruit', 'seed', 'root']) {
+    await p.click(`.pl-chips [data-part="${id}"]`);
+    ok((await hash()).includes('p=' + id) && await p.locator(`.pl-svg .pz.on[data-part="${id}"]`).count() === 1 && await p.locator(`.bd-svg .bz.on[data-part="${id}"]`).count() === 1, `חלק ${id}: צמח וגוף מסונכרנים`);
   }
+  await p.click('.pl-svg .pz[data-part="leaf"] path.f >> nth=0');
+  ok((await p.textContent('#pl-title')).includes('עלה') && (await p.locator('#pl-aside').innerText()).includes('נשמה'), 'לחיצה על העלה בציור: ריאות ונשמה');
+  ok((await p.locator('.pl-quote').innerText()).includes('Darwin'), 'ציטוט דרווין');
+  await go('#/tree');
+  ok((await p.locator('#pl-title').count()) === 1, 'הכתובת הישנה #/tree מובילה לצמח וגוף');
+
+  console.log('שיטות');
+  await go('#/methods');
+  ok(await p.locator('.mt tbody tr').count() === 11 && await p.locator('.tl .tl-m').count() === 11, '11 שיטות בציר ובטבלה');
+  await p.click('.mt tbody tr[data-m="ayurveda"]');
+  ok((await p.textContent('#mt-title')).includes('איורוודה') && (await hash()).includes('m=ayurveda'), 'בחירת שיטה מהטבלה');
+  await p.click('.tl .tl-m[data-m="washoku"]', { force: true });
+  ok((await p.textContent('#mt-title')).includes('וושוקו'), 'בחירת שיטה מהציר');
 
   console.log('עונות');
   await go('#/seasons?m=6');
   ok((await p.textContent('#m-title')).includes('יוני'), 'חודש מהכתובת');
+  ok(await p.locator('.yg').count() === 1, 'מפה שנתית כברירת מחדל');
+  await p.click('.yg-m[data-m="9"]');
+  ok(await p.locator('.yg i.col.on').count() >= 1, 'עמודת החודש מסומנת במפה');
+  await p.click('[data-mode="wheel"]');
+  ok(await p.locator('.wheel .msec').count() === 12 && (await hash()).includes('v=wheel'), 'מעבר לגלגל');
   await p.click('.msec[data-m="9"]');
   ok((await p.textContent('#m-title')).includes('ספטמבר') && (await hash()).includes('m=9'), 'לחיצה על חודש בגלגל');
   await p.click('[data-mstep="1"]');
@@ -156,7 +169,7 @@ function serve() {
 
   console.log('מתכונים');
   await go('#/recipes');
-  ok(await p.locator('.recipe-card').count() === 6, '6 מתכונים');
+  ok(await p.locator('.recipe-card').count() === 20, '20 מתכונים');
   ok((await p.textContent('#r-title')).length > 2 && await p.locator('.r-steps li').count() <= 10, 'כרטיס מתכון עם עד 10 שלבים');
   await p.click('.recipe-card[data-id="ful"]');
   ok((await hash()).includes('id=ful') && (await p.locator('#r-sheet').innerText()).includes('G6PD'), 'פול מדמס: אזהרת G6PD');
@@ -171,7 +184,7 @@ function serve() {
   await go('#/recipes');
   await p.click('#f-season');
   const n = await p.locator('.recipe-card').count();
-  ok(n >= 1 && n <= 6 && (await hash()).includes('season=1'), 'סינון "מתאים לעונה עכשיו"');
+  ok(n >= 1 && n <= 20 && (await hash()).includes('season=1'), 'סינון "מתאים לעונה עכשיו"');
 
   console.log('השוואה');
   await go('#/compare');
@@ -181,7 +194,10 @@ function serve() {
   await p.click('[data-pair="onion,garlic"]');
   ok((await p.textContent('#shared')).includes('במדבר יא ה') && (await hash()).includes('a=onion'), 'זוג מוצע: מקור משותף');
 
-  console.log('עזרה, שיטה והתקנה');
+  console.log('מקורות והערות');
+  await go('#/method');
+  ok(await p.locator('#redlist').count() === 1 && await p.locator('.red-card').count() === 4, 'הרשימה האדומה במקום אחד, בדף המקורות');
+  ok(await p.locator('a[href="tel:101"]').count() === 1, 'קווי העזרה בדף המקורות');
   await go('#/help');
   ok(await p.locator('a[href="tel:101"]').count() === 1 && await p.locator('a[href="tel:1201"]').count() === 1, 'קווי חירום כקישורי חיוג');
   await p.click('#wipe');
@@ -198,7 +214,7 @@ function serve() {
   const rm = await b.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   rm.on('pageerror', (e) => errors.push(e.message));
   await rm.route('**/appofapp-gh.vercel.app/ai-menu.js', (r) => r.fulfill({ path: path.join(__dirname, 'fixtures', 'ai-menu.js'), contentType: 'application/javascript' }));
-  for (const h of ['', '#/foods', '#/tree', '#/seasons', '#/compare', '#/method']) {
+  for (const h of ['', '#/foods', '#/plant', '#/methods', '#/seasons', '#/recipes', '#/compare', '#/method']) {
     await rm.goto(base + h, { waitUntil: 'networkidle' });
     await rm.waitForTimeout(600);
     ok(!(await rm.evaluate(() => document.documentElement.scrollWidth > innerWidth)), `נייד ${h || '#/'}: בלי גלילה אופקית`);
