@@ -4,6 +4,7 @@ import { FOODS, CATEGORIES, ALLERGENS } from "../js/data/foods.js";
 import { SOURCES, EVIDENCE } from "../js/data/sources.js";
 import { REDLIST } from "../js/data/safety-data.js";
 import { TREE_POINTS } from "../js/data/tree.js";
+import { RECIPES } from "../js/data/recipes.js";
 
 const FORBIDDEN = ["מרפא", "מרפאת", "מנקה רעלים", "מאזן הורמונים", "מחזק חיסון", "מוריד לחץ דם", "מוריד סוכר", "עוצמתי", "מטפל", "מבריא", "מבטיח"];
 const BODY = ["קלוריות", "קלוריה", "BMI", "ירידה במשקל", "לרזות", "ניקוי רעלים"];
@@ -84,11 +85,26 @@ for (const p of TREE_POINTS) {
   checkLayers(w, p.layers);
 }
 
+const rids = new Set();
+for (const r of RECIPES) {
+  const w = `recipe:${r.id}`;
+  if (rids.has(r.id)) err(w, "id כפול");
+  rids.add(r.id);
+  if (!r.steps.length || r.steps.length > 10) err(w, `מספר שלבים לא חוקי (${r.steps.length}), מותר 1 עד 10`);
+  for (const id of r.foods) if (!ids.has(id)) err(w, `מזון לא קיים "${id}"`);
+  if (!r.tradition?.trad || !r.tradition?.src) err(w, "מתכון בלי מסורת מקור");
+  else { checkText(`${w}.tradition`, r.tradition.t); checkSrc(`${w}.tradition`, r.tradition.src); }
+  if (r.months.some((m) => m < 1 || m > 12)) err(w, "חודשים לא חוקיים");
+  r.steps.forEach((st, i) => { checkText(`${w}.steps[${i}]`, st.t); if (st.food && !r.foods.includes(st.food)) err(`${w}.steps[${i}]`, `שלב מפנה למזון שלא ברשימת המתכון "${st.food}"`); });
+  if (r.note) checkText(`${w}.note`, r.note);
+  if (r.foods.includes("fava") && !/G6PD/.test(r.note || "")) err(w, "מתכון עם פול בלי אזהרת G6PD");
+}
+
 const counts = FOODS.reduce((a, f) => { for (const k of ["known", "said", "believed"]) a[k] += f.layers[k].length; return a; }, { known: 0, said: 0, believed: 0 });
 if (errors.length) {
   console.error(errors.join("\n"));
   console.error(`\nFAIL: ${errors.length} הפרות`);
   process.exit(1);
 }
-console.log(`ok: ${FOODS.length} מזונות, ${REDLIST.length} ברשימה האדומה, ${TREE_POINTS.length} נקודות בעץ, ${Object.keys(SOURCES).length} מקורות`);
+console.log(`ok: ${FOODS.length} מזונות, ${RECIPES.length} מתכונים, ${REDLIST.length} ברשימה האדומה, ${TREE_POINTS.length} נקודות בעץ, ${Object.keys(SOURCES).length} מקורות`);
 console.log(`שכבות: ידוע ${counts.known}, נאמר ${counts.said}, מאמינים ${counts.believed}`);

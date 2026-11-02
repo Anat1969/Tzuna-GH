@@ -11,11 +11,12 @@ import * as compare from "./views/compare.js";
 import * as redlist from "./views/redlist.js";
 import * as help from "./views/help.js";
 import * as method from "./views/method.js";
+import * as recipes from "./views/recipes.js";
 
-const VIEWS = { home, foods, tree, seasons, compare, redlist, help, method };
+const VIEWS = { home, foods, tree, seasons, recipes, compare, redlist, help, method };
 const NAV = [
-  ["foods", "מזון"], ["tree", "עץ הזית"], ["seasons", "עונות"], ["compare", "השוואה"],
-  ["method", "<span class=\"long\">שיטה ומקורות</span><span class=\"short\" style=\"display:none\">מקורות</span>"], ["redlist", "רשימה אדומה", "tab-red"], ["help", "עזרה"]
+  ["foods", "מזון"], ["tree", "עץ הזית"], ["seasons", "עונות"], ["recipes", "מתכונים"], ["compare", "השוואה"],
+  ["method", "<span class=\"long\">שיטה ומקורות</span><span class=\"short\" style=\"display:none\">מקורות</span>"], ["redlist", "<span class=\"long2\">רשימה אדומה</span><span class=\"short2\" style=\"display:none\">אדומה</span>", "tab-red"], ["help", "עזרה"]
 ];
 
 const $ = (s) => document.querySelector(s);

@@ -4,7 +4,7 @@
 const { chromium } = require('playwright');
 const path = require('path');
 const SIZES = [['1920', 1920, 1080], ['1440', 1440, 900], ['1280', 1280, 720], ['mob', 390, 844]];
-const ROUTES = ['', 'foods', 'tree', 'seasons', 'compare', 'redlist', 'help'];
+const ROUTES = ['', 'foods', 'tree', 'seasons', 'recipes', 'compare', 'redlist', 'help'];
 const ARTICLE = ['method']; // כתבה: החריג שבסעיף 2.9 א, נקראת בגלילה
 (async () => {
   const [base, out] = process.argv.slice(2);

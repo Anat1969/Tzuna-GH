@@ -63,7 +63,7 @@ function serve() {
   }
 
   console.log('ניווט');
-  for (const v of ['foods', 'tree', 'seasons', 'compare', 'method', 'redlist', 'help']) {
+  for (const v of ['foods', 'tree', 'seasons', 'recipes', 'compare', 'method', 'redlist', 'help']) {
     await p.click(`.tab[data-view="${v}"]`);
     await p.waitForTimeout(400);
     ok(await p.locator(`.tab[data-view="${v}"][aria-current="page"]`).count() === 1 && (await p.locator('#view').innerText()).length > 50, `לשונית ${v} נפתחת ומסומנת`);
@@ -73,7 +73,7 @@ function serve() {
 
   console.log('מזון');
   await go('#/foods');
-  ok(await p.locator('.food-card').count() === 26, '26 גיליונות בגלריה');
+  ok(await p.locator('.food-card').count() === 33, '33 גיליונות בגלריה');
   ok(!(await p.locator('.food-card >> text=ג\'עדה').count()), 'צמח מהרשימה האדומה לא בגלריה');
   await p.click('.food-card[data-id="fig"]');
   ok((await hash()).includes('id=fig') && (await p.textContent('#sheet-title')).includes('תאנה'), 'בחירת כרטיס פותחת גיליון ושומרת בכתובת');
@@ -93,10 +93,10 @@ function serve() {
   await p.click('[data-rem="nuts"]');
   ok(await p.locator('.food-card').count() === 4, 'בורר: "−" מסיר');
   await p.click('[data-cat="legumes"]');
-  ok(await p.locator('.food-card').count() === 26, 'בורר: לחיצה על הבחירה היחידה מחזירה להכול');
+  ok(await p.locator('.food-card').count() === 33, 'בורר: לחיצה על הבחירה היחידה מחזירה להכול');
   await p.click('[data-cat="seven"]');
   await p.click('[data-cat=""]');
-  ok(await p.locator('.food-card').count() === 26, 'בורר: "הכול" מאפס');
+  ok(await p.locator('.food-card').count() === 33, 'בורר: "הכול" מאפס');
 
   console.log('חיפוש ובטיחות');
   await p.fill('#q', 'תאנה');
@@ -153,6 +153,25 @@ function serve() {
   await p.click('.month-item >> nth=0');
   await p.waitForTimeout(300);
   ok((await hash()).startsWith('#/foods?id='), 'פריט בעונה פותח את הגיליון שלו');
+
+  console.log('מתכונים');
+  await go('#/recipes');
+  ok(await p.locator('.recipe-card').count() === 6, '6 מתכונים');
+  ok((await p.textContent('#r-title')).length > 2 && await p.locator('.r-steps li').count() <= 10, 'כרטיס מתכון עם עד 10 שלבים');
+  await p.click('.recipe-card[data-id="ful"]');
+  ok((await hash()).includes('id=ful') && (await p.locator('#r-sheet').innerText()).includes('G6PD'), 'פול מדמס: אזהרת G6PD');
+  await p.click('.recipe-card[data-id="zaatar-bread"]');
+  ok(/גלוטן/.test(await p.locator('#r-sheet').innerText()) && /שומשום/.test(await p.locator('#r-sheet').innerText()), 'אלרגנים נגזרים מהמזונות (גלוטן ושומשום)');
+  await p.click('#r-sheet [data-step="1"]');
+  ok((await hash()).includes('id=cabbage-pomegranate'), 'כפתור "הבא" במתכונים');
+  await p.click('#r-sheet .r-ing >> nth=0');
+  await p.waitForTimeout(300);
+  ok((await hash()).startsWith('#/foods?id=cabbage'), 'מצרך פותח את גיליון המזון');
+  ok(await p.locator('#sheet a[href*="recipes?id=cabbage-pomegranate"]').count() === 1, 'גיליון המזון מקשר למתכון');
+  await go('#/recipes');
+  await p.click('#f-season');
+  const n = await p.locator('.recipe-card').count();
+  ok(n >= 1 && n <= 6 && (await hash()).includes('season=1'), 'סינון "מתאים לעונה עכשיו"');
 
   console.log('השוואה');
   await go('#/compare');

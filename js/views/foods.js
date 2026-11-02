@@ -5,6 +5,7 @@ import { rich, stratum, LAYERS, esc, iconBtn, srcLine, MONTHS, MONTHS_SHORT, now
 import { plate } from "../plates.js";
 import { patch } from "../route.js";
 import * as store from "../store.js";
+import { recipesWith } from "../data/recipes.js";
 
 export const title = "מזון";
 
@@ -88,6 +89,7 @@ function sheetHTML(f) {
         ${months}
         <dl class="row-kv" style="margin-top:8px"><dt>במטבח</dt><dd>${rich(f.use.t)}</dd>${meal}${allergens}</dl>
         ${note}${groups}
+        ${recipesWith(f.id).length ? `<div style="margin-top:10px"><span class="label">מתכונים עם ${esc(f.he)}</span><div class="recipe-links" style="margin-top:4px">${recipesWith(f.id).map((r) => `<a class="press btn" style="text-decoration:none;padding:6px 12px;font-size:13px" href="#/recipes?id=${r.id}">${esc(r.he)}</a>`).join("")}</div></div>` : ""}
       </section>
       <p class="safety-line">${triangle("var(--ink-mute)")}<span>${rich("לפני שימוש בצמח, בחליטה או בתוסף: **בדקו אינטראקציה עם תרופות** אצל רוקח. האפליקציה לא מאבחנת ולא מטפלת.")}</span></p>
     </div>`;
