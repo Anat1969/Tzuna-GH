@@ -3,6 +3,7 @@ import { RECIPES } from "../data/recipes.js";
 import { ALLERGENS, byId } from "../data/foods.js";
 import { rich, stratum, esc, iconBtn, MONTHS, MONTHS_SHORT, nowMonth, triangle } from "../ui.js";
 import { plate } from "../plates.js";
+import { foodImage } from "./foods.js";
 import { patch } from "../route.js";
 
 export const title = "מתכונים";
@@ -18,7 +19,7 @@ function list() {
 function cardHTML(r) {
   const al = allergensOf(r);
   return `<button class="recipe-card press" data-id="${r.id}" aria-pressed="${state.id === r.id}">
-    <span class="r-plates">${r.foods.slice(0, 4).map((id) => `<span>${plate(byId(id))}</span>`).join("")}</span>
+    <span class="r-plates">${r.foods.slice(0, 4).map((id) => `<span>${foodImage(byId(id))}</span>`).join("")}</span>
     <span class="cap"><b>${esc(r.he)}</b>
       <span class="r-meta"><span>${esc(r.time)}</span><span><bdi class="num" style="font-weight:400">${r.steps.length}</bdi> שלבים</span>${al.length ? `<span class="warn">${esc(al.map((a) => ALLERGENS[a]).join(", "))}</span>` : ""}</span>
     </span>
@@ -29,7 +30,7 @@ function monthsBar(r) {
   if (!r.months.length) return `<p style="font-size:14px">כל השנה.</p>`;
   const now = nowMonth();
   return `<div class="months">${MONTHS.map((m, i) => `<i class="${r.months.includes(i + 1) ? "on" : ""} ${i + 1 === now ? "now" : ""}" title="${m}"></i>`).join("")}</div>
-    <div class="months-l">${MONTHS_SHORT.map((m) => `<span>${m}</span>`).join("")}</div><p class="src" style="margin-top:4px">הערכה כללית, לא נתון.</p>`;
+    <div class="months-l">${MONTHS_SHORT.map((m) => `<span>${m}</span>`).join("")}</div>`;
 }
 
 function sheetHTML(r) {
@@ -39,19 +40,18 @@ function sheetHTML(r) {
       <div class="ops">${iconBtn("prev", "הקודם", `data-step="-1" ${idx <= 0 ? "disabled" : ""}`)}<span class="pos"><bdi class="num" style="font-weight:400">${idx + 1}/${L.length}</bdi></span>${iconBtn("next", "הבא", `data-step="1" ${idx >= L.length - 1 ? "disabled" : ""}`)}${iconBtn("print", "הדפסה", "data-print")}${iconBtn("x", "סגירה", "data-close")}</div></div>
     <div class="panel-body scroll-in" style="flex:1">
       ${stratum("said", [r.tradition])}
-      ${r.note ? `<div class="tone tone-red" style="margin-top:8px"><p>${rich(r.note)}</p></div>` : ""}
+      ${r.note ? `<div class="tile t-without" style="margin-top:8px"><span class="tile-l">לא הולך עם</span><p>${rich(r.note)}</p></div>` : ""}
       <section class="sec"><div class="sec-h"><h3>מצרכים</h3><span class="label">לחיצה פותחת את הגיליון</span></div>
-        <div class="r-ings">${r.foods.map((id) => { const f = byId(id); return `<a class="r-ing press" href="#/foods?id=${f.id}">${plate(f)}<b>${esc(f.he)}</b></a>`; }).join("")}</div>
+        <div class="r-ings">${r.foods.map((id) => { const f = byId(id); return `<a class="r-ing press" href="#/foods?id=${f.id}">${foodImage(f)}<b>${esc(f.he)}</b></a>`; }).join("")}</div>
         <p style="font-size:13.5px;margin-top:6px;color:var(--ink-soft)">ועוד: ${esc(r.extra)}.</p>
       </section>
       <section class="sec"><div class="sec-h"><h3>שלבים</h3><span class="label"><bdi class="num" style="font-weight:400">${r.steps.length}</bdi> שלבים</span></div>
-        <ol class="r-steps">${r.steps.map((st, i) => `<li><span class="r-n num">${i + 1}</span><span class="r-st">${rich(st.t)}</span><span class="r-pic">${st.food ? plate(byId(st.food)) : ""}</span></li>`).join("")}</ol>
+        <ol class="r-steps">${r.steps.map((st, i) => `<li><span class="r-n num">${i + 1}</span><span class="r-st">${rich(st.t)}</span><span class="r-pic">${st.food ? foodImage(byId(st.food)) : ""}</span></li>`).join("")}</ol>
       </section>
       <section class="sec"><div class="sec-h"><h3>עונה ואלרגנים</h3></div>
         ${monthsBar(r)}
         <p style="font-size:14px;margin-top:8px">${al.length ? `<b style="color:var(--red)">אלרגנים: ${esc(al.map((a) => ALLERGENS[a]).join(", "))}</b>. גם זיהום צולב.` : "בלי אלרגנים מהרשימה של 14 העיקריים, לפי המזונות במתכון."}</p>
       </section>
-      <p class="safety-line">${triangle("var(--ink-mute)")}<span>${rich("מתכון ללמידה ולבישול. **אין כאן ערכים תזונתיים** ואין המלצה טיפולית.")}</span></p>
     </div>`;
 }
 
@@ -63,7 +63,7 @@ function yearHTML() {
       <span></span>${MONTHS_SHORT.map((m, i) => `<span class="r-mh ${i + 1 === now ? "now" : ""}">${m}</span>`).join("")}
       ${list().map((r) => `<button class="r-yname" data-id="${r.id}" aria-pressed="${r.id === state.id}">${esc(r.he)}</button>${MONTHS.map((_, i) => `<i class="${inSeason(r, i + 1) ? (r.months.length ? "on" : "all") : ""} ${i + 1 === now ? "now" : ""}"></i>`).join("")}`).join("")}
     </div>
-    <p class="src" style="margin-top:6px">${rich("כהה: עונה מתאימה. בהיר: כל השנה. **הערכה כללית**, לא נתון.")}</p></div>`;
+    <p class="hint" style="margin-top:6px">${rich("**כהה**: עונה מתאימה. **בהיר**: כל השנה.")}</p></div>`;
 }
 
 function render() {
@@ -93,7 +93,7 @@ export function mount(el, params) {
   root.innerHTML = `<div class="view-in focus-aside">
     <section class="panel" aria-labelledby="rl-title">
       <div class="gallery-tools">
-        <div><h1 class="view-title" id="rl-title">מתכונים</h1><p class="view-sub">${rich("עד **10 שלבים**, עם מקור מסורת לכל מתכון. **בלי ערכים תזונתיים.**")}</p></div>
+        <div><h1 class="view-title" id="rl-title">מתכונים</h1><p class="view-sub">${rich("עד **10 שלבים**, ומסורת מקור לכל מתכון.")}</p></div>
         <span class="src" id="r-hits" aria-live="polite"></span>
       </div>
       <div class="gallery-tools" style="padding-top:4px;padding-bottom:6px"><div class="chips"><button class="chip" id="f-season" data-season>מתאים לעונה עכשיו</button><span id="f-food"></span></div></div>

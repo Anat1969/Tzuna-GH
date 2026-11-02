@@ -530,6 +530,20 @@ export const FOODS = [
       believed: []
     },
     safety: { flags: ["allergen"], note: "" }
+  },
+  {
+    id: "fenugreek", he: "חילבה (תלתן)", en: "Fenugreek", la: "Trigonella foenum-graecum",
+    family: "קטניות", family_la: "Fabaceae", part: "זרעים ועלים",
+    cat: "herbs", months: [3, 4], season_kind: "פריחה", meal: null,
+    allergens: [], shape: "pod", hue: "#c8a43a", concentrated: true,
+    recognize: { t: "**תרמיל** ארוך ודק, וזרעים צהבהבים קשים.", src: "powo" },
+    use: { t: "**חילבה** תימנית, וזרעים טחונים בתבלינים.", src: "culinary" },
+    layers: {
+      known: [],
+      said: [{ t: "\"רוביא דהיינו **תלתן**\": סימן בליל ראש השנה, \"שירבו זכיותינו\".", trad: "שולחן ערוך", ref: "אורח חיים תקפג א", src: "sa-oc-583" }],
+      believed: []
+    },
+    safety: { flags: [], note: "" }
   }
 ];
 

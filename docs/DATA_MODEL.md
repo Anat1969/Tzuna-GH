@@ -98,3 +98,15 @@
 - `months`: עונה מתאימה, הערכה. ריק: כל השנה.
 - `note`: אזהרה. חובה במתכון עם פול (G6PD).
 - אין ערכים תזונתיים, קלוריות או "השפעה".
+
+## פרופיל מזון, `js/data/profiles.js`
+- `unique`: שורת זיקוק, עד 8 מילים (נבדק).
+- `body: {t, src}`: **הרכב** (מה יש בו), לא "מה הוא עושה".
+- `soul: {t, trad, ref, src}`: משמעות, טקס ותרבות. כמו שכבת "נאמר".
+- `with[]`, `without[]`: `{t, src, said?}`. `without` רק להתנגשות אמיתית, עם מקור.
+
+## צילומים, `js/data/photos.js`
+`{src, w, h, credit, license, page}`. רק CC BY, CC BY-SA או CC0. הבודק מוודא שהקובץ קיים ושיש קרדיט.
+
+## צמח וגוף, `js/data/plant.js`; שיטות, `js/data/methods.js`
+חלק צמח: `plant`, `body` (אנלוגיה של תפקוד), `mind`, `lang`, `foods`. שיטה: מקום, זמן (`from`, `to`, `approx`), `unit`, `principle`, `time`, `conflict`, `example`, `src`.

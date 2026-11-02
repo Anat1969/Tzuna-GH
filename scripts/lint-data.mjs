@@ -3,8 +3,12 @@
 import { FOODS, CATEGORIES, ALLERGENS } from "../js/data/foods.js";
 import { SOURCES, EVIDENCE } from "../js/data/sources.js";
 import { REDLIST } from "../js/data/safety-data.js";
-import { TREE_POINTS } from "../js/data/tree.js";
 import { RECIPES } from "../js/data/recipes.js";
+import { PROFILES } from "../js/data/profiles.js";
+import { PHOTOS } from "../js/data/photos.js";
+import { PARTS } from "../js/data/plant.js";
+import { METHODS } from "../js/data/methods.js";
+import { existsSync } from "node:fs";
 
 const FORBIDDEN = ["מרפא", "מרפאת", "מנקה רעלים", "מאזן הורמונים", "מחזק חיסון", "מוריד לחץ דם", "מוריד סוכר", "עוצמתי", "מטפל", "מבריא", "מבטיח"];
 const BODY = ["קלוריות", "קלוריה", "BMI", "ירידה במשקל", "לרזות", "ניקוי רעלים"];
@@ -78,11 +82,31 @@ for (const r of REDLIST) {
   checkText(`${w}.risk`, r.risk);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(r.last_reviewed)) err(w, "last_reviewed לא חוקי");
 }
-for (const p of TREE_POINTS) {
-  const w = `tree:${p.id}`;
-  checkText(`${w}.recognize`, p.recognize.t);
-  checkSrc(`${w}.recognize`, p.recognize.src);
-  checkLayers(w, p.layers);
+
+for (const f of FOODS) {
+  const w = `profile:${f.id}`, pr = PROFILES[f.id];
+  if (!pr) { err(w, "חסר פרופיל (ייחודיות, גוף, נפש, שילובים)"); continue; }
+  checkText(`${w}.unique`, pr.unique);
+  if (pr.unique.replace(/\*\*|==/g, "").split(/\s+/).length > 9) err(w, "שורת הייחודיות ארוכה מ-8 מילים");
+  for (const k of ["body", "soul"]) { if (!pr[k]) { err(w, `חסר ${k}`); continue; } checkText(`${w}.${k}`, pr[k].t); checkSrc(`${w}.${k}`, pr[k].src); }
+  if (!pr.soul?.trad) err(w, "soul בלי מסורת");
+  for (const k of ["with", "without"]) (pr[k] || []).forEach((x, i) => { checkText(`${w}.${k}[${i}]`, x.t); if (!x.src) err(`${w}.${k}[${i}]`, "שילוב בלי מקור"); else checkSrc(`${w}.${k}[${i}]`, x.src); });
+}
+for (const id of Object.keys(PROFILES)) if (!ids.has(id)) err(`profile:${id}`, "פרופיל למזון שלא קיים");
+
+for (const [id, p] of Object.entries(PHOTOS)) {
+  if (!ids.has(id)) err(`photo:${id}`, "צילום למזון שלא קיים");
+  if (!existsSync(new URL("../" + p.src, import.meta.url))) err(`photo:${id}`, "קובץ הצילום חסר");
+  if (!p.credit || !p.license) err(`photo:${id}`, "צילום בלי קרדיט או רישיון");
+}
+for (const pt of PARTS) {
+  for (const k of ["plant", "body", "mind"]) { checkText(`part:${pt.id}.${k}`, pt[k].t); if (pt[k].src) checkSrc(`part:${pt.id}.${k}`, pt[k].src); }
+  for (const id of pt.foods) if (!ids.has(id)) err(`part:${pt.id}`, `מזון לא קיים "${id}"`);
+}
+for (const m of METHODS) {
+  for (const k of ["unit", "principle", "time", "conflict"]) checkText(`method:${m.id}.${k}`, m[k]);
+  checkSrc(`method:${m.id}`, m.src);
+  if (!ids.has(m.example.food)) err(`method:${m.id}`, `מזון לדוגמה לא קיים "${m.example.food}"`);
 }
 
 const rids = new Set();
@@ -106,5 +130,5 @@ if (errors.length) {
   console.error(`\nFAIL: ${errors.length} הפרות`);
   process.exit(1);
 }
-console.log(`ok: ${FOODS.length} מזונות, ${RECIPES.length} מתכונים, ${REDLIST.length} ברשימה האדומה, ${TREE_POINTS.length} נקודות בעץ, ${Object.keys(SOURCES).length} מקורות`);
+console.log(`ok: ${FOODS.length} מזונות, ${RECIPES.length} מתכונים, ${REDLIST.length} ברשימה האדומה, ${Object.keys(SOURCES).length} מקורות`);
 console.log(`שכבות: ידוע ${counts.known}, נאמר ${counts.said}, מאמינים ${counts.believed}`);

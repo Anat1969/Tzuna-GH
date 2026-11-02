@@ -10,7 +10,20 @@ export const SOURCES = {
   "saadia-tafsir": { title: "רס\"ג, תרגום התורה לערבית (תפסיר)", type: "מסורת", year: 930, url: "" },
   "nccih-tcm": { title: "NCCIH, Traditional Chinese Medicine: What You Need To Know", type: "סקירה", year: 2019, url: "https://www.nccih.nih.gov/health/traditional-chinese-medicine-what-you-need-to-know" },
   "said-2002": { title: "Said et al., Ethnopharmacological survey of medicinal herbs in Israel, the Golan Heights and the West Bank, J Ethnopharmacol", type: "סקירה", year: 2002, url: "" },
-  "culinary": { title: "מסורת קולינרית, ידע כללי", type: "מסורת", year: null, url: "" },
+  "culinary": { title: "מסורת קולינרית ותרבותית, ידע כללי", type: "מסורת", year: null, url: "" },
+
+  "sa-oc-583": { title: "שולחן ערוך, אורח חיים, סימן תקפג (עם הגהות הרמ\"א)", type: "מסורת", year: 1565, url: "https://www.sefaria.org/Shulchan_Arukh%2C_Orach_Chayim.583" },
+  "bavli-keritot-6a": { title: "תלמוד בבלי, כריתות ו ע\"א", type: "מסורת", year: 500, url: "https://www.sefaria.org/Keritot.6a" },
+  "darwin-1880": { title: "Charles Darwin, The Power of Movement in Plants", type: "מסורת", year: 1880, url: "https://www.gutenberg.org/ebooks/5605" },
+  "charaka": { title: "צ'רקה סמהיטה (Charaka Samhita), הטקסט היסודי של האיורוודה", type: "מסורת", year: null, url: "" },
+  "huangdi": { title: "הואנגדי ניי־ג'ינג (Huangdi Neijing), הקאנון של הקיסר הצהוב", type: "מסורת", year: null, url: "" },
+  "hippocrates": { title: "היפוקרטס, על התזונה (Peri Diaites)", type: "מסורת", year: -400, url: "" },
+  "galen": { title: "גלנוס, על תכונות המזונות (De alimentorum facultatibus)", type: "מסורת", year: 180, url: "" },
+  "hildegard": { title: "הילדגרד מבינגן, פיזיקה (Physica)", type: "מסורת", year: 1150, url: "" },
+  "unesco-med": { title: "UNESCO, Mediterranean diet, רשימת המורשת הבלתי מוחשית", type: "רגולציה", year: 2010, url: "https://ich.unesco.org/en/RL/mediterranean-diet-00884" },
+  "unesco-washoku": { title: "UNESCO, Washoku, traditional dietary cultures of the Japanese", type: "רגולציה", year: 2013, url: "https://ich.unesco.org/en/RL/washoku-traditional-dietary-cultures-of-the-japanese-notably-for-the-celebration-of-new-year-00869" },
+  "nccih-ayurveda": { title: "NCCIH, Ayurvedic Medicine: In Depth", type: "סקירה", year: 2019, url: "https://www.nccih.nih.gov/health/ayurvedic-medicine-in-depth" },
+  "new-nordic-2004": { title: "Manifesto for the New Nordic Kitchen", type: "מסורת", year: 2004, url: "" },
 
   // הנחיות
   "moh-2021": { title: "משרד הבריאות, הנחיות התזונה הלאומיות וקשת המזון", type: "הנחיה", year: 2021, url: "https://www.health.gov.il/" },
@@ -31,9 +44,13 @@ export const SOURCES = {
   "ghassa-2024": { title: "Ghassa et al., Teucrium polium and DKA, Annals of Medicine & Surgery", type: "סקירה", year: 2024, url: "" },
   "fda-grapefruit": { title: "FDA, Grapefruit Juice and Some Drugs Don't Mix", type: "רגולציה", year: 2021, url: "https://www.fda.gov/consumers/consumer-updates/grapefruit-juice-and-some-drugs-dont-mix" },
   "nccih-garlic": { title: "NCCIH, Garlic", type: "סקירה", year: 2020, url: "https://www.nccih.nih.gov/health/garlic" },
+  "medlineplus-iron": { title: "MedlinePlus, Iron in diet", type: "מאגר", year: 2024, url: "https://medlineplus.gov/ency/article/002422.htm" },
+  "medlineplus-calcium": { title: "MedlinePlus, Calcium in diet", type: "מאגר", year: 2024, url: "https://medlineplus.gov/ency/article/002412.htm" },
+  "cfr-101-81": { title: "21 CFR 101.81, Soluble fiber from certain foods (oat and barley beta-glucan)", type: "רגולציה", year: 1997, url: "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101/subpart-E/section-101.81" },
   "medlineplus-g6pd": { title: "MedlinePlus, G6PD deficiency", type: "מאגר", year: 2023, url: "https://medlineplus.gov/genetics/condition/glucose-6-phosphate-dehydrogenase-deficiency/" },
 
   // הרכב, בוטניקה ואלרגנים
+  "campbell": { title: "Urry et al., Campbell Biology, 12th ed., Pearson", type: "סקירה", year: 2020, url: "" },
   "usda-fdc": { title: "USDA FoodData Central", type: "מאגר", year: 2024, url: "https://fdc.nal.usda.gov/" },
   "powo": { title: "Plants of the World Online, Kew", type: "מאגר", year: 2024, url: "https://powo.science.kew.org/" },
   "flora-il": { title: "צמחיית ישראל ברשת (Flora of Israel Online)", type: "מאגר", year: 2024, url: "https://flora.org.il/" },

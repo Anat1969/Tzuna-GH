@@ -4,6 +4,8 @@ import { SOURCES } from "../data/sources.js";
 import { rich, stratum, LAYERS, esc } from "../ui.js";
 import { plate } from "../plates.js";
 import * as store from "../store.js";
+import { RECIPES } from "../data/recipes.js";
+import { foodImage, photoCredit } from "./foods.js";
 
 export const title = "";
 
@@ -43,13 +45,13 @@ export function mount(root) {
       </div>
       <nav class="compass rise" style="animation-delay:.26s" aria-label="שלוש דרכים להיכנס">
         <a class="door press" href="#/foods"><span class="label">הכר</span><b>מה זה</b><span>גיליון לכל מזון: מבנה, משפחה וחתך.</span></a>
-        <a class="door press" href="#/tree"><span class="label">הבן</span><b>מה ידוע</b><span>עץ הזית בתלת־ממד, שכבה אחרי שכבה.</span></a>
+        <a class="door press" href="#/plant"><span class="label">הבן</span><b>צמח וגוף</b><span>שורש, גבעול, עלה ופרי: מה דומה בגוף.</span></a>
         <a class="door press" href="#/seasons"><span class="label">השתמש</span><b>מה מתאים</b><span>מה בעונה עכשיו, ומה נאמר עליה.</span></a>
       </nav>
     </section>
     <section class="home-art">
       <figure class="plate-big rise" style="margin:0;animation-delay:.05s">
-        ${plate(olive, { draw: true })}
+        ${foodImage(olive, { big: true })}${photoCredit(olive)}
         <figcaption class="plate-label"><b>זית</b><span class="latin">Olea europaea</span></figcaption>
       </figure>
       <blockquote class="quote rise" style="margin:0;animation-delay:.2s">"הואיל והיות הגוף בריא ושלם מדרכי השם הוא, שהרי אי אפשר שיבין או ידע... והוא חולה."<cite>הרמב"ם, משנה תורה, הלכות דעות ד א. הגוף כתנאי להבנה.</cite></blockquote>
@@ -57,7 +59,7 @@ export function mount(root) {
         <div class="kpi"><span class="num">${FOODS.length}</span><span class="label">מזונות וצמחים</span></div>
         <div class="kpi"><span class="num">${counts}</span><span class="label">טענות בשכבות</span></div>
         <div class="kpi"><span class="num">${Object.keys(SOURCES).length}</span><span class="label">מקורות</span></div>
-        <div class="kpi"><span class="num">0</span><span class="label">מינונים וקלוריות</span></div>
+        <div class="kpi"><span class="num">${RECIPES.length}</span><span class="label">מתכונים</span></div>
       </div>
     </section>
   </div>`;
