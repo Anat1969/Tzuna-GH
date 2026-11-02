@@ -56,9 +56,10 @@ function serve() {
   await go('');
   await p.click('[data-mode="quiz"]');
   ok((await p.textContent('#demo-explain')).includes('מתוך'), 'מבחן דקה: הציון נשמר אחרי רענון');
-  for (const [door, view] of [['הכר', 'foods'], ['הבן', 'plant'], ['השתמש', 'seasons']]) {
+  ok(await p.locator('.ht-food').count() >= 1 && await p.locator('.ht-syn').count() === 2 && await p.locator('.ht-disc').count() === 1, 'היום במטבח: עונה, צירוף וגילוי');
+  for (const [door, view] of [['מזון', 'foods'], ['צמח וגוף', 'plant'], ['עונות', 'seasons'], ['שיטות', 'methods'], ['צירופים', 'recipes'], ['השוואה', 'compare']]) {
     await go('');
-    await p.click(`.door:has-text("${door}")`);
+    await p.click(`.hdoor:has(b:text-is("${door}"))`);
     await p.waitForTimeout(300);
     ok((await hash()).startsWith('#/' + view), `דלת "${door}" מובילה ל-${view}`);
   }

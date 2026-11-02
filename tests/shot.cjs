@@ -2,7 +2,7 @@
 // usage: node tests/shot.cjs <baseUrl> <outDir> [width height]
 const { chromium } = require('playwright');
 const path = require('path');
-const ROUTES = ['seasons'];
+const ROUTES = [''];
 (async () => {
   const [base, out, w, h] = process.argv.slice(2);
   const sizes = w ? [[+w, +h]] : [[1440, 900], [390, 844]];
