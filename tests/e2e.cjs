@@ -191,6 +191,11 @@ function serve() {
   await p.waitForTimeout(300);
   ok((await hash()).startsWith('#/foods?id=cabbage'), 'מצרך פותח את גיליון המזון');
   ok(await p.locator('#sheet a[href*="recipes?id=cabbage-pomegranate"]').count() === 1, 'גיליון המזון מקשר למתכון');
+  await go('#/foods?id=olive');
+  const med = p.locator('#sheet .med-links a');
+  ok(await med.count() === 1 && await med.getAttribute('href') === 'https://refua-gh.vercel.app/#s=cardio&v=disease&d=ischemic' && await med.getAttribute('target') === '_blank' && (await med.getAttribute('rel')).includes('noopener'), 'זית: קישור "ברפואה" למחלת לב איסכמית, בלשונית חדשה');
+  await go('#/foods?id=fig');
+  ok(!(await p.locator('#sheet .med-links').count()), 'מזון בלי גשר: בלי בלוק "ברפואה"');
   await go('#/recipes');
   await p.click('#f-season');
   const n = await p.locator('.recipe-card').count();
