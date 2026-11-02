@@ -1,0 +1,1 @@
+{"type":"module","private":true,"name":"tzuna","scripts":{"lint":"node scripts/lint-data.mjs","test":"node scripts/lint-data.mjs && node tests/e2e.cjs"}}

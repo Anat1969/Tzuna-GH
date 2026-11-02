@@ -66,3 +66,26 @@
   "last_reviewed": "YYYY-MM-DD"
 }
 ```
+
+## מימוש בגרסה 1
+הדאטה נמצאת ב-`js/data/` כמודולים של JavaScript, ולא כ-JSON, כדי לטעון בלי שלב בנייה. המבנה שומר על המודל שלמעלה, בשמות קצרים:
+
+| במודל | בקוד | הערה |
+|---|---|---|
+| `name_he` | `he` | |
+| `layers.known[].text_he` | `layers.known[].t` | טקסט עשיר: `**מודגש**`, `==תובנה==` |
+| `layers.known[].evidence` | `layers.known[].ev` | גבוהה, בינונית, ראשונית, מקרי דיווח, אין |
+| `layers.known[].source_id` | `layers.known[].src` | מחרוזת או מערך |
+| `layers.said[].tradition` | `layers.said[].trad` | ועוד `ref`: פסוק או הלכה |
+| `layers.believed[].status` | `layers.believed[].status` | לא נבדק, לא אוששה, לא נבדק בבני אדם |
+
+שדות תצוגה שנוספו (לא טענות על הגוף):
+- `la`, `family`, `family_la`, `part`: הכרה. `recognize: {t, src}`: מבנה, עם מקור.
+- `months`, `season_kind`: עונה בשדה. **הערכה** (`season-est`), לא עובדה.
+- `meal`: `before` או `after`, רק לפי הרמב"ם, הלכות דעות ד ו. הבודק דורש שכבת "נאמר" מהרמב"ם כשהשדה קיים.
+- `use: {t, src}`: שימוש במטבח. `allergens`: מתוך 14 האלרגנים.
+- `concentrated`: נצרך גם כחליטה או כתוסף. מפעיל "לא מתאים בלי ייעוץ" לקבוצות מיוחדות.
+- `shape`, `hue`: איור ההרבריום.
+- `safety.redlink`: קישור לרשומה ברשימה האדומה.
+
+אין שדה של מינון, קלוריות, משקל או "השפעה" כמותית. `scripts/lint-data.mjs` נכשל אם מופיע טקסט שנראה כמו מינון.
