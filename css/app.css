@@ -676,3 +676,50 @@ mark.insight { background: linear-gradient(transparent 45%, var(--marker) 45%, v
 .month-item > .type-card b, .r-ing > .type-card b, .r-pic > .type-card b, .yg-ph .type-card b { font-size: 8px; }
 .month-item > .type-card i, .r-ing > .type-card i, .r-pic > .type-card i, .yg-ph .type-card i { display: none; }
 .yg-ph .type-card b, .month-item > .type-card b { display: none; }
+
+/* דף בית 2: הקדמה ושכבות | היום במטבח, ומתחת שש דלתות עם צילום */
+.home2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: "lead today" "doors doors"; }
+.h-lead { grid-area: lead; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 10px; min-height: 0; }
+.h-lead .demo { overflow: auto; }
+.h-lead .headline { font-size: clamp(26px, 2.8vw, 44px); }
+.h-lead .headline .k { color: #1D9E75; }
+.h-today { grid-area: today; min-height: 0; overflow: auto; background: #fff; border: 1px solid var(--rule); box-shadow: var(--shadow-1); padding: 12px 14px; display: grid; gap: 8px; align-content: start; }
+.ht-title { font-size: clamp(18px, 1.4vw, 22px); font-weight: 700; }
+.ht-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.ht-food { display: grid; text-decoration: none; color: var(--ink); font-size: 12.5px; }
+.ht-food .ph { aspect-ratio: 1; position: relative; overflow: hidden; background: #f4f3ef; }
+.ht-food .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ht-food b { padding-top: 3px; font-weight: 600; }
+.ht-syn { display: block; text-decoration: none; color: inherit; }
+.ht-dish { display: grid; gap: 1px; padding: 8px 10px; text-decoration: none; color: var(--ink); }
+.ht-dish b { font-size: 16px; }
+.ht-disc { display: grid; gap: 2px; text-decoration: none; color: var(--ink); border-right: 4px solid #E8C400; background: #FFF9D6; padding: 8px 10px; font-size: 13.5px; line-height: 1.5; }
+.ht-disc b { font-size: 15px; }
+.h-doors { grid-area: doors; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; height: clamp(120px, 19vh, 190px); }
+.hdoor { position: relative; overflow: hidden; padding: 0; text-decoration: none; color: #fff; }
+.hd-img { position: absolute; inset: 0; }
+.hd-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.hdoor:hover .hd-img img { transform: scale(1.05); }
+.hd-cap { position: absolute; inset: auto 0 0 0; padding: 22px 10px 8px; background: linear-gradient(transparent, rgba(16,16,14,.82)); display: grid; gap: 0; }
+.hd-cap .label { color: rgba(255,255,255,.75); }
+.hd-cap b { font-size: clamp(17px, 1.4vw, 22px); font-weight: 700; }
+.hd-n { font-size: 12.5px; }
+.hd-n .num { font-size: 15px; }
+.hd-line { font-size: 11.5px; opacity: .85; }
+@media (max-width: 920px) {
+  .home2 { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "lead" "today" "doors"; }
+  [data-view="home"] .view-in.home2 { height: auto; }
+  .h-today { overflow: visible; }
+  .ht-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .h-doors { grid-template-columns: repeat(2, minmax(0, 1fr)); height: auto; grid-auto-rows: 120px; }
+}
+@media (max-width: 920px) {
+  .h-doors { display: flex; overflow-x: auto; height: 112px; grid-auto-rows: auto; }
+  .hdoor { flex: 0 0 150px; }
+  .ht-strip { display: flex; overflow-x: auto; gap: 6px; }
+  .ht-food { flex: 0 0 76px; }
+  .h-today .ht-syn.block, .h-today .ht-dish { display: none; }
+  .h-lead .lede span:first-child { display: none; }
+  .home2 .demo .stratum { padding: 6px 10px; }
+  .home2 .demo .st-text { font-size: 13.5px; }
+}
