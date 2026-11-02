@@ -110,3 +110,9 @@
 
 ## צמח וגוף, `js/data/plant.js`; שיטות, `js/data/methods.js`
 חלק צמח: `plant`, `body` (אנלוגיה של תפקוד), `mind`, `lang`, `foods`. שיטה: מקום, זמן (`from`, `to`, `approx`), `unit`, `principle`, `time`, `conflict`, `example`, `src`.
+
+## גרסה 3
+- `js/data/science.js`: `{why, studied:[{t, ev, src}], practical:[...]}` לכל מזון.
+- `js/data/synergies.js`: `{a, b, mate, kind: boost|block, title, how, suggest, ev, src, dishes}`. מוצג בגיליון, במתכון ובהשוואה.
+- `js/data/discoveries.js`: גילויים מהצלבת הדאטה, `type: עובדה | פרשנות`, ו-`pair` שנפתח בהשוואה.
+- `methods.js`: `context: {culture, geo, climate}`, `layer: "believed"` לשיטה שלא נבדקה, `TRAITS`, `MATRIX`, `METHOD_INSIGHTS`.

@@ -45,8 +45,12 @@ let root, month, mode;
 const LINEAR = [...SEASONAL].sort((a, b) => a.months[0] - b.months[0] || a.months.length - b.months.length);
 function gridHTML() {
   const now = nowMonth();
+  const maxN = Math.max(...MONTHS.map((_, i) => SEASONAL.filter((f) => f.months.includes(i + 1)).length));
   return `<div class="yg" role="table" aria-label="מפה שנתית">
     <span class="yg-h"></span>${MONTHS_SHORT.map((m, i) => `<button class="yg-m ${i + 1 === month ? "sel" : ""} ${i + 1 === now ? "now" : ""}" data-m="${i + 1}" aria-pressed="${i + 1 === month}" aria-label="${MONTHS[i]}"><span class="ml">${m}</span><span class="mn">${i + 1}</span></button>`).join("")}
+    <span class="yg-lab">עונה</span>${MONTHS.map((_, i) => { const k = rambamFor(i + 1).kind; return `<i class="yg-season ${k === "ימות החמה" ? "hot" : k === "ימות הגשמים" ? "rain" : "mid"}" title="${MONTHS[i]}: ${k}"></i>`; }).join("")}
+    <span class="yg-lab">בשדה</span>${MONTHS.map((_, i) => { const n = SEASONAL.filter((f) => f.months.includes(i + 1)).length; return `<span class="yg-bar" title="${MONTHS[i]}: ${n}"><i style="height:${Math.round(n / maxN * 100)}%"></i><b class="num">${n}</b></span>`; }).join("")}
+    <span class="yg-legend">${rich("**חמה** · **גשמים** · מעבר, לפי הרמב\"ם. העמודה: כמה מזונות בשדה.")}</span>
     ${LINEAR.map((f) => `<a class="yg-name" href="#/foods?id=${f.id}"><span class="yg-ph">${foodImage(f)}</span><b>${esc(f.he)}</b></a>${MONTHS.map((_, i) => `<i class="${f.months.includes(i + 1) ? "on" : ""} ${i + 1 === month ? "col" : ""}" title="${esc(f.he)}: ${MONTHS[i]}"></i>`).join("")}`).join("")}
   </div>`;
 }

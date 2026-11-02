@@ -3,6 +3,8 @@ import { FOODS, CATEGORIES, ALLERGENS, byId } from "../data/foods.js";
 import { rich, stratum, LAYERS, esc, MONTHS } from "../ui.js";
 import { plate } from "../plates.js";
 import { foodImage } from "./foods.js";
+import { DISCOVERIES } from "../data/discoveries.js";
+import { SYNERGIES } from "../data/synergies.js";
 import { patch } from "../route.js";
 
 export const title = "השוואה";
@@ -53,7 +55,9 @@ function table() {
 }
 
 function render() {
-  root.querySelector("#shared").innerHTML = shared(byId(a), byId(b)).map((s) => `<span>${rich(s)}</span>`).join("");
+  const syn = SYNERGIES.filter((x) => [x.a, x.b].includes(a) && [x.a, x.b].includes(b));
+  root.querySelector("#shared").innerHTML = shared(byId(a), byId(b)).map((s) => `<span>${rich(s)}</span>`).join("")
+    + syn.map((x) => `<span class="syn ${x.kind}" style="display:block;margin-top:6px"><b class="syn-t">${x.kind === "boost" ? "צירוף מעצים" : "צירוף מחליש"}</b> ${rich(x.how)}</span>`).join("");
   root.querySelector("#cmp").innerHTML = table();
   root.querySelectorAll("[data-pair]").forEach((p) => p.setAttribute("aria-pressed", String(p.dataset.pair === `${a},${b}`)));
 }
@@ -71,10 +75,10 @@ export function mount(el, params) {
       <div class="scroll-in" style="flex:1;padding:0 14px 14px" id="cmp"></div>
     </section>
     <aside class="panel" aria-labelledby="s-title">
-      <div class="panel-head"><h2 class="sheet-name" id="s-title" style="font-size:20px">מה משותף</h2></div>
+      <div class="panel-head"><div><span class="label">השוואות שעשיתי בשבילך</span><h2 class="sheet-name" id="s-title" style="font-size:24px;font-weight:700">גילויים</h2></div></div>
       <div class="panel-body scroll-in" style="flex:1">
-        <p class="shared lines" id="shared"></p>
-        <div class="sec"><div class="sec-h"><h3>זוגות מעניינים</h3></div><div class="chips">${PAIRS.map(([x, y, t]) => `<button class="chip" data-pair="${x},${y}">${esc(byId(x).he)} ו${esc(byId(y).he)}: ${t}</button>`).join("")}</div></div>
+        <div class="disc-list">${DISCOVERIES.map((d, i) => `<button class="disc press" data-pair="${d.pair.join(",")}"><span class="disc-n num">${i + 1}</span><span><b>${esc(d.title)}</b><span class="disc-t">${rich(d.t)}</span><span class="disc-type ${d.type === "פרשנות" ? "interp" : ""}">${esc(d.type)}</span></span></button>`).join("")}</div>
+        <div class="sec"><div class="sec-h"><h3>בזוג שנבחר</h3><span class="label">מה משותף, ומה מפעיל את מה</span></div><p class="shared lines" id="shared"></p></div>
       </div>
     </aside>
   </div>`;

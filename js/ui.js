@@ -7,9 +7,10 @@ export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&a
 const NUM = /(\d[\d,.]*%?)/g;
 const nums = (s) => s.replace(NUM, "<bdi class=\"num\">$1</bdi>");
 export function rich(text) {
-  return esc(text).split(/(\*\*[^*]+\*\*|==[^=]+==)/g).map((p) => {
+  return esc(text).split(/(==[^=]+==|\*\*[^*]+\*\*)/g).map((p) => {
     if (p.startsWith("**")) return `<strong>${nums(p.slice(2, -2))}</strong>`;
-    if (p.startsWith("==")) return `<mark class="insight">${nums(p.slice(2, -2))}</mark>`;
+    // הדגשה בתוך מרקר: **מילה** בתוך ==תובנה==
+    if (p.startsWith("==")) return `<mark class="insight">${nums(p.slice(2, -2)).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")}</mark>`;
     return nums(p);
   }).join("");
 }

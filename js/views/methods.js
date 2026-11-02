@@ -1,5 +1,5 @@
 // שיטות: ציר זמן לפי אזור (מוקד), טבלת השוואה (סדרות קטנות), וכרטיס שיטה (טור צד).
-import { METHODS, REGIONS } from "../data/methods.js";
+import { METHODS, REGIONS, TRAITS, MATRIX, METHOD_INSIGHTS } from "../data/methods.js";
 import { byId } from "../data/foods.js";
 import { rich, esc, sourcesBox } from "../ui.js";
 import { foodImage } from "./foods.js";
@@ -47,13 +47,25 @@ function tableHTML() {
   </tbody></table>`;
 }
 
+// מה דומה ומה שונה: תובנות, ומטריצה של מה כל שיטה שוקלת.
+function compareHTML() {
+  const count = (t) => METHODS.filter((m) => (MATRIX[m.id] || []).includes(t)).length;
+  return `<section class="mt-cmp"><div class="sec-h"><h3>מה דומה ומה שונה</h3><span class="label">התובנות שלי מההשוואה</span></div>
+    <ul class="insights">${METHOD_INSIGHTS.map((x) => `<li>${rich(x.t)}</li>`).join("")}</ul>
+    <table class="mx"><thead><tr><th></th>${TRAITS.map((t) => `<th>${esc(t.he)}<span class="mx-n">${count(t.id)}</span></th>`).join("")}</tr></thead>
+    <tbody>${METHODS.map((m) => `<tr data-m="${m.id}" class="${m.id === sel ? "on" : ""}"><th>${esc(m.he)}</th>${TRAITS.map((t) => `<td>${(MATRIX[m.id] || []).includes(t.id) ? `<i class="dot" style="background:${REGIONS.find((r) => r.id === m.region).hue}"></i>` : ""}</td>`).join("")}</tr>`).join("")}</tbody></table>
+  </section>`;
+}
+
 function asideHTML() {
   const m = METHODS.find((x) => x.id === sel), r = REGIONS.find((x) => x.id === m.region), f = byId(m.example.food);
   const when = m.from === m.to ? yearLabel(m.from) : `${yearLabel(m.from)} עד ${yearLabel(m.to)}`;
   return `<div class="panel-head"><div><span class="label" style="color:${r.hue}">${esc(r.he)}</span><h2 class="sheet-name" id="mt-title" style="font-size:30px;font-weight:700">${esc(m.he)}</h2>
       <div class="sheet-tags"><span><b>${esc(m.place)}</b> <span class="latin">${esc(m.place_la)}</span></span><span><b>${when}</b>${m.approx ? " (בערך)" : ""}</span></div></div></div>
     <div class="panel-body scroll-in" style="flex:1">
+      ${m.layer === "believed" ? `<p class="believed-badge"><i class="layer-mark lm-believed"></i>${rich("שכבת **מאמינים**: חלק מהמידע נמסר בתקשור, ולא נבדק במחקר.")}</p>` : ""}
       <p class="unique" style="margin-top:0">${rich(m.principle)}</p>
+      ${m.context ? `<div class="ctx"><div><span class="tile-l">תרבות</span>${rich(m.context.culture)}</div><div><span class="tile-l">מקום</span>${rich(m.context.geo)}</div><div><span class="tile-l">אקלים</span>${rich(m.context.climate)}</div></div>` : ""}
       <div class="tiles" style="grid-template-columns:minmax(0,1fr)">
         <div class="tile t-body"><span class="tile-l">מה ממיינים</span><p>${rich(m.unit)}</p></div>
         <div class="tile t-soul"><span class="tile-l">זמן ועונה</span><p>${rich(m.time)}</p></div>
@@ -66,7 +78,7 @@ function asideHTML() {
 
 function render() {
   root.querySelector("#tl").innerHTML = timelineSVG();
-  root.querySelector("#mt").innerHTML = tableHTML();
+  root.querySelector("#mt").innerHTML = compareHTML() + tableHTML();
   root.querySelector("#mt-aside").innerHTML = asideHTML();
 }
 function select(id) { sel = id; patch({ m: id }); render(); }

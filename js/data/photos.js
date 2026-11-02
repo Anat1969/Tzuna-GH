@@ -155,11 +155,11 @@ export const PHOTOS = {
  },
  "chard": {
   "src": "img/foods/chard.jpg",
-  "w": 720,
-  "h": 960,
-  "credit": "Noland Aull, iNaturalist",
+  "w": 960,
+  "h": 720,
+  "credit": "Duarte Frade, iNaturalist",
   "license": "CC BY",
-  "page": "https://www.inaturalist.org/observations/228879551"
+  "page": "https://www.inaturalist.org/photos/626652"
  },
  "mustard": {
   "src": "img/foods/mustard.jpg",
@@ -168,5 +168,93 @@ export const PHOTOS = {
   "credit": "Nicola van Berkel, iNaturalist",
   "license": "CC BY-SA",
   "page": "https://www.inaturalist.org/observations/149808391"
+ },
+ "chickpea": {
+  "src": "img/foods/chickpea.jpg",
+  "w": 720,
+  "h": 960,
+  "credit": "Andrew Sebastian, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/173880149"
+ },
+ "lupin": {
+  "src": "img/foods/lupin.jpg",
+  "w": 755,
+  "h": 960,
+  "credit": "Todd Boland, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/120845281"
+ },
+ "almond": {
+  "src": "img/foods/almond.jpg",
+  "w": 960,
+  "h": 640,
+  "credit": "Roozitaa, iNaturalist",
+  "license": "CC BY-SA",
+  "page": "https://www.inaturalist.org/photos/93581871"
+ },
+ "sesame": {
+  "src": "img/foods/sesame.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "no rights reserved, iNaturalist",
+  "license": "CC0",
+  "page": "https://www.inaturalist.org/photos/29332099"
+ },
+ "cucumber": {
+  "src": "img/foods/cucumber.jpg",
+  "w": 960,
+  "h": 643,
+  "credit": "Chen Ting, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/20105"
+ },
+ "onion": {
+  "src": "img/foods/onion.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Forest and Kim Starr, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/136608711"
+ },
+ "garlic": {
+  "src": "img/foods/garlic.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Anthony Austin, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/75692"
+ },
+ "apple": {
+  "src": "img/foods/apple.jpg",
+  "w": 720,
+  "h": 960,
+  "credit": "Kieran Hanrahan, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/399127934"
+ },
+ "lentil": {
+  "src": "img/foods/lentil.jpg",
+  "w": 720,
+  "h": 960,
+  "credit": "Andrew Sebastian, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/173880286"
+ },
+ "cabbage": {
+  "src": "img/foods/cabbage.jpg",
+  "w": 540,
+  "h": 960,
+  "credit": "no rights reserved, iNaturalist",
+  "license": "CC0",
+  "page": "https://www.inaturalist.org/photos/625068414"
+ },
+ "ginger": {
+  "src": "img/foods/ginger.jpg",
+  "w": 720,
+  "h": 960,
+  "credit": "no rights reserved, iNaturalist",
+  "license": "CC0",
+  "page": "https://www.inaturalist.org/photos/184849955"
  }
 };
