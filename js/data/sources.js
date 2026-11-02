@@ -51,6 +51,17 @@ export const SOURCES = {
 
   // הרכב, בוטניקה ואלרגנים
   "campbell": { title: "Urry et al., Campbell Biology, 12th ed., Pearson", type: "סקירה", year: 2020, url: "" },
+  "nccih-turmeric": { title: "NCCIH, Turmeric", type: "סקירה", year: 2024, url: "https://www.nccih.nih.gov/health/turmeric" },
+  "nccih-ginger": { title: "NCCIH, Ginger", type: "סקירה", year: 2024, url: "https://www.nccih.nih.gov/health/ginger" },
+  "nccih-fenugreek": { title: "NCCIH, Fenugreek", type: "סקירה", year: 2024, url: "https://www.nccih.nih.gov/health/fenugreek" },
+  "nccih-pomegranate": { title: "NCCIH, Pomegranate", type: "סקירה", year: 2024, url: "https://www.nccih.nih.gov/health/pomegranate" },
+  "nccih-sage": { title: "NCCIH, Sage", type: "סקירה", year: 2024, url: "https://www.nccih.nih.gov/health/sage" },
+  "gartner-1997": { title: "Gärtner, Stahl, Sies, Lycopene is more bioavailable from tomato paste than from fresh tomatoes, Am J Clin Nutr", type: "ניסוי", year: 1997, url: "https://doi.org/10.1093/ajcn/66.1.116" },
+  "unlu-2005": { title: "Unlu et al., Carotenoid absorption from salad and salsa is enhanced by the addition of avocado or avocado oil, J Nutr", type: "ניסוי", year: 2005, url: "https://doi.org/10.1093/jn/135.3.431" },
+  "who-protein-2007": { title: "WHO/FAO/UNU, Protein and amino acid requirements in human nutrition (TRS 935)", type: "הנחיה", year: 2007, url: "https://iris.who.int/handle/10665/43411" },
+  "song-milner-2001": { title: "Song & Milner, The influence of heating on the anticancer properties of garlic, J Nutr", type: "ניסוי", year: 2001, url: "https://doi.org/10.1093/jn/131.3.1054S" },
+  "okunade-2018": { title: "Okunade et al., Exogenous myrosinase via mustard seeds and sulforaphane after cooked broccoli, Mol Nutr Food Res", type: "ניסוי", year: 2018, url: "" },
+  "rogel": { title: "אילנה רוגל, על רוח וחומר: אנציקלופדיה לתזונה ורוחניות, הוצאת מגדלור (ynet)", type: "מסורת", year: null, url: "https://www.ynet.co.il/articles/0,7340,L-3414523,00.html" },
   "usda-fdc": { title: "USDA FoodData Central", type: "מאגר", year: 2024, url: "https://fdc.nal.usda.gov/" },
   "powo": { title: "Plants of the World Online, Kew", type: "מאגר", year: 2024, url: "https://powo.science.kew.org/" },
   "flora-il": { title: "צמחיית ישראל ברשת (Flora of Israel Online)", type: "מאגר", year: 2024, url: "https://flora.org.il/" },

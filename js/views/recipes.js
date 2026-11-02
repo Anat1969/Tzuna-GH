@@ -5,6 +5,7 @@ import { rich, stratum, esc, iconBtn, MONTHS, MONTHS_SHORT, nowMonth, triangle }
 import { plate } from "../plates.js";
 import { foodImage } from "./foods.js";
 import { patch } from "../route.js";
+import { synergiesInRecipe } from "../data/synergies.js";
 
 export const title = "מתכונים";
 
@@ -21,6 +22,7 @@ function cardHTML(r) {
   return `<button class="recipe-card press" data-id="${r.id}" aria-pressed="${state.id === r.id}">
     <span class="r-plates">${r.foods.slice(0, 4).map((id) => `<span>${foodImage(byId(id))}</span>`).join("")}</span>
     <span class="cap"><b>${esc(r.he)}</b>
+      ${synergiesInRecipe(r.id).slice(0, 1).map((x) => `<span class="r-syn">${esc(x.title)}</span>`).join("")}
       <span class="r-meta"><span>${esc(r.time)}</span><span><bdi class="num" style="font-weight:400">${r.steps.length}</bdi> שלבים</span>${al.length ? `<span class="warn">${esc(al.map((a) => ALLERGENS[a]).join(", "))}</span>` : ""}</span>
     </span>
   </button>`;
@@ -39,6 +41,8 @@ function sheetHTML(r) {
   return `<div class="panel-head"><div style="min-width:0"><span class="label">מתכון · ${esc(r.time)}</span><h2 class="sheet-name" id="r-title">${esc(r.he)}</h2></div>
       <div class="ops">${iconBtn("prev", "הקודם", `data-step="-1" ${idx <= 0 ? "disabled" : ""}`)}<span class="pos"><bdi class="num" style="font-weight:400">${idx + 1}/${L.length}</bdi></span>${iconBtn("next", "הבא", `data-step="1" ${idx >= L.length - 1 ? "disabled" : ""}`)}${iconBtn("print", "הדפסה", "data-print")}${iconBtn("x", "סגירה", "data-close")}</div></div>
     <div class="panel-body scroll-in" style="flex:1">
+      ${synergiesInRecipe(r.id).length ? `<section class="sec" style="margin-top:0"><div class="sec-h"><h3>מה מעצים את מה</h3><span class="label">הצירוף שבמתכון</span></div>
+        ${synergiesInRecipe(r.id).map((x) => `<div class="syn ${x.kind}"><b class="syn-t">${esc(x.title)}</b><p>${rich(x.how)}</p></div>`).join("")}</section>` : ""}
       ${stratum("said", [r.tradition])}
       ${r.note ? `<div class="tile t-without" style="margin-top:8px"><span class="tile-l">לא הולך עם</span><p>${rich(r.note)}</p></div>` : ""}
       <section class="sec"><div class="sec-h"><h3>מצרכים</h3><span class="label">לחיצה פותחת את הגיליון</span></div>
@@ -93,7 +97,7 @@ export function mount(el, params) {
   root.innerHTML = `<div class="view-in focus-aside">
     <section class="panel" aria-labelledby="rl-title">
       <div class="gallery-tools">
-        <div><h1 class="view-title" id="rl-title">מתכונים</h1><p class="view-sub">${rich("עד **10 שלבים**, ומסורת מקור לכל מתכון.")}</p></div>
+        <div><h1 class="view-title" id="rl-title">צירופים מעצימים</h1><p class="view-sub">${rich("מתכון הוא **צירוף**: מזון אחד מפעיל איכות של אחר. ==ויטמין C פותח ברזל, פלפל פותח כורכום, שמן ובישול פותחים ליקופן.==")}</p></div>
         <span class="src" id="r-hits" aria-live="polite"></span>
       </div>
       <div class="gallery-tools" style="padding-top:4px;padding-bottom:6px"><div class="chips"><button class="chip" id="f-season" data-season>מתאים לעונה עכשיו</button><span id="f-food"></span></div></div>

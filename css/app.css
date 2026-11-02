@@ -597,3 +597,82 @@ mark.insight { background: linear-gradient(transparent 45%, var(--marker) 45%, v
   .yg-ph { width: 24px; height: 22px; }
   [data-view="methods"] .tl-box { display: none; }
 }
+
+/* v3: צילום אחיד בכל המסגרות: חיתוך מרכזי (cover), בלי עיוות */
+.food-card .thumb img, .pl-food .ph img, .mt-ex .ph img, .yg-ph img, .recipe-card .r-plates img, .r-pic img, .r-ing img, .month-item img, .cmp .ch img, .plate-big img, .sheet .sheet-hero img { object-fit: cover !important; object-position: center; }
+.food-card .thumb { aspect-ratio: 4 / 3; }
+.sheet .sheet-hero { height: auto; aspect-ratio: 16 / 9; max-height: 34vh; }
+.type-card { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; gap: 2px; background: linear-gradient(160deg, #f6f4ee, #ebe7dc); color: var(--ink); }
+.type-card b { font-size: clamp(16px, 1.4vw, 22px); font-weight: 700; }
+.type-card i { font-family: var(--serif); font-size: 11px; color: var(--ink-mute); direction: ltr; }
+.sheet .sheet-hero .type-card b { font-size: 34px; }
+.r-pic, .r-ing span:first-child { position: relative; }
+/* מדע וצירופים */
+.why { font-size: 17px; font-weight: 700; line-height: 1.4; margin: 0 0 6px; }
+.why strong { background: linear-gradient(transparent 58%, var(--marker) 58%, var(--marker) 94%, transparent 94%); }
+.found { border-right: 4px solid var(--known); background: var(--known-wash); padding: 7px 10px; margin-top: 6px; }
+.found p { margin: 0 0 3px; font-size: 14px; line-height: 1.55; }
+.syn { border: 1px solid var(--rule-soft); border-right: 4px solid #1D9E75; background: #fff; box-shadow: var(--shadow-1); padding: 8px 10px; margin-top: 6px; }
+.syn.block { border-right-color: #A32D2D; }
+.syn-t { display: block; font-size: 13px; color: #1D9E75; margin-bottom: 2px; }
+.syn.block .syn-t { color: #A32D2D; }
+.syn p { margin: 0; font-size: 14px; line-height: 1.5; }
+.syn .syn-dish { margin-top: 4px; font-size: 13px; color: var(--ink-soft); }
+.syn-dish .tile-l { display: inline; margin-inline-end: 6px; }
+.practical { margin: 0; padding-inline-start: 18px; font-size: 14px; line-height: 1.6; }
+.practical li + li { margin-top: 3px; }
+.r-syn { display: block; font-size: 12px; font-weight: 600; color: #1D9E75; }
+/* צמח וגוף: כרטיסי צילום */
+.pgrid { flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); gap: 10px; padding: 12px 14px; }
+.pcard { position: relative; padding: 0; overflow: hidden; min-height: 150px; text-align: right; }
+.pc-img { position: absolute; inset: 0; }
+.pc-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s; }
+.pcard:hover .pc-img img { transform: scale(1.04); }
+.pc-cap { position: absolute; inset: auto 0 0 0; padding: 26px 12px 10px; background: linear-gradient(transparent, rgba(16,16,14,.78)); color: #fff; display: grid; gap: 2px; }
+.pc-cap b { font-size: clamp(20px, 1.8vw, 28px); font-weight: 700; }
+.pc-arrow { font-size: 13px; opacity: .92; }
+.pc-arrow strong { font-weight: 700; }
+.pcard[aria-pressed="true"] { outline: 4px solid var(--marker); outline-offset: -4px; }
+.pl-organ { font-size: .6em; color: var(--known); font-weight: 600; }
+/* שיטות: הקשר, מטריצה ותובנות */
+.ctx { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 4px 0 10px; font-size: 13px; line-height: 1.45; }
+.ctx > div { background: var(--rule-soft); padding: 7px 8px; }
+.believed-badge { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--believed); border: 1px dashed var(--believed); padding: 6px 8px; margin: 0 0 10px; }
+.mt-cmp { margin: 10px 0 16px; }
+.insights { margin: 0 0 10px; padding-inline-start: 18px; font-size: 14px; line-height: 1.6; }
+.mx { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+.mx th, .mx td { padding: 4px 6px; border-bottom: 1px solid var(--rule-soft); text-align: center; }
+.mx tbody th { text-align: right; white-space: nowrap; font-weight: 600; }
+.mx thead th { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+.mx-n { display: block; font-size: 10px; color: var(--ink); }
+.mx tbody tr { cursor: pointer; } .mx tbody tr.on { background: #FFF9D6; }
+.dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; }
+/* השוואה: גילויים */
+.disc-list { display: grid; gap: 8px; }
+.disc { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; text-align: right; padding: 9px 10px; color: var(--ink); }
+.disc b { display: block; font-size: 15px; margin-bottom: 2px; }
+.disc-t { display: block; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+.disc-n { font-size: 18px; color: var(--known); }
+.disc-type { display: inline-block; margin-top: 4px; font-size: 10.5px; font-family: var(--mono); color: var(--known); border: 1px solid currentColor; padding: 0 5px; }
+.disc-type.interp { color: var(--said); border-style: dotted; }
+.disc[aria-pressed="true"] { outline: 2px solid var(--ink); }
+/* עונות: אינפוגרפיקה */
+.yg-lab { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+.yg-season { height: 14px; }
+.yg-season.hot { background: #e8a46a; } .yg-season.rain { background: #6a9ac8; } .yg-season.mid { background: #d9d8d3; }
+.yg-bar { height: 54px; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
+.yg-bar i { width: 70%; background: var(--said); display: block; }
+.yg-bar b { font-size: 10.5px; position: absolute; top: 0; }
+.yg-legend { grid-column: 1 / -1; font-size: 12px; color: var(--ink-soft); padding: 2px 0 6px; border-bottom: 1px solid var(--rule); margin-bottom: 4px; }
+@media (max-width: 920px) {
+  .pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 130px; }
+  .ctx { grid-template-columns: minmax(0, 1fr); }
+  [data-view="plant"] .pl-quote { display: none; }
+}
+/* כרטיס טיפוגרפי: ממלא את המסגרת שלו בלבד, ולעולם לא בורח ממנה */
+.type-card { position: relative !important; inset: auto; width: 100%; height: 100%; min-height: 30px; overflow: hidden; }
+.thumb > .type-card, .ph > .type-card, .yg-ph > .type-card, .sheet-hero > .type-card, .plate-big > .type-card, .r-plates span > .type-card { position: absolute !important; inset: 0; }
+.month-item > .type-card, .r-ing > .type-card, .r-pic > .type-card { width: 34px; height: 34px; }
+.month-item > .type-card b, .r-ing > .type-card b, .r-pic > .type-card b, .yg-ph .type-card b { font-size: 8px; }
+.month-item > .type-card i, .r-ing > .type-card i, .r-pic > .type-card i, .yg-ph .type-card i { display: none; }
+.yg-ph .type-card b, .month-item > .type-card b { display: none; }

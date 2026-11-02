@@ -6,6 +6,9 @@ import { REDLIST } from "../js/data/safety-data.js";
 import { RECIPES } from "../js/data/recipes.js";
 import { PROFILES } from "../js/data/profiles.js";
 import { PHOTOS } from "../js/data/photos.js";
+import { SCIENCE } from "../js/data/science.js";
+import { SYNERGIES } from "../js/data/synergies.js";
+import { DISCOVERIES } from "../js/data/discoveries.js";
 import { PARTS } from "../js/data/plant.js";
 import { METHODS } from "../js/data/methods.js";
 import { existsSync } from "node:fs";
@@ -109,6 +112,22 @@ for (const m of METHODS) {
   if (!ids.has(m.example.food)) err(`method:${m.id}`, `מזון לדוגמה לא קיים "${m.example.food}"`);
 }
 
+for (const f of FOODS) {
+  const sc = SCIENCE[f.id], w = `science:${f.id}`;
+  if (!sc) { err(w, "חסר מדע ומעשה"); continue; }
+  checkText(`${w}.why`, sc.why);
+  sc.studied.forEach((x, i) => { checkText(`${w}.studied[${i}]`, x.t); checkSrc(`${w}.studied[${i}]`, x.src); if (!EVIDENCE.includes(x.ev)) err(`${w}.studied[${i}]`, `עוצמת ראיה לא חוקית "${x.ev}"`); });
+  if (!sc.practical?.length) err(w, "חסר מידע מעשי");
+  sc.practical.forEach((t, i) => checkText(`${w}.practical[${i}]`, t));
+}
+for (const x of SYNERGIES) {
+  const w = `synergy:${x.id}`;
+  for (const id of [x.a, x.b].filter(Boolean)) if (!ids.has(id)) err(w, `מזון לא קיים "${id}"`);
+  checkText(`${w}.how`, x.how); checkText(`${w}.suggest`, x.suggest); checkSrc(w, x.src);
+  if (!["boost", "block"].includes(x.kind)) err(w, "kind לא חוקי");
+}
+for (const d of DISCOVERIES) { checkText(`disc:${d.id}`, d.t); d.pair.forEach((id) => { if (!ids.has(id)) err(`disc:${d.id}`, `מזון לא קיים "${id}"`); }); }
+
 const rids = new Set();
 for (const r of RECIPES) {
   const w = `recipe:${r.id}`;
@@ -116,6 +135,7 @@ for (const r of RECIPES) {
   rids.add(r.id);
   if (!r.steps.length || r.steps.length > 10) err(w, `מספר שלבים לא חוקי (${r.steps.length}), מותר 1 עד 10`);
   for (const id of r.foods) if (!ids.has(id)) err(w, `מזון לא קיים "${id}"`);
+  for (const x of SYNERGIES) for (const d of x.dishes) if (!RECIPES.some((rr) => rr.id === d)) err(`synergy:${x.id}`, `מתכון לא קיים "${d}"`);
   if (!r.tradition?.trad || !r.tradition?.src) err(w, "מתכון בלי מסורת מקור");
   else { checkText(`${w}.tradition`, r.tradition.t); checkSrc(`${w}.tradition`, r.tradition.src); }
   if (r.months.some((m) => m < 1 || m > 12)) err(w, "חודשים לא חוקיים");

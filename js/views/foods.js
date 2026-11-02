@@ -6,7 +6,10 @@ import { PHOTOS } from "../data/photos.js";
 import { rich, stratum, LAYERS, esc, iconBtn, MONTHS, MONTHS_SHORT, nowMonth, sourcesBox } from "../ui.js";
 import { plate } from "../plates.js";
 import { patch } from "../route.js";
-import { recipesWith } from "../data/recipes.js";
+import { recipesWith, RECIPES } from "../data/recipes.js";
+import { SCIENCE } from "../data/science.js";
+import { synergiesFor } from "../data/synergies.js";
+import { evMeter } from "../ui.js";
 
 export const title = "מזון";
 
@@ -16,7 +19,8 @@ const catName = (id) => CATEGORIES.find((c) => c.id === id)?.he || "";
 // תמונה: צילום כשיש, ואחרת איור הרבריום.
 export function foodImage(f, { big = false } = {}) {
   const p = PHOTOS[f.id];
-  if (!p) return plate(f);
+  // בלי צילום נכון: כרטיס טיפוגרפי, לא איור (חור עדיף על תמונה מטעה, ואיור נראה ילדותי).
+  if (!p) return `<span class="type-card" role="img" aria-label="${esc(f.he)}"><b>${esc(f.he)}</b><i>${esc(f.la)}</i></span>`;
   return `<img src="${p.src}" alt="${esc(f.he)}" loading="${big ? "eager" : "lazy"}" decoding="async" width="${p.w || 640}" height="${p.h || 480}">`;
 }
 export const photoCredit = (f) => { const p = PHOTOS[f.id]; return p ? `<span class="credit">${esc(p.credit)} · ${esc(p.license)}</span>` : ""; };
@@ -65,6 +69,23 @@ function monthsBar(f) {
     <div class="months-l">${MONTHS_SHORT.map((m) => `<span>${m}</span>`).join("")}</div>`;
 }
 
+// מדע, צירופים מעצימים ומעשה: החלק שעונה על "למה זה חשוב, ועם מה, ולמה".
+function scienceHTML(f) {
+  const sc = SCIENCE[f.id];
+  const syn = synergiesFor(f.id);
+  const dish = (id) => RECIPES.find((r) => r.id === id);
+  return `${sc ? `<section class="sec sci"><div class="sec-h"><h3>למה זה חשוב</h3><span class="label">מה המדע מצא</span></div>
+      <p class="why">${rich(sc.why)}</p>
+      ${sc.studied.map((x) => `<div class="found"><p>${rich(x.t)}</p>${evMeter(x.ev)}</div>`).join("")}
+    </section>` : ""}
+    ${syn.length ? `<section class="sec"><div class="sec-h"><h3>צירופים מעצימים</h3><span class="label">מה מפעיל את מה, ולמה</span></div>
+      ${syn.map((x) => `<div class="syn ${x.kind}"><b class="syn-t">${x.kind === "boost" ? "מעצים" : "מחליש"} · ${esc(x.title)}</b><p>${rich(x.how)}</p>
+        <p class="syn-dish"><span class="tile-l">בצלחת</span>${rich(x.suggest)}${x.dishes.length ? " " + x.dishes.map((d) => dish(d)).filter(Boolean).map((r) => `<a href="#/recipes?id=${r.id}">${esc(r.he)}</a>`).join(" · ") : ""}</p></div>`).join("")}
+    </section>` : ""}
+    ${sc ? `<section class="sec"><div class="sec-h"><h3>מעשי</h3><span class="label">בחירה, אחסון והכנה</span></div>
+      <ul class="practical">${sc.practical.map((t) => `<li>${rich(t)}</li>`).join("")}</ul></section>` : ""}`;
+}
+
 const tile = (label, cls, body) => `<div class="tile ${cls}"><span class="tile-l">${label}</span>${body}</div>`;
 
 function sheetHTML(f) {
@@ -76,7 +97,7 @@ function sheetHTML(f) {
   const allergens = f.allergens.length ? `<dt>אלרגנים</dt><dd><b>${esc(f.allergens.map((a) => ALLERGENS[a]).join(", "))}</b></dd>` : "";
   const recs = recipesWith(f.id);
   const months = f.months.length ? `${monthsBar(f)}<p class="hint">${esc(f.season_kind)}: <b>${esc(f.months.map((m) => MONTHS[m - 1]).join(", "))}</b></p>` : `<p style="font-size:14px">${rich("**כל השנה**, ביבוא.")}</p>`;
-  const srcIds = [f.recognize.src, f.use.src, pr.body?.src, pr.soul?.src, ...(pr.with || []).map((x) => x.src), ...(pr.without || []).map((x) => x.src),
+  const srcIds = [...(SCIENCE[f.id]?.studied || []).map((x) => x.src), ...synergiesFor(f.id).map((x) => x.src), f.recognize.src, f.use.src, pr.body?.src, pr.soul?.src, ...(pr.with || []).map((x) => x.src), ...(pr.without || []).map((x) => x.src),
     ...LAYERS.flatMap((l) => f.layers[l.key].map((x) => x.src)), "season-est"];
   return `<div class="sheet-hero">${foodImage(f, { big: true })}${photoCredit(f)}
       <div class="ops on-photo">${iconBtn("prev", "הקודם", `data-step="-1" ${idx <= 0 ? "disabled" : ""}`)}<span class="pos"><bdi class="num" style="font-weight:400">${idx + 1}/${list.length}</bdi></span>${iconBtn("next", "הבא", `data-step="1" ${idx >= list.length - 1 ? "disabled" : ""}`)}${iconBtn("x", "סגירה", "data-close")}</div>
@@ -91,6 +112,7 @@ function sheetHTML(f) {
         ${pr.with?.length ? tile("הולך עם", "t-with", lines(pr.with)) : ""}
         ${pr.without?.length ? tile("לא הולך עם", "t-without", lines(pr.without)) : ""}
       </div>
+      ${scienceHTML(f)}
       <section class="sec"><div class="sec-h"><h3>מה ידוע, מה נאמר, במה מאמינים</h3></div>
         ${LAYERS.map((l) => stratum(l.key, f.layers[l.key])).join("")}
       </section>

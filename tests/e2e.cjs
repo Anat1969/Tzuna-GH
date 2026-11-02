@@ -124,6 +124,12 @@ function serve() {
   ok(!(await p.locator('#safety-overlay').count()), 'מונח מחקרי ("דיאטה ים תיכונית") לא מקפיץ אזהרה');
   await p.click('#q-x');
 
+  console.log('מדע וצירופים');
+  await go('#/foods?id=turmeric');
+  ok((await p.locator('#sheet .why').count()) === 1 && (await p.locator('#sheet .syn').innerText()).includes('פיפרין'), 'כורכום: למה חשוב, ולמה עם פלפל');
+  ok(await p.locator('#sheet .practical li').count() >= 2, 'מידע מעשי');
+  ok(await p.locator('.food-card .type-card').count() <= 2, 'כמעט כל המזונות עם צילום');
+
   console.log('התנגשויות');
   await go('#/foods?id=lentil');
   ok((await p.locator('#sheet .t-without').innerText()).includes('תה שחור'), 'עדשים: "לא הולך עם" תה שחור (ספיגת ברזל)');
@@ -133,19 +139,22 @@ function serve() {
 
   console.log('צמח וגוף');
   await go('#/plant');
+  ok(await p.locator('.pcard img').count() === 6 && !(await p.locator('.pl-svg, .bd-svg').count()), 'שישה צילומים, בלי איורים');
   for (const id of ['stem', 'leaf', 'flower', 'fruit', 'seed', 'root']) {
-    await p.click(`.pl-chips [data-part="${id}"]`);
-    ok((await hash()).includes('p=' + id) && await p.locator(`.pl-svg .pz.on[data-part="${id}"]`).count() === 1 && await p.locator(`.bd-svg .bz.on[data-part="${id}"]`).count() === 1, `חלק ${id}: צמח וגוף מסונכרנים`);
+    await p.click(`.pcard[data-part="${id}"]`);
+    ok((await hash()).includes('p=' + id) && await p.locator(`.pcard[data-part="${id}"][aria-pressed="true"]`).count() === 1, `חלק ${id} נפתח`);
   }
-  await p.click('.pl-svg .pz[data-part="leaf"] path.f >> nth=0');
-  ok((await p.textContent('#pl-title')).includes('עלה') && (await p.locator('#pl-aside').innerText()).includes('נשמה'), 'לחיצה על העלה בציור: ריאות ונשמה');
+  await p.click('.pcard[data-part="leaf"]');
+  ok((await p.locator('#pl-aside').innerText()).includes('נשמה'), 'העלה: ריאות ונשמה');
   ok((await p.locator('.pl-quote').innerText()).includes('Darwin'), 'ציטוט דרווין');
   await go('#/tree');
   ok((await p.locator('#pl-title').count()) === 1, 'הכתובת הישנה #/tree מובילה לצמח וגוף');
 
   console.log('שיטות');
   await go('#/methods');
-  ok(await p.locator('.mt tbody tr').count() === 11 && await p.locator('.tl .tl-m').count() === 11, '11 שיטות בציר ובטבלה');
+  ok(await p.locator('.mt tbody tr').count() === 12 && await p.locator('.tl .tl-m').count() === 12, '12 שיטות בציר ובטבלה');
+  ok(await p.locator('.insights li').count() >= 5 && await p.locator('.mx tbody tr').count() === 12, 'מה דומה ומה שונה: תובנות ומטריצה');
+  ok(await p.locator('#mt-aside .ctx').count() === 1, 'הקשר תרבותי, גאוגרפי ואקלימי');
   await p.click('.mt tbody tr[data-m="ayurveda"]');
   ok((await p.textContent('#mt-title')).includes('איורוודה') && (await hash()).includes('m=ayurveda'), 'בחירת שיטה מהטבלה');
   await p.click('.tl .tl-m[data-m="washoku"]', { force: true });
@@ -191,8 +200,9 @@ function serve() {
   ok((await p.textContent('#shared')).includes('מפריד'), 'תאנה ורימון: הרמב"ם מפריד ביניהם');
   await p.selectOption('#b', 'grape');
   ok((await p.textContent('#shared')).includes('קודם'), 'החלפת מזון מעדכנת את "מה משותף"');
-  await p.click('[data-pair="onion,garlic"]');
-  ok((await p.textContent('#shared')).includes('במדבר יא ה') && (await hash()).includes('a=onion'), 'זוג מוצע: מקור משותף');
+  ok(await p.locator('.disc').count() === 10, '10 גילויים');
+  await p.click('.disc[data-pair="cabbage,mustard"]');
+  ok((await hash()).includes('a=cabbage') && (await p.textContent('#shared')).includes('מירוזינאז'), 'גילוי פותח זוג, עם הצירוף המעצים');
 
   console.log('מקורות והערות');
   await go('#/method');

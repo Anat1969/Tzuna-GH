@@ -17,7 +17,7 @@ import * as recipes from "./views/recipes.js";
 const VIEWS = { home, foods, plant, methods, seasons, recipes, compare, redlist, help, method };
 const ALIASES = { tree: "plant" };
 const NAV = [
-  ["foods", "מזון"], ["plant", "צמח וגוף"], ["methods", "שיטות"], ["seasons", "עונות"], ["recipes", "מתכונים"], ["compare", "השוואה"]
+  ["foods", "מזון"], ["plant", "צמח וגוף"], ["methods", "שיטות"], ["seasons", "עונות"], ["recipes", "צירופים"], ["compare", "השוואה"]
 ];
 
 const $ = (s) => document.querySelector(s);
