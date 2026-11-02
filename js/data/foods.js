@@ -429,6 +429,107 @@ export const FOODS = [
       believed: []
     },
     safety: { flags: ["allergen"], note: "" }
+  },
+  {
+    id: "apple", he: "תפוח", en: "Apple", la: "Malus domestica",
+    family: "ורדיים", family_la: "Rosaceae", part: "פרי",
+    cat: "veg", months: [8, 9, 10], season_kind: "פרי", meal: "after",
+    allergens: [], shape: "apple", hue: "#b8403a",
+    recognize: { t: "פרי **מדומה**: רוב הציפה מתפתחת מבסיס הפרח, לא מהשחלה.", src: "powo" },
+    use: { t: "טרי, אפוי, ו**ריבה**.", src: "culinary" },
+    layers: {
+      known: [{ t: "WHO ממליצה על **פרי שלם**. סוכר ב**מיץ פירות** נחשב סוכר חופשי.", ev: "גבוהה", src: "who-2023" }],
+      said: [
+        { t: "תפוחים נמנים בין \"המאמצין\": אוכלים אותם **תכף לארוחה**.", trad: "הרמב\"ם", ref: "הלכות דעות ד ו", src: "rambam-deot" },
+        { t: "\"כתפוח בעצי היער\": התפוח כדימוי ל**אהוב**, ופריו \"מתוק לחכי\".", trad: "מקרא", ref: "שיר השירים ב ג", src: "tanakh" }
+      ],
+      believed: [{ t: "רווחת אמונה ש\"**תפוח ביום** מרחיק רופא\".", status: "לא אוששה" }]
+    },
+    safety: { flags: [], note: "" }
+  },
+  {
+    id: "pear", he: "אגס", en: "Pear", la: "Pyrus communis",
+    family: "ורדיים", family_la: "Rosaceae", part: "פרי",
+    cat: "veg", months: [7, 8, 9], season_kind: "פרי", meal: "before",
+    allergens: [], shape: "pear", hue: "#a8a43a",
+    recognize: { t: "פרי מדומה, כמו התפוח, עם **תאי אבן** שנותנים מרקם גרגרי.", src: "powo" },
+    use: { t: "טרי, **מבושל ביין** או אפוי.", src: "culinary" },
+    layers: {
+      known: [{ t: "הנחיות התזונה ממליצות על **פירות** מגוונים בכל יום.", ev: "גבוהה", src: "moh-2021" }],
+      said: [{ t: "אגסים נמנים בין \"המשלשלין\": אוכלים אותם **קודם הארוחה**.", trad: "הרמב\"ם", ref: "הלכות דעות ד ו", src: "rambam-deot" }],
+      believed: []
+    },
+    safety: { flags: [], note: "" }
+  },
+  {
+    id: "mulberry", he: "תות עץ", en: "Black mulberry", la: "Morus nigra",
+    family: "תותיים", family_la: "Moraceae", part: "פרי מורכב",
+    cat: "veg", months: [5, 6], season_kind: "פרי", meal: "before",
+    allergens: [], shape: "berry", hue: "#4a1f3a",
+    recognize: { t: "**פרי מורכב**: כל \"גרגר\" הוא פרי קטן מפרח נפרד. ה\"תותים\" של הרמב\"ם הם פירות העץ הזה, לא תות שדה.", src: "powo" },
+    use: { t: "טרי מהעץ, **מיץ** וריבה.", src: "culinary" },
+    layers: {
+      known: [],
+      said: [{ t: "תותים נמנים בין \"המשלשלין\": אוכלים אותם **קודם הארוחה**.", trad: "הרמב\"ם", ref: "הלכות דעות ד ו", src: "rambam-deot" }],
+      believed: [{ t: "רווחת אמונה שכתם של תות עץ יורד רק עם **תות ירוק**.", status: "לא נבדק" }]
+    },
+    safety: { flags: [], note: "" }
+  },
+  {
+    id: "quince", he: "חבוש", en: "Quince", la: "Cydonia oblonga",
+    family: "ורדיים", family_la: "Rosaceae", part: "פרי",
+    cat: "veg", months: [9, 10, 11], season_kind: "פרי", meal: "after",
+    allergens: [], shape: "quince", hue: "#d8b43a",
+    recognize: { t: "פרי **קשה ועפיץ**, שכמעט לא נאכל טרי. בבישול הוא משנה צבע לוורוד.", src: "culinary" },
+    use: { t: "**ריבת חבושים**, אפוי, ובתבשיל עם בשר.", src: "culinary" },
+    layers: {
+      known: [],
+      said: [{ t: "\"פרישים\", כלומר חבושים, נמנים בין \"המאמצין\": אוכלים אותם **תכף לארוחה**.", trad: "הרמב\"ם", ref: "הלכות דעות ד ו", src: "rambam-deot" }],
+      believed: []
+    },
+    safety: { flags: [], note: "" }
+  },
+  {
+    id: "cabbage", he: "כרוב", en: "Cabbage", la: "Brassica oleracea",
+    family: "מצליבים", family_la: "Brassicaceae", part: "עלים (ניצן)",
+    cat: "veg", months: [11, 12, 1, 2, 3], season_kind: "חורף", meal: null,
+    allergens: [], shape: "cabbage", hue: "#7a9a6a",
+    recognize: { t: "ראש הכרוב הוא **ניצן ענק**: עלים צפופים סביב גבעול קצר.", src: "powo" },
+    use: { t: "סלט, **כרוב ממולא**, וכבוש.", src: "culinary" },
+    layers: {
+      known: [{ t: "הנחיות התזונה ממליצות על **ירקות** מגוונים בכל יום.", ev: "גבוהה", src: "moh-2021" }],
+      said: [{ t: "הרמב\"ם מזכיר **מי שלק של כרוב** בשמן זית ובמלח, לבחור צעיר בבוקר.", trad: "הרמב\"ם", ref: "הלכות דעות ד יג", src: "rambam-deot" }],
+      believed: []
+    },
+    safety: { flags: [], note: "" }
+  },
+  {
+    id: "chard", he: "מנגולד (תרדין)", en: "Chard", la: "Beta vulgaris var. cicla",
+    family: "ירבוזיים", family_la: "Amaranthaceae", part: "עלים",
+    cat: "veg", months: [11, 12, 1, 2, 3, 4], season_kind: "חורף", meal: null,
+    allergens: [], shape: "chard", hue: "#5a8a4a",
+    recognize: { t: "אותו מין כמו **סלק אדום**, שגודל לעלים במקום לשורש.", src: "powo" },
+    use: { t: "**ממולאים**, בתבשיל ובמרק.", src: "culinary" },
+    layers: {
+      known: [{ t: "הנחיות התזונה ממליצות על **ירקות** מגוונים בכל יום.", ev: "גבוהה", src: "moh-2021" }],
+      said: [{ t: "הרמב\"ם מזכיר **מי שלק של תרדין** בשמן זית ובמלח, לצד הכרוב.", trad: "הרמב\"ם", ref: "הלכות דעות ד יג", src: "rambam-deot" }],
+      believed: []
+    },
+    safety: { flags: [], note: "" }
+  },
+  {
+    id: "mustard", he: "חרדל", en: "Black mustard", la: "Brassica nigra",
+    family: "מצליבים", family_la: "Brassicaceae", part: "זרעים",
+    cat: "herbs", months: [3, 4], season_kind: "פריחה", meal: null,
+    allergens: ["mustard"], shape: "mustard", hue: "#c8a41a",
+    recognize: { t: "**פרחים צהובים** בקצה הגבעול, וזרעים זעירים בתרמילים דקים.", src: "flora-il" },
+    use: { t: "**ממרח חרדל**, וזרעים בכבישה.", src: "culinary" },
+    layers: {
+      known: [{ t: "**חרדל** נמנה בין 14 האלרגנים שחובה לסמן באירופה.", ev: "גבוהה", src: "eu-1169" }],
+      said: [{ t: "\"ובימות הגשמים... ואוכל מעט מן **החרדל**\": תבלין לחורף.", trad: "הרמב\"ם", ref: "הלכות דעות ד ח", src: "rambam-deot" }],
+      believed: []
+    },
+    safety: { flags: ["allergen"], note: "" }
   }
 ];
 

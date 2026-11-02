@@ -132,6 +132,30 @@ const SHAPES = {
   carob: (h) => stem("M20 20Q40 24 52 34") + leaf(30, 22, 16, 6, -100) + leaf(40, 26, 16, 6, 70) +
     `<path d="M50 34c10 4 20 20 28 42c6 16 10 28 6 32c-4 4-10-2-14-12c-8-20-18-36-24-50c-2-6 0-12 4-12z" fill="${h}" fill-opacity=".88" stroke="${INK}" stroke-width="${sw}"/>` +
     line("M54 40c8 14 16 34 24 62", .5, "#c8a888") + [[90, 52], [100, 60], [94, 66], [104, 72]].map(([x, y], i) => ell(x, y, 3, 4.4, "#7a4a2a", .95, i * 30)).join(""),
+  apple: (h) => stem("M58 22Q60 28 60 34", 1.6) + leaf(60, 26, 22, 6, -30) +
+    `<path d="M60 36c-10-8-30-4-32 16c-2 22 14 40 32 36c18 4 34-14 32-36c-2-20-22-24-32-16z" fill="${h}" fill-opacity=".82" stroke="${INK}" stroke-width="${sw}"/>` +
+    line("M44 50q-4 8-2 16", .6, "#fff") +
+    `<path d="M74 92c0-8 6-12 12-12s12 4 12 12c0 9-5 16-12 16s-12-7-12-16z" fill="#f6ecd8" stroke="${INK}" stroke-width="${sw}"/>` +
+    [0, 72, 144, 216, 288].map((a) => `<ellipse cx="86" cy="88" rx="1.4" ry="3" transform="rotate(${a} 86 93)" fill="#5a3a2a"/>`).join(""),
+  pear: (h) => stem("M60 16Q62 22 62 28", 1.6) + leaf(62, 20, 20, 5, -40) +
+    `<path d="M62 28c-8 0-10 14-12 22c-10 8-16 18-14 30c2 14 14 22 26 22s24-8 26-22c2-12-4-22-14-30c-2-8-4-22-12-22z" fill="${h}" fill-opacity=".8" stroke="${INK}" stroke-width="${sw}"/>` +
+    Array.from({ length: 18 }, (_, i) => circ(46 + (i % 6) * 6, 66 + Math.floor(i / 6) * 9, .6, INK, .35)).join(""),
+  berry: (h) => stem("M40 16Q50 30 56 44") + leaf(46, 26, 26, 9, -150) + leaf(48, 30, 22, 8, 10) +
+    Array.from({ length: 16 }, (_, i) => circ(56 + (i % 4) * 5.2 - (Math.floor(i / 4) % 2) * 2.6, 50 + Math.floor(i / 4) * 6, 3.4, h, .9)).join("") +
+    Array.from({ length: 12 }, (_, i) => circ(84 + (i % 3) * 5, 84 + Math.floor(i / 3) * 5.5, 3, "#c84a6a", .85)).join(""),
+  quince: (h) => stem("M60 18Q60 24 58 30", 1.6) + leaf(60, 22, 24, 7, -20) +
+    `<path d="M58 30c-16 0-30 14-30 34c0 22 14 36 32 36s32-14 32-36c0-20-14-34-30-34c-1 0-3 0-4 0z" fill="${h}" fill-opacity=".85" stroke="${INK}" stroke-width="${sw}"/>` +
+    line("M40 58q4-14 18-20M78 46q8 8 8 22", .6, "#8a7a2a") + circ(60, 100, 2.4, "#5a4a2a", 1) +
+    Array.from({ length: 26 }, (_, i) => circ(36 + (i % 9) * 6, 50 + Math.floor(i / 9) * 14, .5, "#fff", .8)).join(""),
+  cabbage: (h) => `<circle cx="60" cy="62" r="40" fill="${h}" fill-opacity=".55" stroke="${INK}" stroke-width="${sw}"/>` +
+    [32, 25, 18, 11].map((r, i) => `<path d="M${60 - r} ${62 + i * 2}a${r} ${r} 0 0 1 ${r * 2} 0" fill="none" stroke="${LEAF_INK}" stroke-width=".8"/>`).join("") +
+    line("M60 22v78M30 40l30 22M90 40L60 62M26 72l34-10M94 72L60 62", .5, LEAF_INK),
+  chard: (h) => [[-22, "#c43a3a"], [0, "#e8c43a"], [22, "#f2f2e8"]].map(([a, c]) =>
+    `<g transform="rotate(${a} 60 108)"><path d="M60 108V64" stroke="${c}" stroke-width="4" stroke-linecap="round"/><path d="M60 70c-22-4-26-30-14-48c6-8 22-8 28 0c12 18 8 44-14 48z" fill="${h}" fill-opacity=".6" stroke="${LEAF_INK}" stroke-width="${sw}"/>${line("M60 68V24M60 56l-10-8M60 46l10-8M60 36l-8-6", .6, c === "#f2f2e8" ? "#8a8a7a" : c)}</g>`).join(""),
+  mustard: (h) => stem("M60 112Q58 70 60 30") + leaf(60, 96, 26, 8, -150) + leaf(60, 86, 22, 7, -30) +
+    [[60, 26], [54, 32], [66, 32], [60, 36], [52, 22], [68, 22]].map(([x, y]) => `<g transform="translate(${x} ${y})">${[0, 90, 180, 270].map((a) => `<ellipse cx="0" cy="-2.6" rx="1.6" ry="2.6" transform="rotate(${a})" fill="${h}" stroke="${INK}" stroke-width=".5"/>`).join("")}</g>`).join("") +
+    [[60, 50, -1], [60, 60, 1], [60, 70, -1]].map(([x, y, d]) => line(`M${x} ${y}l${d * 12} -10`, 1.4, LEAF_INK)).join("") +
+    Array.from({ length: 14 }, (_, i) => circ(84 + (i % 5) * 4.4, 92 + Math.floor(i / 5) * 4.4, 1.6, "#6a4a1a", .9)).join(""),
   tree: () => `<path d="M60 112c-2-14 2-24-2-36c-4-12-14-16-12-28M60 112c4-10 2-22 8-30c6-8 16-10 18-20M58 80c-8-4-16-2-22-10" fill="none" stroke="#6a5a4a" stroke-width="4.2" stroke-linecap="round"/>` +
     [[30, 44, 22], [52, 32, 26], [78, 36, 24], [92, 54, 18], [40, 60, 16], [66, 54, 20]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * .62}" fill="#9aa88a" fill-opacity=".5" stroke="${LEAF_INK}" stroke-width="1"/>`).join("") +
     [[44, 40], [70, 44], [84, 58], [56, 58], [36, 54]].map(([x, y]) => ell(x, y, 2, 2.8, "#3a4a2a", .9)).join("")
