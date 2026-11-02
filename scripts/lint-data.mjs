@@ -121,6 +121,7 @@ for (const r of RECIPES) {
   if (r.months.some((m) => m < 1 || m > 12)) err(w, "חודשים לא חוקיים");
   r.steps.forEach((st, i) => { checkText(`${w}.steps[${i}]`, st.t); if (st.food && !r.foods.includes(st.food)) err(`${w}.steps[${i}]`, `שלב מפנה למזון שלא ברשימת המתכון "${st.food}"`); });
   if (r.note) checkText(`${w}.note`, r.note);
+  for (const al of r.extraAllergens || []) if (!ALLERGENS[al]) err(w, `אלרגן לא מוכר "${al}"`);
   if (r.foods.includes("fava") && !/G6PD/.test(r.note || "")) err(w, "מתכון עם פול בלי אזהרת G6PD");
 }
 

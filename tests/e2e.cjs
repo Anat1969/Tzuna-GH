@@ -169,7 +169,7 @@ function serve() {
 
   console.log('מתכונים');
   await go('#/recipes');
-  ok(await p.locator('.recipe-card').count() === 6, '6 מתכונים');
+  ok(await p.locator('.recipe-card').count() === 20, '20 מתכונים');
   ok((await p.textContent('#r-title')).length > 2 && await p.locator('.r-steps li').count() <= 10, 'כרטיס מתכון עם עד 10 שלבים');
   await p.click('.recipe-card[data-id="ful"]');
   ok((await hash()).includes('id=ful') && (await p.locator('#r-sheet').innerText()).includes('G6PD'), 'פול מדמס: אזהרת G6PD');
@@ -184,7 +184,7 @@ function serve() {
   await go('#/recipes');
   await p.click('#f-season');
   const n = await p.locator('.recipe-card').count();
-  ok(n >= 1 && n <= 6 && (await hash()).includes('season=1'), 'סינון "מתאים לעונה עכשיו"');
+  ok(n >= 1 && n <= 20 && (await hash()).includes('season=1'), 'סינון "מתאים לעונה עכשיו"');
 
   console.log('השוואה');
   await go('#/compare');

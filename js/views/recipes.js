@@ -10,7 +10,7 @@ export const title = "מתכונים";
 
 let root, state;
 
-const allergensOf = (r) => [...new Set(r.foods.flatMap((id) => byId(id).allergens))];
+const allergensOf = (r) => [...new Set([...r.foods.flatMap((id) => byId(id).allergens), ...(r.extraAllergens || [])])];
 const inSeason = (r, m) => !r.months.length || r.months.includes(m);
 function list() {
   return RECIPES.filter((r) => (!state.food || r.foods.includes(state.food)) && (!state.season || inSeason(r, nowMonth())));
