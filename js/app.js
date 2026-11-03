@@ -14,11 +14,12 @@ import * as redlist from "./views/redlist.js";
 import * as help from "./views/help.js";
 import * as method from "./views/method.js";
 import * as recipes from "./views/recipes.js";
+import * as creations from "./views/exhibit.js";
 
-const VIEWS = { home, foods, plant, methods, seasons, recipes, compare, redlist, help, method };
+const VIEWS = { home, foods, plant, methods, seasons, recipes, compare, creations, redlist, help, method };
 const ALIASES = { tree: "plant" };
 const NAV = [
-  ["foods", "מזון"], ["plant", "צמח וגוף"], ["methods", "שיטות"], ["seasons", "עונות"], ["recipes", "צירופים"], ["compare", "השוואה"]
+  ["foods", "מזון"], ["plant", "צמח וגוף"], ["methods", "שיטות"], ["seasons", "עונות"], ["recipes", "צירופים"], ["compare", "השוואה"], ["creations", "יצירות"]
 ];
 
 const $ = (s) => document.querySelector(s);

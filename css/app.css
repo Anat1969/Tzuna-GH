@@ -793,3 +793,9 @@ mark.insight { background: linear-gradient(transparent 45%, var(--marker) 45%, v
 .net-f .src { margin-inline-start: auto; }
 .g-ins { margin-inline-start: auto; font-size: 13px; font-weight: 600; }
 @media (max-width: 920px) { .g-ins { flex-basis: 100%; margin: 2px 0 0; } }
+/* ───── יצירות ───── */
+/* דף שנקרא בגלילה, כמו כתבה: המעטפת לא נעולה לגובה המסך */
+.app-shell.page-creations { height: auto; min-height: 100dvh; overflow: visible; }
+.app-shell.page-creations .view { overflow: visible; }
+.creations-page { display: block; max-width: 1280px; margin: 0 auto; padding: 16px clamp(16px, 3vw, 40px) 40px; min-width: 0; }
+.creations-page app-creations { max-width: 100%; overflow-wrap: anywhere; }
