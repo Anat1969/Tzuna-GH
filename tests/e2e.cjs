@@ -201,6 +201,21 @@ function serve() {
   const n = await p.locator('.recipe-card').count();
   ok(n >= 1 && n <= 20 && (await hash()).includes('season=1'), 'סינון "מתאים לעונה עכשיו"');
 
+  console.log('רשת הצירופים');
+  await go('#/recipes?v=net');
+  ok(await p.locator('.net .ne').count() === 12 && await p.locator('.net .ne.block').count() === 4, 'רשת: 12 קווים, 4 מחלישים');
+  ok(await p.locator('.net-ins li').count() === 3, 'רשת: שלוש תובנות לפני הכלי');
+  await p.click('.ne[data-syn="turmeric-pepper"] .ne-hit', { force: true });
+  ok((await p.textContent('#r-sheet')).includes('פיפרין') && (await hash()).includes('syn=turmeric-pepper'), 'לחיצה על קו: המנגנון בטור הצד, בלי לעזוב את הדף');
+  await p.click('#r-sheet [data-open-recipe="dal"]');
+  ok(await p.locator('.recipe-card[aria-pressed="true"][data-id="dal"]').count() === 1, 'מנה מתוך הצירוף פותחת את המתכון באותו דף');
+  await go('#/recipes?v=net');
+  await p.click('.nn[data-node="lentil"]');
+  ok(await p.locator('#r-sheet .syn').count() === 3, 'לחיצה על עדשים: שלושת הצירופים שלהן');
+  await go('#/');
+  ok(await p.locator('.hd-line mark').count() === 6, 'כל דלת: מספר עם תובנה');
+  ok(/\d+\/10/.test(await p.textContent('#ht-disc')), 'גילוי מתחלף עם מונה');
+
   console.log('השוואה');
   await go('#/compare');
   ok((await p.textContent('#shared')).includes('מפריד'), 'תאנה ורימון: הרמב"ם מפריד ביניהם');
