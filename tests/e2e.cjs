@@ -32,6 +32,10 @@ function serve() {
   p.on('pageerror', (e) => errors.push(e.message));
   p.on('console', (m) => { if (m.type() === 'error' && !/fonts|favicon|ERR_/.test(m.text())) errors.push(m.text()); });
   await p.route('**/appofapp-gh.vercel.app/ai-menu.js', (r) => r.fulfill({ path: path.join(__dirname, 'fixtures', 'ai-menu.js'), contentType: 'application/javascript' }));
+  // הרכיב המשותף <app-creations>: עותק מקומי מ-AppOfApp-GH כשקיים, אחרת מהרשת
+  const CREATIONS_JS = process.env.CREATIONS_JS || path.join(ROOT, '..', 'appofapp-gh', 'public', 'creations.js');
+  const routeCreations = (pg) => fs.existsSync(CREATIONS_JS) && pg.route('**/creations.js', (r) => r.fulfill({ path: CREATIONS_JS, contentType: 'application/javascript' }));
+  await routeCreations(p);
   const go = async (h, wait = 700) => { await p.goto(base + h, { waitUntil: 'networkidle' }); await p.waitForTimeout(wait); };
   const hash = () => p.evaluate(() => location.hash);
 
@@ -269,11 +273,23 @@ function serve() {
   const inst = await cdp.send('Page.getInstallabilityErrors');
   ok(inst.installabilityErrors.length === 0, 'Page.getInstallabilityErrors ריק' + (inst.installabilityErrors.length ? ': ' + JSON.stringify(inst.installabilityErrors) : ''));
 
+  console.log('יצירות');
+  await go('#/creations', 1500);
+  ok(await p.locator('.tab[data-view="creations"][aria-current="page"]').count() === 1, 'לשונית "יצירות" בסרגל ומסומנת');
+  const rooms = await p.locator('app-creations .cr-room').count();
+  ok(rooms >= 6, `לפחות 6 חדרים (${rooms})`);
+  const perRoom = await p.$$eval('app-creations .cr-room', (rs) => rs.map((r) => r.querySelectorAll('.cr-card').length));
+  ok(perRoom.length && perRoom.every((n) => n >= 4 && n <= 6), `בכל חדר 4 עד 6 יצירות (${perRoom.join(',')})`);
+  ok(await p.evaluate(() => document.querySelector('.app-shell').classList.contains('page-creations') && document.documentElement.scrollHeight > innerHeight), 'דף היצירות נגלל כדף רגיל');
+  await go('#/foods');
+  ok(!(await p.evaluate(() => document.querySelector('.app-shell').classList.contains('page-creations'))), 'יציאה מהיצירות מחזירה את המעטפת לגובה המסך');
+
   console.log('הפחתת תנועה ונייד');
   const rm = await b.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   rm.on('pageerror', (e) => errors.push(e.message));
   await rm.route('**/appofapp-gh.vercel.app/ai-menu.js', (r) => r.fulfill({ path: path.join(__dirname, 'fixtures', 'ai-menu.js'), contentType: 'application/javascript' }));
-  for (const h of ['', '#/foods', '#/plant', '#/methods', '#/seasons', '#/recipes', '#/compare', '#/method']) {
+  await routeCreations(rm);
+  for (const h of ['', '#/foods', '#/plant', '#/methods', '#/seasons', '#/recipes', '#/compare', '#/creations', '#/method']) {
     await rm.goto(base + h, { waitUntil: 'networkidle' });
     await rm.waitForTimeout(600);
     ok(!(await rm.evaluate(() => document.documentElement.scrollWidth > innerWidth)), `נייד ${h || '#/'}: בלי גלילה אופקית`);
