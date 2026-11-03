@@ -5,7 +5,7 @@ import { rich, stratum, esc, iconBtn, MONTHS, MONTHS_SHORT, nowMonth, triangle }
 import { plate } from "../plates.js";
 import { foodImage } from "./foods.js";
 import { patch } from "../route.js";
-import { synergiesInRecipe } from "../data/synergies.js";
+import { synergiesInRecipe, SYNERGIES } from "../data/synergies.js";
 
 export const title = "מתכונים";
 
@@ -70,8 +70,86 @@ function yearHTML() {
     <p class="hint" style="margin-top:6px">${rich("**כהה**: עונה מתאימה. **בהיר**: כל השנה.")}</p></div>`;
 }
 
+// רשת הצירופים: כל מזון צומת, כל צירוף קו. ירוק רציף מעצים, אדום מקווקו מחליש. לחיצה פותחת את המנגנון בטור הצד.
+const nodeKey = (s, side) => side === "a" ? s.a : (s.b || "m:" + s.mate);
+const nodeLabel = (k) => k.startsWith("m:") ? k.slice(2) : byId(k).he;
+function netNodes() {
+  const adj = {};
+  for (const s of SYNERGIES) { const a = nodeKey(s, "a"), b = nodeKey(s, "b"); (adj[a] ||= []).push(b); (adj[b] ||= []).push(a); }
+  // הצומת העמוס במרכז כעמוד שדרה, וכל זוג אחר כשורה אופקית משני הצדדים. כך כל קו נראה, ושום תווית לא עולה על אחרת.
+  const keys = Object.keys(adj).sort((x, y) => adj[y].length - adj[x].length);
+  const hub = keys[0], W = 840, H = 440, cx = W / 2, cy = H / 2, GAP = 46;
+  const wOf = (k) => Math.max(44, nodeLabel(k).length * 9 + 18);
+  const pos = { [hub]: { x: cx, y: cy } }, seen = new Set([hub]);
+  for (const q = [hub]; q.length;) for (const n of adj[q.shift()]) if (!seen.has(n)) { seen.add(n); q.push(n); }
+  const dirs = [[0, -1], [0, 1], [1, 0], [-1, 0]];
+  adj[hub].forEach((n, i) => {
+    const [dx, dy] = dirs[i % 4];
+    pos[n] = { x: cx + dx * 130, y: cy + dy * 92 };
+    adj[n].filter((m) => !pos[m]).forEach((m) => { pos[m] = { x: cx + dx * 250, y: cy + dy * 172 }; });
+  });
+  const comps = [];
+  for (const k of keys) { if (seen.has(k)) continue; const c = [k]; seen.add(k); for (let i = 0; i < c.length; i++) for (const n of adj[c[i]]) if (!seen.has(n)) { seen.add(n); c.push(n); } comps.push(c); }
+  const left = comps.filter((_, i) => i % 2 === 0), right = comps.filter((_, i) => i % 2 === 1);
+  const rows = (n, avoid) => { const ys = []; for (let i = 0; i < n; i++) ys.push(40 + (i * (H - 80)) / Math.max(1, n - 1)); return avoid ? ys.map((y) => (Math.abs(y - cy) < 40 ? y + (y < cy ? -45 : 45) : y)) : ys; };
+  const place = (list, side) => rows(list.length, true).forEach((y, i) => {
+    const [inner, outer] = list[i]; const edge = side < 0 ? cx - 90 : cx + 90;
+    const xi = edge + side * wOf(inner) / 2; pos[inner] = { x: xi, y };
+    if (outer) pos[outer] = { x: xi + side * (wOf(inner) / 2 + GAP + wOf(outer) / 2), y };
+  });
+  place(left, -1); place(right, 1);
+  return { W, H, adj, pos };
+}
+function netInsights(adj) {
+  const hub = Object.keys(adj).filter((k) => !k.startsWith("m:")).sort((x, y) => adj[y].length - adj[x].length)[0];
+  const hubSyn = SYNERGIES.filter((s) => s.a === hub || s.b === hub);
+  const boost = SYNERGIES.filter((s) => s.kind === "boost").length, block = SYNERGIES.length - boost;
+  const ext = SYNERGIES.filter((s) => !s.b && s.mate);
+  return [
+    { type: "עובדה", t: `**${SYNERGIES.length}** צירופים: ==**${boost}** מעצימים ו-**${block}** מחלישים.== מחליש הוא מידע באותה מידה כמו מעצים.` },
+    { type: "פרשנות", t: `**${byId(hub).he}** הם הצומת העמוס, ב-**${hubSyn.length}** צירופים: ==מה שותים לידם חשוב כמו מה אוכלים איתם.==` },
+    { type: "פרשנות", t: `ב-**${ext.length}** צירופים השותף אינו מזון מהגלריה: ==גם זמן, בישול ומשקה הם חלק מהצירוף.==` }
+  ];
+}
+function netHTML() {
+  const { W, H, adj, pos } = netNodes();
+  const sel = state.syn;
+  const edges = SYNERGIES.map((s) => { const a = pos[nodeKey(s, "a")], b = pos[nodeKey(s, "b")];
+    return `<g class="ne ${s.kind} ${sel === s.id ? "on" : ""}" data-syn="${s.id}" tabindex="0" role="button" aria-label="${esc(s.title)}"><line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="ne-hit"/><line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="ne-l"/></g>`; }).join("");
+  const nodes = Object.entries(pos).map(([k, p]) => { const ext = k.startsWith("m:"); const lab = nodeLabel(k); const w = Math.max(44, lab.length * 9 + 18);
+    return `<g class="nn ${ext ? "ext" : ""}" data-node="${esc(k)}" tabindex="0" role="button" transform="translate(${p.x},${p.y})"><rect x="${-w / 2}" y="-13" width="${w}" height="26"/><text y="5">${esc(lab)}</text>${adj[k].length > 1 ? `<circle cx="${w / 2}" cy="-13" r="9"/><text class="nn-n" x="${w / 2}" y="-9">${adj[k].length}</text>` : ""}</g>`; }).join("");
+  return `<div class="net-box">
+    <ol class="insights net-ins">${netInsights(adj).map((x) => `<li><span class="label">${x.type}</span> ${rich(x.t)}</li>`).join("")}</ol>
+    <div class="net-list" role="list">${SYNERGIES.map((s) => `<button class="net-row ${s.kind} ${sel === s.id ? "on" : ""}" data-syn="${s.id}" role="listitem"><b>${esc(nodeLabel(nodeKey(s, "a")))}</b><i></i><b>${esc(nodeLabel(nodeKey(s, "b")))}</b></button>`).join("")}</div>
+    <svg class="net" viewBox="0 0 ${W} ${H}" role="img" aria-label="רשת הצירופים">${edges}${nodes}</svg>
+    <p class="hint net-legend"><span class="lg boost"></span>מעצים <span class="lg block"></span>מחליש <span class="lg ext"></span>שותף שאינו בגלריה · לחיצה על קו או על מזון פותחת את המנגנון</p>
+  </div>`;
+}
+function synSheetHTML() {
+  const node = state.node, list = node ? SYNERGIES.filter((s) => nodeKey(s, "a") === node || nodeKey(s, "b") === node) : SYNERGIES.filter((s) => s.id === state.syn);
+  if (!list.length) return `<div class="panel-body" style="display:grid;place-items:center;height:100%;color:var(--ink-soft);text-align:center">${rich("**לחצו על קו** כדי לראות למה הצירוף עובד,<br>ובאיזו מנה הוא קורה.")}</div>`;
+  const head = node ? nodeLabel(node) : list[0].title;
+  return `<div class="panel-head"><div style="min-width:0"><span class="label">${node ? "מזון ברשת" : "צירוף"}</span><h2 class="sheet-name" id="r-title">${esc(head)}</h2></div><div class="ops">${iconBtn("x", "סגירה", "data-net-close")}</div></div>
+    <div class="panel-body scroll-in" style="flex:1">${list.map((s) => `<div class="syn ${s.kind}"><b class="syn-t">${s.kind === "boost" ? "מעצים" : "מחליש"} · ${esc(s.title)}</b><p>${rich(s.how)}</p><p class="syn-dish"><span class="tile-l">בצלחת</span>${rich(s.suggest)}</p>
+      ${s.dishes.length ? `<div class="chips" style="margin-top:6px">${s.dishes.map((d) => { const r = RECIPES.find((x) => x.id === d); return r ? `<button class="chip" data-open-recipe="${r.id}">${esc(r.he)}</button>` : ""; }).join("")}</div>` : ""}
+      <p class="hint" style="margin-top:4px">עוצמת ראיה: <b>${esc(s.ev)}</b></p></div>`).join("")}
+      ${node && !node.startsWith("m:") ? `<p style="margin-top:10px"><a class="btn press" href="#/foods?id=${node}">לגיליון של ${esc(nodeLabel(node))} ←</a></p>` : ""}
+    </div>`;
+}
+
 function render() {
+  root.querySelectorAll("[data-v]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === state.v)));
+  root.querySelector("#r-filters").hidden = state.v === "net";
+  if (state.v === "net") {
+    root.querySelector("#r-list").classList.add("is-net");
+    root.querySelector("#r-list").innerHTML = netHTML();
+    root.querySelector("#r-year").innerHTML = "";
+    root.querySelector("#r-hits").innerHTML = `<bdi class="num">${SYNERGIES.length}</bdi> צירופים`;
+    root.querySelector("#r-sheet").innerHTML = synSheetHTML();
+    return;
+  }
   const L = list();
+  root.querySelector("#r-list").classList.remove("is-net");
   root.querySelector("#r-list").innerHTML = L.map(cardHTML).join("") || `<p class="src" style="padding:12px">אין מתכון שמתאים לסינון. <button class="chip" data-clear>ניקוי הסינון</button></p>`;
   root.querySelector("#r-year").innerHTML = yearHTML();
   root.querySelector("#r-hits").innerHTML = `<bdi class="num">${L.length}</bdi> מתכונים`;
@@ -92,7 +170,7 @@ function select(id) { state.id = id; patch({ id: id || undefined }); renderSheet
 
 export function mount(el, params) {
   root = el;
-  state = { id: params.id || null, food: byId(params.food) ? params.food : null, season: params.season === "1" };
+  state = { id: params.id || null, food: byId(params.food) ? params.food : null, season: params.season === "1", v: params.v === "net" ? "net" : "list", syn: params.syn || null, node: null };
   if (!state.id) state.id = list()[0]?.id || null;
   root.innerHTML = `<div class="view-in focus-aside">
     <section class="panel" aria-labelledby="rl-title">
@@ -100,13 +178,23 @@ export function mount(el, params) {
         <div><h1 class="view-title" id="rl-title">צירופים מעצימים</h1><p class="view-sub">${rich("מתכון הוא **צירוף**: מזון אחד מפעיל איכות של אחר. ==ויטמין C פותח ברזל, פלפל פותח כורכום, שמן ובישול פותחים ליקופן.==")}</p></div>
         <span class="src" id="r-hits" aria-live="polite"></span>
       </div>
-      <div class="gallery-tools" style="padding-top:4px;padding-bottom:6px"><div class="chips"><button class="chip" id="f-season" data-season>מתאים לעונה עכשיו</button><span id="f-food"></span></div></div>
+      <div class="gallery-tools" style="padding-top:4px;padding-bottom:6px"><div class="chips" role="group" aria-label="תצוגה"><button class="chip" data-v="list">מתכונים</button><button class="chip" data-v="net">רשת הצירופים</button></div><div class="chips" id="r-filters"><button class="chip" id="f-season" data-season>מתאים לעונה עכשיו</button><span id="f-food"></span></div></div>
       <div class="scroll-in gallery-box" style="flex:1"><div class="recipe-grid" id="r-list"></div><div id="r-year" class="r-year-box"></div></div>
     </section>
     <aside class="panel" id="r-sheet" aria-labelledby="r-title"></aside>
   </div>`;
   render();
+  const pickNet = (el) => {
+    if (el.dataset.syn) { state.syn = el.dataset.syn; state.node = null; } else { state.node = el.dataset.node; state.syn = null; }
+    patch({ syn: state.syn || undefined }); render();
+    if (matchMedia("(max-width: 920px)").matches) root.querySelector("#r-sheet").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  };
+  root.addEventListener("keydown", (e) => { const el = e.target.closest?.("[data-syn], [data-node]"); if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pickNet(el); } });
   root.addEventListener("click", (e) => {
+    const vb = e.target.closest("[data-v]"); if (vb) { state.v = vb.dataset.v; patch({ v: state.v === "net" ? "net" : undefined, syn: undefined }); state.syn = null; state.node = null; return render(); }
+    const ne = e.target.closest("[data-syn], [data-node]"); if (ne) return pickNet(ne);
+    const orr = e.target.closest("[data-open-recipe]"); if (orr) { state.v = "list"; state.food = null; state.season = false; state.id = orr.dataset.openRecipe; patch({ v: undefined, syn: undefined, food: undefined, season: undefined, id: state.id }); return render(); }
+    if (e.target.closest("[data-net-close]")) { state.syn = null; state.node = null; patch({ syn: undefined }); return render(); }
     const c = e.target.closest(".recipe-card, .r-yname"); if (c) { select(c.dataset.id); root.querySelectorAll(".r-yname").forEach((y) => y.setAttribute("aria-pressed", String(y.dataset.id === state.id))); return; }
     if (e.target.closest("[data-season]")) { state.season = !state.season; patch({ season: state.season ? "1" : undefined }); return render(); }
     if (e.target.closest("[data-clear-food]") || e.target.closest("[data-clear]")) { state.food = null; state.season = false; patch({ food: undefined, season: undefined }); return render(); }
@@ -118,6 +206,8 @@ export function mount(el, params) {
 }
 
 export function update(params) {
+  const v = params.v === "net" ? "net" : "list";
+  if (v !== state.v || (params.syn || null) !== state.syn) { state.v = v; state.syn = params.syn || null; state.node = null; return render(); }
   const food = byId(params.food) ? params.food : null;
   if (food !== state.food) { state.food = food; render(); }
   if ((params.id || null) !== state.id && params.id) select(params.id);

@@ -27,26 +27,52 @@ function today() {
   const m = nowMonth();
   const inSeason = FOODS.filter((f) => f.months.includes(m));
   const ids = new Set(inSeason.map((f) => f.id));
-  const syn = SYNERGIES.find((s) => s.kind === "boost" && (ids.has(s.a) || ids.has(s.b))) || SYNERGIES[0];
+  const syn0 = SYNERGIES.find((s) => s.kind === "boost" && (ids.has(s.a) || ids.has(s.b))) || SYNERGIES[0];
   const dish = RECIPES.find((r) => r.months.includes(m) && r.foods.some((id) => ids.has(id))) || RECIPES.find((r) => !r.months.length);
-  const day = Math.floor(Date.now() / 86400000);
+  const boosts = SYNERGIES.filter((s) => s.kind === "boost" && (ids.has(s.a) || ids.has(s.b)));
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
   const block = SYNERGIES.find((s) => s.kind === "block" && (ids.has(s.a) || ids.has(s.b))) || SYNERGIES.find((s) => s.kind === "block");
-  return { m, inSeason, syn, block, dish, disc: DISCOVERIES[day % DISCOVERIES.length] };
+  const syn = boosts.length ? pick(boosts) : syn0;
+  const start = Math.floor(Math.random() * DISCOVERIES.length);
+  return { m, inSeason, syn, block, dish, start, disc: DISCOVERIES[start] };
+}
+
+// כל מספר בדלת מגיע עם משפט שאומר מה הוא מלמד.
+function doorLines(t) {
+  const high = FOODS.filter((f) => f.layers.known.some((x) => x.ev === "גבוהה")).length;
+  const fs = new Set(PARTS.filter((p) => p.id === "fruit" || p.id === "seed").flatMap((p) => p.foods));
+  const byM = MONTHS.map((_, i) => FOODS.filter((f) => f.months.includes(i + 1)).length);
+  const peak = byM.indexOf(Math.max(...byM));
+  const block = SYNERGIES.filter((s) => s.kind === "block").length;
+  const facts = DISCOVERIES.filter((d) => d.type === "עובדה").length;
+  return {
+    foods: `**${high}** עם ראיה גבוהה. ==השאר נשען על מסורת.==`,
+    plant: `**${fs.size}** מהם פרי או זרע: ==מה שהצמח שומר לדור הבא.==`,
+    methods: `**${METHODS.filter((m) => m.from < 1800).length}** קדמו למדע, ==ורובן מחפשות איזון.==`,
+    seasons: peak + 1 === t.m ? `==עכשיו שיא השנה.==` : `ב${MONTHS[peak]} **${byM[peak]}**, ==${byM[peak] >= t.inSeason.length * 3 ? "פי שלושה ויותר מעכשיו" : byM[peak] >= t.inSeason.length * 2 ? "יותר מכפול מעכשיו" : "קרוב לעכשיו"}.==`,
+    recipes: `ועוד **${block}** שלא לשלב. ==מחליש הוא מידע.==`,
+    compare: `**${facts}** עובדות ו-**${DISCOVERIES.length - facts}** פרשנויות, ==מסומנות.==`
+  };
 }
 
 const door = (href, label, title, n, unit, photoId, line) => {
   const ph = PHOTOS[photoId];
   return `<a class="hdoor press" href="${href}">
     <span class="hd-img">${ph ? `<img src="${ph.src}" alt="" loading="lazy">` : ""}</span>
-    <span class="hd-cap"><span class="label">${label}</span><b>${title}</b><span class="hd-n"><bdi class="num">${n}</bdi> ${unit}</span><span class="hd-line">${line}</span></span>
+    <span class="hd-cap"><span class="label">${label}</span><b>${title}</b><span class="hd-n"><bdi class="num">${n}</bdi> ${unit}</span><span class="hd-line">${rich(line)}</span></span>
   </a>`;
 };
 
+const discInner = (d, i) => `<span class="tile-l">גילוי · <bdi class="num">${i + 1}/${DISCOVERIES.length}</bdi> · ${esc(d.type)}</span><b>${esc(d.title)}</b><span>${rich(d.t)}</span>`;
+let timer = null;
+
 export function mount(root) {
+  clearInterval(timer);
   const olive = byId("olive");
   const quiz = store.get("quiz", { right: 0, total: 0 });
   const t = today();
   const synCount = SYNERGIES.filter((s) => s.kind === "boost").length;
+  const L = doorLines(t);
   root.innerHTML = `<div class="view-in home2">
     <section class="h-lead">
       <div class="rise">
@@ -72,15 +98,15 @@ export function mount(root) {
       <a class="syn boost ht-syn" href="#/recipes${t.syn.dishes[0] ? "?id=" + t.syn.dishes[0] : ""}"><b class="syn-t">צירוף מעצים · ${esc(t.syn.title)}</b><p>${rich(t.syn.how)}</p><p class="syn-dish"><span class="tile-l">בצלחת</span>${rich(t.syn.suggest)}</p></a>
       <a class="syn block ht-syn" href="#/foods?id=${t.block.a}"><b class="syn-t">לא לשלב · ${esc(t.block.title)}</b><p>${rich(t.block.how)}</p></a>
       ${t.dish ? `<a class="ht-dish press" href="#/recipes?id=${t.dish.id}"><span class="tile-l">מנה לחודש</span><b>${esc(t.dish.he)}</b><span class="hint">${esc(t.dish.time)} · ${t.dish.steps.length} שלבים</span></a>` : ""}
-      <a class="ht-disc" href="#/compare?a=${t.disc.pair[0]}&b=${t.disc.pair[1]}"><span class="tile-l">גילוי היום</span><b>${esc(t.disc.title)}</b><span>${rich(t.disc.t)}</span></a>
+      <a class="ht-disc" id="ht-disc" href="#/compare?a=${t.disc.pair[0]}&b=${t.disc.pair[1]}" aria-live="polite">${discInner(t.disc, t.start)}</a>
     </section>
     <nav class="h-doors" aria-label="מפת האפליקציה">
-      ${door("#/foods", "הכר", "מזון", FOODS.length, "מזונות", "pomegranate", "ייחודיות, גוף, נפש ומדע")}
-      ${door("#/plant", "הבן", "צמח וגוף", PARTS.length, "חלקים", "chard", "שורש, עלה, פרי וזרע בגוף")}
-      ${door("#/methods", "הבן", "שיטות", METHODS.length, "שיטות", "olive", "3000 שנה, מה דומה ומה שונה")}
-      ${door("#/seasons", "השתמש", "עונות", t.inSeason.length, "בעונה עכשיו", "watermelon", "מפה שנתית ואקלים")}
-      ${door("#/recipes", "השתמש", "צירופים", synCount, "צירופים מעצימים", "lentil", `${RECIPES.length} מתכונים`)}
-      ${door("#/compare", "גלה", "השוואה", DISCOVERIES.length, "גילויים", "fig", "תובנות מהצלבת הדאטה")}
+      ${door("#/foods", "הכר", "מזון", FOODS.length, "מזונות", "pomegranate", L.foods)}
+      ${door("#/plant", "הבן", "צמח וגוף", PARTS.length, "חלקים", "chard", L.plant)}
+      ${door("#/methods", "הבן", "שיטות", METHODS.length, "שיטות", "olive", L.methods)}
+      ${door("#/seasons", "השתמש", "עונות", t.inSeason.length, "בעונה עכשיו", "watermelon", L.seasons)}
+      ${door("#/recipes?v=net", "השתמש", "צירופים", synCount, "צירופים מעצימים", "lentil", L.recipes)}
+      ${door("#/compare", "גלה", "השוואה", DISCOVERIES.length, "גילויים", "fig", L.compare)}
     </nav>
   </div>`;
 
@@ -129,4 +155,19 @@ export function mount(root) {
     (b.dataset.mode === "quiz" ? showQuiz : showDemo)();
   }));
   showDemo();
+
+  // דף בית מתחלף: הגילוי מתחיל ממקום אקראי ומתחלף כל 9 שניות. עוצר בריחוף ובהפחתת תנועה.
+  const discEl = root.querySelector("#ht-disc");
+  let i = t.start, hold = false;
+  discEl.addEventListener("mouseenter", () => { hold = true; });
+  discEl.addEventListener("mouseleave", () => { hold = false; });
+  discEl.addEventListener("focus", () => { hold = true; });
+  discEl.addEventListener("blur", () => { hold = false; });
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) timer = setInterval(() => {
+    if (!discEl.isConnected) return clearInterval(timer);
+    if (hold || document.hidden) return;
+    i = (i + 1) % DISCOVERIES.length; const d = DISCOVERIES[i];
+    discEl.classList.add("swap");
+    setTimeout(() => { discEl.href = `#/compare?a=${d.pair[0]}&b=${d.pair[1]}`; discEl.innerHTML = discInner(d, i); discEl.classList.remove("swap"); }, 250);
+  }, 9000);
 }

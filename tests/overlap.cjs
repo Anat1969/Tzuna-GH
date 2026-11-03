@@ -25,8 +25,10 @@ let total = 0;
           const r = document.createRange(); r.selectNodeContents(t);
           // טקסט שנחתך ע"י מיכל גלילה לא נראה, ולכן לא נספר (תוספת Tzuna-GH)
           const clips = []; for (let n = el.parentElement; n && n !== document.body; n = n.parentElement) { const o = getComputedStyle(n); if (/(auto|scroll|hidden|clip)/.test(o.overflow + o.overflowX + o.overflowY)) clips.push(n.getBoundingClientRect()); }
-          const inside = (q) => clips.every((c) => q.top < c.bottom - 1 && q.bottom > c.top + 1 && q.left < c.right - 1 && q.right > c.left + 1);
-          for (const q of r.getClientRects()) if (q.width > 2 && q.height > 2 && q.bottom > 0 && q.top < innerHeight * 3 && inside(q)) rects.push({ q, el, txt: t.textContent.trim().slice(0, 30) });
+          // רק החלק הגלוי של הטקסט, אחרי חיתוך בכל מיכל גלילה, נמדד.
+          const visible = (q) => clips.reduce((v, c) => ({ left: Math.max(v.left, c.left), right: Math.min(v.right, c.right), top: Math.max(v.top, c.top), bottom: Math.min(v.bottom, c.bottom) }), { left: q.left, right: q.right, top: q.top, bottom: q.bottom });
+          for (const q0 of r.getClientRects()) { const v = visible(q0); const q = { ...v, width: v.right - v.left, height: v.bottom - v.top };
+            if (q.width > 2 && q.height > 2 && q.bottom > 0 && q.top < innerHeight * 3) rects.push({ q, el, txt: t.textContent.trim().slice(0, 30) }); }
         }
         const out = [];
         for (let i = 0; i < rects.length; i++) for (let j = i + 1; j < rects.length; j++) {
