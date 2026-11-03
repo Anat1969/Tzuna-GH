@@ -38,7 +38,7 @@ function asideHTML() {
   const p = PARTS.find((x) => x.id === sel);
   const ph = partPhoto(p.id);
   const foods = p.foods.map(byId).filter(Boolean);
-  return `<div class="sheet-hero">${ph ? `<img src="${ph.src}" alt="${esc(ph.caption)}"><span class="credit">${esc(ph.credit)}</span>` : ""}</div>
+  return `<div class="sheet-hero zoomable" data-zoom-cap="${esc(ph ? ph.caption : "")}">${ph ? `<img src="${ph.src}" alt="${esc(ph.caption)}"><span class="credit">${esc(ph.credit)}</span>` : ""}</div>
     <div class="panel-body scroll-in" style="flex:1">
       <h2 class="sheet-name" id="pl-title">${esc(p.he)} <span class="pl-organ">↔ ${esc(p.organ)}</span></h2>
       <p class="hint">${esc(ph?.caption || "")}</p>

@@ -73,9 +73,9 @@ function yearHTML() {
 // רשת הצירופים: כל מזון צומת, כל צירוף קו. ירוק רציף מעצים, אדום מקווקו מחליש. לחיצה פותחת את המנגנון בטור הצד.
 const nodeKey = (s, side) => side === "a" ? s.a : (s.b || "m:" + s.mate);
 const nodeLabel = (k) => k.startsWith("m:") ? k.slice(2) : byId(k).he;
-function netNodes() {
+function netNodes(SYN) {
   const adj = {};
-  for (const s of SYNERGIES) { const a = nodeKey(s, "a"), b = nodeKey(s, "b"); (adj[a] ||= []).push(b); (adj[b] ||= []).push(a); }
+  for (const s of SYN) { const a = nodeKey(s, "a"), b = nodeKey(s, "b"); (adj[a] ||= []).push(b); (adj[b] ||= []).push(a); }
   // הצומת העמוס במרכז כעמוד שדרה, וכל זוג אחר כשורה אופקית משני הצדדים. כך כל קו נראה, ושום תווית לא עולה על אחרת.
   const keys = Object.keys(adj).sort((x, y) => adj[y].length - adj[x].length);
   const hub = keys[0], W = 840, H = 440, cx = W / 2, cy = H / 2, GAP = 46;
@@ -111,23 +111,32 @@ function netInsights(adj) {
     { type: "פרשנות", t: `ב-**${ext.length}** צירופים השותף אינו מזון מהגלריה: ==גם זמן, בישול ומשקה הם חלק מהצירוף.==` }
   ];
 }
+// סינון בשני הכיוונים: סוג (מעצים, מחליש, הכול) ושותף (מהגלריה, מחוץ לה, הכול).
+const KINDS = [["all", "הכול"], ["boost", "רק מעצים"], ["block", "רק מחלישים"]];
+const MATES = [["all", "הכול"], ["in", "רק מזון עם מזון"], ["ext", "רק שותף חיצוני"]];
+const netList = () => SYNERGIES.filter((s) => (state.k === "all" || s.kind === state.k) && (state.p === "all" || (state.p === "in" ? !!s.b : !s.b)));
 function netHTML() {
-  const { W, H, adj, pos } = netNodes();
+  const SYN = netList();
+  if (!SYN.length) return `<div class="net-box"><p class="src">אין צירוף שמתאים לסינון. <button class="chip" data-net-k="all" data-net-p="all">ניקוי הסינון</button></p></div>`;
+  const { W, H, adj, pos } = netNodes(SYN);
   const sel = state.syn;
-  const edges = SYNERGIES.map((s) => { const a = pos[nodeKey(s, "a")], b = pos[nodeKey(s, "b")];
+  const edges = SYN.map((s) => { const a = pos[nodeKey(s, "a")], b = pos[nodeKey(s, "b")];
     return `<g class="ne ${s.kind} ${sel === s.id ? "on" : ""}" data-syn="${s.id}" tabindex="0" role="button" aria-label="${esc(s.title)}"><line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="ne-hit"/><line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" class="ne-l"/></g>`; }).join("");
   const nodes = Object.entries(pos).map(([k, p]) => { const ext = k.startsWith("m:"); const lab = nodeLabel(k); const w = Math.max(44, lab.length * 9 + 18);
     return `<g class="nn ${ext ? "ext" : ""}" data-node="${esc(k)}" tabindex="0" role="button" transform="translate(${p.x},${p.y})"><rect x="${-w / 2}" y="-13" width="${w}" height="26"/><text y="5">${esc(lab)}</text>${adj[k].length > 1 ? `<circle cx="${w / 2}" cy="-13" r="9"/><text class="nn-n" x="${w / 2}" y="-9">${adj[k].length}</text>` : ""}</g>`; }).join("");
   return `<div class="net-box">
+    <div class="net-f"><span class="chips" role="group" aria-label="סוג">${KINDS.map(([k, he]) => `<button class="chip" data-net-k="${k}" aria-pressed="${state.k === k}">${he}</button>`).join("")}</span>
+      <span class="chips" role="group" aria-label="שותף">${MATES.map(([k, he]) => `<button class="chip" data-net-p="${k}" aria-pressed="${state.p === k}">${he}</button>`).join("")}</span>
+      <span class="src"><bdi class="num">${SYN.length}</bdi> מתוך <bdi class="num">${SYNERGIES.length}</bdi></span></div>
     <ol class="insights net-ins">${netInsights(adj).map((x) => `<li><span class="label">${x.type}</span> ${rich(x.t)}</li>`).join("")}</ol>
-    <div class="net-list" role="list">${SYNERGIES.map((s) => `<button class="net-row ${s.kind} ${sel === s.id ? "on" : ""}" data-syn="${s.id}" role="listitem"><b>${esc(nodeLabel(nodeKey(s, "a")))}</b><i></i><b>${esc(nodeLabel(nodeKey(s, "b")))}</b></button>`).join("")}</div>
+    <div class="net-list" role="list">${SYN.map((s) => `<button class="net-row ${s.kind} ${sel === s.id ? "on" : ""}" data-syn="${s.id}" role="listitem"><b>${esc(nodeLabel(nodeKey(s, "a")))}</b><i></i><b>${esc(nodeLabel(nodeKey(s, "b")))}</b></button>`).join("")}</div>
     <svg class="net" viewBox="0 0 ${W} ${H}" role="img" aria-label="רשת הצירופים">${edges}${nodes}</svg>
     <p class="hint net-legend"><span class="lg boost"></span>מעצים <span class="lg block"></span>מחליש <span class="lg ext"></span>שותף שאינו בגלריה · לחיצה על קו או על מזון פותחת את המנגנון</p>
   </div>`;
 }
 function synSheetHTML() {
   const node = state.node, list = node ? SYNERGIES.filter((s) => nodeKey(s, "a") === node || nodeKey(s, "b") === node) : SYNERGIES.filter((s) => s.id === state.syn);
-  if (!list.length) return `<div class="panel-body" style="display:grid;place-items:center;height:100%;color:var(--ink-soft);text-align:center">${rich("**לחצו על קו** כדי לראות למה הצירוף עובד,<br>ובאיזו מנה הוא קורה.")}</div>`;
+  if (!list.length) return `<div class="panel-body" style="display:grid;place-items:center;height:100%;color:var(--ink-soft);text-align:center"><p class="lines"><span>${rich("**לחצו על קו** כדי לראות למה הצירוף עובד,")}</span><span>ובאיזו מנה הוא קורה.</span></p></div>`;
   const head = node ? nodeLabel(node) : list[0].title;
   return `<div class="panel-head"><div style="min-width:0"><span class="label">${node ? "מזון ברשת" : "צירוף"}</span><h2 class="sheet-name" id="r-title">${esc(head)}</h2></div><div class="ops">${iconBtn("x", "סגירה", "data-net-close")}</div></div>
     <div class="panel-body scroll-in" style="flex:1">${list.map((s) => `<div class="syn ${s.kind}"><b class="syn-t">${s.kind === "boost" ? "מעצים" : "מחליש"} · ${esc(s.title)}</b><p>${rich(s.how)}</p><p class="syn-dish"><span class="tile-l">בצלחת</span>${rich(s.suggest)}</p>
@@ -170,7 +179,8 @@ function select(id) { state.id = id; patch({ id: id || undefined }); renderSheet
 
 export function mount(el, params) {
   root = el;
-  state = { id: params.id || null, food: byId(params.food) ? params.food : null, season: params.season === "1", v: params.v === "net" ? "net" : "list", syn: params.syn || null, node: null };
+  state = { id: params.id || null, food: byId(params.food) ? params.food : null, season: params.season === "1", v: params.v === "net" ? "net" : "list", syn: params.syn || null, node: null,
+    k: KINDS.some(([k]) => k === params.k) ? params.k : "all", p: MATES.some(([k]) => k === params.p) ? params.p : "all" };
   if (!state.id) state.id = list()[0]?.id || null;
   root.innerHTML = `<div class="view-in focus-aside">
     <section class="panel" aria-labelledby="rl-title">
@@ -192,6 +202,10 @@ export function mount(el, params) {
   root.addEventListener("keydown", (e) => { const el = e.target.closest?.("[data-syn], [data-node]"); if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pickNet(el); } });
   root.addEventListener("click", (e) => {
     const vb = e.target.closest("[data-v]"); if (vb) { state.v = vb.dataset.v; patch({ v: state.v === "net" ? "net" : undefined, syn: undefined }); state.syn = null; state.node = null; return render(); }
+    const nf = e.target.closest("[data-net-k], [data-net-p]");
+    if (nf) { if (nf.dataset.netK) state.k = nf.dataset.netK; if (nf.dataset.netP) state.p = nf.dataset.netP;
+      if (state.syn && !netList().some((s) => s.id === state.syn)) state.syn = null;
+      patch({ k: state.k === "all" ? undefined : state.k, p: state.p === "all" ? undefined : state.p, syn: state.syn || undefined }); return render(); }
     const ne = e.target.closest("[data-syn], [data-node]"); if (ne) return pickNet(ne);
     const orr = e.target.closest("[data-open-recipe]"); if (orr) { state.v = "list"; state.food = null; state.season = false; state.id = orr.dataset.openRecipe; patch({ v: undefined, syn: undefined, food: undefined, season: undefined, id: state.id }); return render(); }
     if (e.target.closest("[data-net-close]")) { state.syn = null; state.node = null; patch({ syn: undefined }); return render(); }

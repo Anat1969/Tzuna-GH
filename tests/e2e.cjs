@@ -212,6 +212,34 @@ function serve() {
   await go('#/recipes?v=net');
   await p.click('.nn[data-node="lentil"]');
   ok(await p.locator('#r-sheet .syn').count() === 3, 'לחיצה על עדשים: שלושת הצירופים שלהן');
+  await go('#/recipes?v=net');
+  await p.click('[data-net-k="block"]');
+  ok(await p.locator('.net .ne').count() === 4 && await p.locator('.net .ne.boost').count() === 0 && (await hash()).includes('k=block'), 'סינון ברשת: רק מחלישים');
+  await p.click('[data-net-p="in"]');
+  ok(await p.locator('.net .ne').count() === 0 && await p.locator('.net-box [data-net-k="all"]').count() >= 1, 'סינון ריק: הסבר וניקוי');
+  await p.click('.net-box p [data-net-k="all"]');
+  await p.click('[data-net-p="ext"]');
+  ok(await p.locator('.net .ne').count() === 6, 'רק שותף חיצוני: 6');
+  await p.click('[data-net-p="in"]');
+  ok(await p.locator('.net .ne').count() === 6, 'רק מזון עם מזון: 6');
+
+  console.log('קיבוץ והגדלה');
+  await go('#/foods?id=olive');
+  await p.click('[data-group="season"]');
+  ok(await p.locator('.g-head').count() >= 3 && (await hash()).includes('g=season'), 'קיבוץ לפי עונה: כותרות לקבוצות');
+  await p.click('[data-group="ev"]');
+  ok((await p.textContent('.g-head')).includes('ראיה גבוהה'), 'קיבוץ לפי ראיה: גבוהה ראשונה');
+  await p.click('[data-group="none"]');
+  ok(await p.locator('.g-head').count() === 0, 'בלי קיבוץ');
+  await p.click('#sheet .sheet-hero img');
+  ok(await p.locator('.lightbox img').count() === 1 && (await p.textContent('.lightbox')).includes('זית'), 'לחיצה על צילום: הגדלה בתוך הדף');
+  await p.keyboard.press('Escape');
+  ok(await p.locator('.lightbox').count() === 0 && await p.locator('#sheet .sheet-hero img').count() === 1, 'Esc סוגר את ההגדלה, והגיליון נשאר');
+  await p.click('#sheet .sheet-hero img');
+  await p.evaluate(() => { location.hash = '#/plant'; });
+  await p.waitForTimeout(400);
+  ok(await p.locator('.lightbox').count() === 0, 'מעבר מסך סוגר את ההגדלה');
+
   await go('#/');
   ok(await p.locator('.hd-line mark').count() === 6, 'כל דלת: מספר עם תובנה');
   ok(/\d+\/10/.test(await p.textContent('#ht-disc')), 'גילוי מתחלף עם מונה');

@@ -3,6 +3,7 @@ import { parse, go } from "./route.js";
 import { legendHTML } from "./ui.js";
 import { APP_MARK } from "./plates.js";
 import { classify, showSafety } from "./safety.js";
+import { initZoom } from "./zoom.js";
 import * as home from "./views/home.js";
 import * as foods from "./views/foods.js";
 import * as plant from "./views/plant.js";
@@ -72,3 +73,5 @@ render();
 if ("serviceWorker" in navigator && location.protocol === "https:" && !location.hostname.includes("githack")) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
+
+initZoom();

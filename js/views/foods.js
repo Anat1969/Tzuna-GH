@@ -11,6 +11,8 @@ import { SCIENCE } from "../data/science.js";
 import { synergiesFor } from "../data/synergies.js";
 import { evMeter } from "../ui.js";
 import { medicineFor } from "../data/medicine.js";
+import { PARTS } from "../data/plant.js";
+import { EVIDENCE } from "../data/sources.js";
 
 export const title = "מזון";
 
@@ -44,6 +46,42 @@ function matcher(q) {
 }
 
 const visible = () => FOODS.filter((f) => !state.cats.length || state.cats.includes(f.cat));
+
+// קיבוץ הגלריה: לפי קטגוריה, עונה, חלק בצמח או עוצמת ראיה. בכל קבוצה מיון לפי השם.
+const SEASON_OF = [["חורף", [12, 1, 2]], ["אביב", [3, 4, 5]], ["קיץ", [6, 7, 8]], ["סתיו", [9, 10, 11]]];
+const GROUPS = {
+  none: { he: "בלי קיבוץ" },
+  cat: { he: "קטגוריה", key: (f) => catName(f.cat), order: CATEGORIES.map((c) => c.he) },
+  season: { he: "עונה", key: (f) => { if (!f.months.length || f.months.length >= 11) return "כל השנה"; const best = SEASON_OF.map(([n, ms]) => [n, ms.filter((m) => f.months.includes(m)).length]).sort((a, b) => b[1] - a[1])[0]; return best[0]; }, order: ["חורף", "אביב", "קיץ", "סתיו", "כל השנה"] },
+  part: { he: "חלק בצמח", key: (f) => PARTS.find((p) => p.foods.includes(f.id))?.he || "אחר", order: [...PARTS.map((p) => p.he), "אחר"] },
+  ev: { he: "עוצמת ראיה", key: (f) => { const evs = f.layers.known.map((x) => EVIDENCE.indexOf(x.ev)).filter((i) => i >= 0); return evs.length ? "ראיה " + EVIDENCE[Math.min(...evs)] : "בלי מחקר"; }, order: [...EVIDENCE.map((e) => "ראיה " + e), "בלי מחקר"] }
+};
+function groups() {
+  const list = visible(), g = GROUPS[state.g];
+  if (!g || !g.key) return [[null, list]];
+  const by = {};
+  for (const f of list) (by[g.key(f)] ||= []).push(f);
+  return g.order.filter((k) => by[k]).map((k) => [k, by[k].sort((a, b) => a.he.localeCompare(b.he, "he"))]);
+}
+// סדר התצוגה בפועל, גם לקודם והבא בגיליון.
+const ordered = () => groups().flatMap(([, l]) => l);
+function groupedHTML() {
+  return groups().map(([k, l]) => (k ? `<h3 class="g-head"><span>${esc(k)}</span><bdi class="num">${l.length}</bdi></h3>` : "") + l.map(cardHTML).join("")).join("");
+}
+// משפט תובנה לכל קיבוץ: מה הוא חושף.
+function groupInsight() {
+  const gs = groups(); if (gs.length < 2) return "";
+  const big = [...gs].sort((a, b) => b[1].length - a[1].length)[0], small = [...gs].sort((a, b) => a[1].length - b[1].length)[0];
+  const n = visible().length;
+  const T = {
+    cat: `==**${big[0]}** היא הקבוצה הגדולה==, **${big[1].length}** מתוך **${n}**.`,
+    season: `==**${big[0]}** עשיר פי ${big[1].length >= small[1].length * 3 ? "שלושה ויותר" : "שניים"} מ${small[0]}.==`,
+    part: `==**${big[0]}** מוביל==: **${big[1].length}** מתוך **${n}** מזונות.`,
+    ev: (() => { const hi = gs.find(([k]) => k === "ראיה גבוהה"); return hi ? `==**${hi[1].length}** מתוך **${n}** נשענים על ראיה גבוהה.==` : ""; })()
+  };
+  return T[state.g] ? `<span class="g-ins">${rich(T[state.g])}</span>` : "";
+}
+const groupChips = () => `<span class="label" style="margin-inline-end:4px">קיבוץ</span>` + Object.entries(GROUPS).map(([k, g]) => `<button class="chip" data-group="${k}" aria-pressed="${state.g === k}">${g.he}</button>`).join("") + groupInsight();
 
 function chipsHTML() {
   const all = `<span class="chip-wrap"><button class="chip" data-cat="" aria-pressed="${!state.cats.length}">הכול<span class="count">${FOODS.length}</span></button></span>`;
@@ -90,7 +128,7 @@ function scienceHTML(f) {
 const tile = (label, cls, body) => `<div class="tile ${cls}"><span class="tile-l">${label}</span>${body}</div>`;
 
 function sheetHTML(f) {
-  const list = visible();
+  const list = ordered();
   const idx = list.findIndex((x) => x.id === f.id);
   const pr = PROFILES[f.id] || {};
   const lines = (arr) => arr.map((x) => `<p>${rich(x.t)}</p>`).join("");
@@ -101,7 +139,7 @@ function sheetHTML(f) {
   const months = f.months.length ? `${monthsBar(f)}<p class="hint">${esc(f.season_kind)}: <b>${esc(f.months.map((m) => MONTHS[m - 1]).join(", "))}</b></p>` : `<p style="font-size:14px">${rich("**כל השנה**, ביבוא.")}</p>`;
   const srcIds = [...(SCIENCE[f.id]?.studied || []).map((x) => x.src), ...synergiesFor(f.id).map((x) => x.src), f.recognize.src, f.use.src, pr.body?.src, pr.soul?.src, ...(pr.with || []).map((x) => x.src), ...(pr.without || []).map((x) => x.src),
     ...LAYERS.flatMap((l) => f.layers[l.key].map((x) => x.src)), "season-est"];
-  return `<div class="sheet-hero">${foodImage(f, { big: true })}${photoCredit(f)}
+  return `<div class="sheet-hero zoomable" data-zoom-cap="${esc(f.he)}">${foodImage(f, { big: true })}${photoCredit(f)}
       <div class="ops on-photo">${iconBtn("prev", "הקודם", `data-step="-1" ${idx <= 0 ? "disabled" : ""}`)}<span class="pos"><bdi class="num" style="font-weight:400">${idx + 1}/${list.length}</bdi></span>${iconBtn("next", "הבא", `data-step="1" ${idx >= list.length - 1 ? "disabled" : ""}`)}${iconBtn("x", "סגירה", "data-close")}</div>
     </div>
     <div class="panel-body scroll-in" style="flex:1">
@@ -129,7 +167,8 @@ function sheetHTML(f) {
 }
 
 function renderGallery() {
-  root.querySelector("#gallery").innerHTML = visible().map(cardHTML).join("");
+  root.querySelector("#gallery").innerHTML = groupedHTML();
+  root.querySelector("#gchips").innerHTML = groupChips();
   root.querySelector("#chips").innerHTML = chipsHTML();
   applySearch();
 }
@@ -164,7 +203,8 @@ export function mount(el, params, ctx) {
   state = {
     id: params.id || null,
     cats: (params.cat || "").split(",").filter((c) => CATEGORIES.some((x) => x.id === c)),
-    q: params.q || ctx.query || ""
+    q: params.q || ctx.query || "",
+    g: GROUPS[params.g] ? params.g : "none"
   };
   const qInput = document.querySelector("#q");
   if (state.q && qInput && qInput.value !== state.q) qInput.value = state.q;
@@ -177,6 +217,7 @@ export function mount(el, params, ctx) {
         <span class="src" id="hits" aria-live="polite"></span>
       </div>
       <div class="gallery-tools" style="padding-top:4px;padding-bottom:6px"><div class="chips" id="chips" role="group" aria-label="קטגוריות"></div></div>
+      <div class="gallery-tools g-tools"><div class="chips" id="gchips" role="group" aria-label="קיבוץ"></div></div>
       <div class="scroll-in gallery-box" style="flex:1"><div class="gallery" id="gallery"></div></div>
     </section>
     <aside class="panel sheet" id="sheet" aria-labelledby="sheet-title"></aside>
@@ -200,6 +241,8 @@ export function mount(el, params, ctx) {
   root.addEventListener("click", (e) => {
     const card = e.target.closest(".food-card");
     if (card) return select(card.dataset.id, { scroll: true });
+    const gb = e.target.closest("[data-group]");
+    if (gb) { state.g = gb.dataset.group; patch({ g: state.g === "none" ? undefined : state.g }); return renderGallery(); }
     const chip = e.target.closest("[data-cat]");
     if (chip) {
       const c = chip.dataset.cat;
@@ -213,7 +256,7 @@ export function mount(el, params, ctx) {
     if (rem) { state.cats = state.cats.filter((c) => c !== rem.dataset.rem); patch({ cat: state.cats.join(",") || undefined }); return renderGallery(); }
     const step = e.target.closest("[data-step]");
     if (step) {
-      const list = visible(); const i = list.findIndex((x) => x.id === state.id);
+      const list = ordered(); const i = list.findIndex((x) => x.id === state.id);
       const nx = list[i + Number(step.dataset.step)];
       if (nx) select(nx.id);
       return;
@@ -224,7 +267,7 @@ export function mount(el, params, ctx) {
   const onKey = (e) => {
     if (e.target.closest("input, textarea, select") || document.getElementById("safety-overlay")) return;
     if (!state.id) return;
-    const list = visible(); const i = list.findIndex((x) => x.id === state.id);
+    const list = ordered(); const i = list.findIndex((x) => x.id === state.id);
     if (e.key === "ArrowLeft" && list[i + 1]) select(list[i + 1].id);
     if (e.key === "ArrowRight" && list[i - 1]) select(list[i - 1].id);
     if (e.key === "Escape") select(null);
@@ -235,6 +278,8 @@ export function mount(el, params, ctx) {
 
 export function update(params) {
   if ((params.id || null) !== state.id) { state.id = params.id || null; renderSheet(); }
+  const g = GROUPS[params.g] ? params.g : "none";
+  if (g !== state.g) { state.g = g; renderGallery(); }
   const cats = (params.cat || "").split(",").filter(Boolean);
   if (cats.join() !== state.cats.join()) { state.cats = cats; renderGallery(); }
   if (params.q !== undefined && params.q !== state.q) { state.q = params.q; document.querySelector("#q").value = params.q; applySearch(); }
