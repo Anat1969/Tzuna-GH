@@ -21,22 +21,23 @@ export function frame(viewEl, name) {
   if (titleBox) {
     const tools = titleBox.parentElement;
     head.querySelector(".ph-title").append(titleBox);
+    if (lens.use) head.querySelector(".ph-title").insertAdjacentHTML("beforeend", `<p class="ph-use">${icon("origin")}<span><b>איך משתמשים:</b> ${rich(lens.use)}</span></p>`);
     if (tools && tools.classList.contains("gallery-tools") && !tools.textContent.trim()) tools.remove();
   }
   grid.prepend(head);
   grid.classList.add("framed");
 }
 
-// רמה 3: גוף ונפש, תמיד בתחתית הטור הצדדי. המידע משתנה לפי הנושא.
-// body/soul: {t, sub} . sub הוא מאיפה המידע (שם המזון, המסורת, הפסוק).
-export function dock(aside, { body, soul }) {
+// רמה 3: גוף ונפש, תמיד בראש הטור הצדדי ובאותו מקום. המידע משתנה לפי הנושא. מתחתם נגלל רק המידע הכמותי.
+// body/soul: {t, sub} . sub הוא מאיפה המידע. extra: שורה קבועה נוספת (למשל "מתי בשנה").
+export function dock(aside, { body, soul, extra = "" }) {
   if (!aside) return;
   aside.querySelector(".bs-dock")?.remove();
   const half = (cls, ic, word, x) => `<section class="bs-h ${cls}" aria-label="${word}"><header>${icon(ic)}<b>${word}</b>${x?.sub ? `<span>${esc(x.sub)}</span>` : ""}</header><p>${x ? rich(x.t) : `<span class="bs-empty">אין מידע לנושא הזה.</span>`}</p></section>`;
   const el = document.createElement("div");
   el.className = "bs-dock";
-  el.innerHTML = half("bs-body", "body", "גוף", body) + half("bs-soul", "mind", "נפש", soul);
-  aside.append(el);
+  el.innerHTML = `<div class="bs-pair">${half("bs-body", "body", "גוף", body) + half("bs-soul", "mind", "נפש", soul)}</div>${extra ? `<div class="bs-extra">${extra}</div>` : ""}`;
+  aside.prepend(el);
 }
 
 export const monthName = () => MONTHS[nowMonth() - 1];

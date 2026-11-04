@@ -6,7 +6,26 @@ export const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&a
 // **מודגש**, ==תובנה==, ומספרים מודגשים אוטומטית בכיוון LTR מבודד.
 const NUM = /(\d[\d,.]*%?)/g;
 const nums = (s) => s.replace(NUM, "<bdi class=\"num\">$1</bdi>");
+// כל משפט בשורה חדשה (כלל ענת): חיתוך אחרי נקודה, סימן שאלה או קריאה, רק מחוץ ל-** ול-==.
+function sentences(t) {
+  const out = []; let b = 0, star = 0, eq = 0;
+  for (let i = 0; i < t.length; i++) {
+    if (t.startsWith("**", i)) { star ^= 1; i++; continue; }
+    if (t.startsWith("==", i)) { eq ^= 1; i++; continue; }
+    const c = t[i];
+    if ((c === "." || c === "?" || c === "!") && t[i - 1] !== "." && t[i + 1] === " " && i + 2 < t.length && !star && !eq && /[^\s)]/.test(t[i + 2])) {
+      out.push(t.slice(b, i + 1)); b = i + 2;
+    }
+  }
+  out.push(t.slice(b));
+  return out.filter((x) => x.trim());
+}
 export function rich(text) {
+  const ss = sentences(String(text ?? ""));
+  if (ss.length > 1) return ss.map((x) => `<span class="s">${richOne(x)}</span>`).join("");
+  return richOne(text);
+}
+function richOne(text) {
   return esc(text).split(/(==[^=]+==|\*\*[^*]+\*\*)/g).map((p) => {
     if (p.startsWith("**")) return `<strong>${nums(p.slice(2, -2))}</strong>`;
     // הדגשה בתוך מרקר: **מילה** בתוך ==תובנה==

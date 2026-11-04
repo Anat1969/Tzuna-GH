@@ -102,26 +102,31 @@ const climateLegend = () => sort === "climate" ? `<div class="legend geo-legend"
 const SEG = [[-1100, -200, 0, 0.22], [-200, 1000, 0.22, 0.44], [1000, 1900, 0.44, 0.68], [1900, 2030, 0.68, 1]];
 const tx = (year) => { const s = SEG.find(([a, b]) => year >= a && year <= b) || SEG[SEG.length - 1]; return s[2] + ((year - s[0]) / (s[1] - s[0])) * (s[3] - s[2]); };
 function timelineSVG() {
-  const W = 1000, laneH = 64, top = 56, H = top + REGIONS.length * laneH + 40, X = (y) => 24 + tx(y) * (W - 160);
+  const W = 1000, top = 56, X = (y) => 24 + tx(y) * (W - 160);
+  // תוויות בלי חפיפה: לכל נתיב ארבעה מקומות (מתחת, מעל, מתחת 2, מעל 2). הנתיב גדל לפי הצורך.
+  const SLOT = [[24, 37], [52, 65], [80, 93]], slot = {}, used = {};
+  METHODS.slice().sort((a, b) => a.from - b.from).forEach((m) => {
+    const x0 = X(m.from), w = Math.max(10, X(m.to) - x0), cx = x0 + w / 2, half = Math.max(m.he.length * 3.8, 30) + 6;
+    const L = (used[m.region] ||= [[], [], []]);
+    let k = L.findIndex((iv) => iv.every(([a, b]) => cx + half < a || cx - half > b));
+    if (k < 0) k = 0;
+    L[k].push([cx - half, cx + half]); slot[m.id] = k;
+  });
+  const extra = (r) => { const L = used[r.id] || []; return (L[1]?.length ? 28 : 0) + (L[2]?.length ? 28 : 0); };
+  const laneTop = []; let acc = top;
+  REGIONS.forEach((r) => { laneTop.push(acc); acc += 64 + extra(r); });
+  const H = acc + 40;
   const yr = (y, x, yy, big, on) => `<text x="${x}" y="${yy}" text-anchor="middle" class="tl-y ${big ? "big" : ""} ${on ? "on" : ""}">${Math.abs(y)}${y < 0 ? `<tspan class="tl-bce" dx="2">לפנה"ס</tspan>` : ""}</text>`;
-  // שני עידנים: לפני הספירה ולספירה, ברצועה בראש הציר
   const era = `<rect x="${X(-1100)}" y="8" width="${X(0) - X(-1100)}" height="18" fill="#efe9dc"/><rect x="${X(0)}" y="8" width="${X(2030) - X(0)}" height="18" fill="#e6edf3"/>
     <text x="${(X(-1100) + X(0)) / 2}" y="21" text-anchor="middle" class="tl-era">לפני הספירה</text><text x="${(X(0) + X(2030)) / 2}" y="21" text-anchor="middle" class="tl-era">לספירה</text>`;
-  const lanes = REGIONS.map((r, i) => `<g><rect x="0" y="${top + i * laneH}" width="${W}" height="${laneH - 8}" fill="${i % 2 ? "#fafaf7" : "#fff"}"/><text x="${W - 8}" y="${top + i * laneH + 32}" text-anchor="end" class="tl-lane" fill="${r.hue}">${esc(r.he)}</text></g>`).join("");
+  const lanes = REGIONS.map((r, i) => { const y0 = laneTop[i], h = 56 + extra(r); return `<g><rect x="0" y="${y0}" width="${W}" height="${h}" fill="${i % 2 ? "#fafaf7" : "#fff"}"/><text x="${W - 8}" y="${laneTop[i] + 32}" text-anchor="end" class="tl-lane" fill="${r.hue}">${esc(r.he)}</text></g>`; }).join("");
   const ticks = [-1000, -500, 0, 500, 1000, 1500, 1900, 2000].map((t) => `<line x1="${X(t)}" x2="${X(t)}" y1="${top - 6}" y2="${H - 30}" stroke="${t === 0 ? "#bdb8ab" : "#ecebe6"}" stroke-width="${t === 0 ? 1.2 : 1}"/>${yr(t, X(t), H - 10, true, false)}`).join("");
-  const lastX = {}, flip = {};
-  METHODS.slice().sort((a, b) => a.from - b.from).forEach((m) => {
-    const cx = X((m.from + m.to) / 2);
-    flip[m.id] = lastX[m.region] !== undefined && cx - lastX[m.region].x < 120 ? !lastX[m.region].up : false;
-    lastX[m.region] = { x: cx, up: flip[m.id] };
-  });
   const marks = METHODS.map((m) => {
-    const li = REGIONS.findIndex((r) => r.id === m.region), x0 = X(m.from), w = Math.max(10, X(m.to) - x0), y = top + li * laneH + 24, on = m.id === sel, cx = x0 + w / 2;
-    const up = flip[m.id];
+    const li = REGIONS.findIndex((r) => r.id === m.region), x0 = X(m.from), w = Math.max(10, X(m.to) - x0), y = laneTop[li] + 24, on = m.id === sel, cx = x0 + w / 2, [ny, yy] = SLOT[slot[m.id]];
     return `<g class="tl-m ${on ? "on" : ""} ${dim(m) ? "dim" : ""}" data-m="${m.id}" role="button" tabindex="0" aria-label="${esc(m.he)}, ${yearLabel(m.from)}">
       <rect x="${x0 - (w === 10 ? 5 : 0)}" y="${y}" width="${w}" height="10" rx="5" fill="${hue(m)}" opacity="${on ? 1 : .6}" ${m.approx ? `stroke-dasharray="3 2" stroke="${hue(m)}" fill-opacity=".45"` : ""}/>
-      <text x="${cx}" y="${up ? y - 16 : y + 24}" text-anchor="middle" class="tl-n ${on ? "on" : ""}" style="direction:rtl">${esc(m.he)}</text>
-      ${yr(m.from, cx, up ? y - 4 : y + 37, false, on)}</g>`;
+      <text x="${cx}" y="${y + ny}" text-anchor="middle" class="tl-n ${on ? "on" : ""}" style="direction:rtl">${esc(m.he)}</text>
+      ${yr(m.from, cx, y + yy, false, on)}</g>`;
   }).join("");
   const now = X(2026);
   return `<svg class="tl" viewBox="0 0 ${W} ${H}" role="img" aria-label="ציר זמן של שיטות התזונה" style="direction:ltr">${era}${lanes}${ticks}<line x1="${now}" x2="${now}" y1="${top - 6}" y2="${H - 30}" stroke="#7A1F2B" stroke-dasharray="2 3"/><text x="${now - 4}" y="${top - 10}" text-anchor="end" class="tl-now">היום</text>${marks}</svg>`;
@@ -147,7 +152,7 @@ function figuresHTML() {
 function matrixHTML() {
   const count = (t) => METHODS.filter((m) => has(m, t.id)).length;
   return `<table class="mx"><thead><tr><th></th>${TRAITS.map((t) => `<th><button class="mx-h ${sort === t.id ? "on" : ""}" data-sort="${t.id}" title="מיון לפי ${esc(t.he)}">${icon(TRAIT_ICON[t.id])}<span>${esc(t.he)}</span><span class="mx-n">${count(t)}</span></button></th>`).join("")}</tr></thead>
-    <tbody>${ordered().map((m) => `<tr data-m="${m.id}" class="${m.id === sel ? "on" : ""} ${dim(m) ? "dim" : ""}"><th>${esc(m.he)}</th>${TRAITS.map((t) => `<td class="${sort === t.id ? "col-on" : ""}">${has(m, t.id) ? `<i class="dot" style="background:${hue(m)}"></i>` : ""}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+    <tbody>${ordered().map((m) => `<tr data-m="${m.id}" class="${m.id === sel ? "on" : ""} ${dim(m) ? "dim" : ""} ${TRAITS.some((t) => t.id === sort) && has(m, sort) ? "hit" : ""}"><th>${esc(m.he)}</th>${TRAITS.map((t) => `<td class="${sort === t.id ? "col-on" : ""}">${has(m, t.id) ? `<i class="dot" style="background:${hue(m)}"></i>` : ""}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 }
 
 function tableHTML() {
@@ -157,17 +162,17 @@ function tableHTML() {
   </tbody></table></details>`;
 }
 
-function topHTML() {
-  return `${sortBar()}${traitInsight()}
-    <section class="mt-disc"><div class="sec-h"><h3>מה הטבלה מחביאה</h3><span class="label">גילויים מההצלבה</span></div>
-      <ul class="disc-list">${discoveries().map((d) => `<li>${icon(TRAIT_ICON[d.ic] || d.ic)}<span>${rich(d.t)}</span></li>`).join("")}</ul></section>`;
-}
+function topHTML() { return `${sortBar()}${traitInsight()}`; }
+// הדף מפוצל ללשוניות: מקום וזמן, גילויים, מה כל שיטה שוקלת, ודמויות. מידע מאותו סוג ברשימה אחת.
+let tab = "geo";
+const TABS = [["geo", "מקום וזמן", "local"], ["disc", "גילויים", "mind"], ["cmp", "מה כל שיטה שוקלת", "nutrient"], ["who", "דמויות", "body"]];
+const tabsHTML = () => `<div class="mt-tabs" role="tablist">${TABS.map(([k, he, ic]) => `<button class="mt-tab" role="tab" data-tab="${k}" aria-selected="${tab === k}">${icon(ic)}${he}</button>`).join("")}</div>`;
 function restHTML() {
-  return `<section><div class="sec-h"><h3>דמויות</h3><span class="label">מי ניסח את השיטה</span></div>${figuresHTML()}</section>
-    <section class="mt-cmp"><div class="sec-h"><h3>מה כל שיטה שוקלת</h3><span class="label">לחיצה על פרמטר ממיינת</span></div>${matrixHTML()}</section>
-    <section class="mt-cmp"><div class="sec-h"><h3>מה דומה ומה שונה</h3><span class="label">התובנות שלי מההשוואה</span></div>
-      <ul class="insights">${METHOD_INSIGHTS.map((x) => `<li>${rich(x.t)}</li>`).join("")}</ul></section>
-    ${tableHTML()}`;
+  if (tab === "disc") return `<section class="mt-disc"><div class="sec-h"><h3>מה הטבלה מחביאה, ומה דומה ומה שונה</h3><span class="label">גילויים מההצלבה</span></div>
+      <ul class="disc-list one">${discoveries().map((d) => `<li>${icon(TRAIT_ICON[d.ic] || d.ic)}<span>${rich(d.t)}</span></li>`).join("")}${METHOD_INSIGHTS.map((x) => `<li>${icon("combine")}<span>${rich(x.t)}</span></li>`).join("")}</ul></section>`;
+  if (tab === "cmp") return `<section class="mt-cmp"><div class="sec-h"><h3>מה כל שיטה שוקלת</h3><span class="label">לחיצה על פרמטר ממיינת ומדגישה את השורות</span></div>${matrixHTML()}</section>${tableHTML()}`;
+  if (tab === "who") return `<section><div class="sec-h"><h3>דמויות</h3><span class="label">מי ניסח את השיטה</span></div>${figuresHTML()}</section>`;
+  return "";
 }
 
 // תרשים של הרעיון: ארבע הליחות, שלוש הדושות, חמש התמורות, וסדר הארוחה של הרמב"ם.
@@ -201,8 +206,8 @@ function asideHTML() {
   const traits = TRAITS.filter((t) => has(m, t.id));
   return `<div class="panel-head mt-head"><div class="mt-head-in">${m.who ? portrait(m, 64) : `<span class="mt-noportrait" style="color:${r.hue}">${icon(m.ll ? "culture" : "globe")}</span>`}
       <div><span class="label" style="color:${r.hue}">${esc(r.he)}</span><h2 class="sheet-name" id="mt-title" style="font-size:28px;font-weight:700">${esc(m.he)}</h2>
-      ${m.who ? `<p class="mt-who">${esc(m.who.he)} <span class="latin">${esc(m.who.la)}</span></p>` : ""}</div></div>
-      <div class="mt-when"><span>${icon("local")}<b>${esc(m.place)}</b> <span class="latin">${esc(m.place_la)}</span></span><span>${icon("order")}<b>${when}</b>${m.approx ? " (בערך)" : ""}</span><span>${icon("climate")}<b>${esc(CLIMATES[IDEAS[m.id].climate].he)}</b>${m.ll ? ` · ${Math.round(m.ll[1])}°` : ""}</span></div></div>
+      ${m.who ? `<p class="mt-who">${esc(m.who.he)}</p>` : ""}</div></div>
+      <div class="mt-when"><span>${icon("local")}<b>${esc(m.place)}</b></span><span>${icon("order")}<b>${when}</b>${m.approx ? " (בערך)" : ""}</span><span>${icon("climate")}<b>${esc(CLIMATES[IDEAS[m.id].climate].he)}</b>${m.ll ? ` · ${Math.round(m.ll[1])}°` : ""}</span></div></div>
     <div class="panel-body scroll-in" style="flex:1">
       ${m.layer === "believed" ? `<p class="believed-badge"><i class="layer-mark lm-believed"></i>${rich("שכבת **מאמינים**: חלק מהמידע נמסר בתקשור, ולא נבדק במחקר.")}</p>` : ""}
       <p class="unique" style="margin-top:0">${rich(m.principle)}</p>
@@ -224,7 +229,8 @@ function asideHTML() {
 }
 
 function render() {
-  root.querySelector("#mt-top").innerHTML = topHTML();
+  root.querySelector("#mt-top").innerHTML = topHTML() + tabsHTML();
+  root.querySelector(".mt-geo").hidden = tab !== "geo";
   root.querySelector("#mt-tl").innerHTML = timelineSVG();
   root.querySelector("#mt-rest").innerHTML = restHTML();
   root.querySelector("#mt-geo-legend").innerHTML = climateLegend();
@@ -239,6 +245,7 @@ function select(id) { sel = id; patch({ m: id }); render(); }
 export function mount(el, params) {
   root = el;
   sel = METHODS.some((m) => m.id === params.m) ? params.m : "rambam";
+  tab = TABS.some(([k]) => k === params.t) ? params.t : "geo";
   sort = params.s && (["lat", "climate"].includes(params.s) || TRAITS.some((t) => t.id === params.s)) ? params.s : "time";
   root.innerHTML = `<div class="view-in focus-aside">
     <section class="panel" aria-labelledby="mt-h">
@@ -257,6 +264,7 @@ export function mount(el, params) {
   attachGeo(root.querySelector("#mt-geo"), select);
   render();
   root.addEventListener("click", (e) => {
+    const tb = e.target.closest("[data-tab]"); if (tb) { tab = tb.dataset.tab; patch({ t: tab === "geo" ? undefined : tab }); return render(); }
     const s = e.target.closest("[data-sort]");
     if (s) { sort = s.dataset.sort; patch({ s: sort === "time" ? undefined : sort }); return render(); }
     const t = e.target.closest("[data-m]");

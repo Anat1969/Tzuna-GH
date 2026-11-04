@@ -6,6 +6,21 @@ import * as store from "../store.js";
 import { RECIPES } from "../data/recipes.js";
 import { SYNERGIES } from "../data/synergies.js";
 import { DISCOVERIES } from "../data/discoveries.js";
+import { METHOD_INSIGHTS } from "../data/methods.js";
+import { discoveries as nutrientDisc } from "./nutrients.js";
+
+// מאגר גילויים מכל האפליקציה, בסדר אקראי בכל ביקור: זוגות, שיטות, רכיבים וחלקי צמח.
+function discPool() {
+  const all = [
+    ...DISCOVERIES.map((d) => ({ title: d.title, t: d.t, type: d.type, href: `#/compare?a=${d.pair[0]}&b=${d.pair[1]}` })),
+    ...METHOD_INSIGHTS.map((x) => ({ title: "שיטות מכל העולם", t: x.t, type: "פרשנות", href: "#/methods?t=disc" })),
+    ...nutrientDisc().map((x) => ({ title: x.n.he, t: x.t, type: "עובדה", href: `#/nutrients?n=${x.n.id}` })),
+    ...PARTS.filter((p) => p.note).map((p) => ({ title: `צמח וגוף: ${p.he}`, t: p.note, type: "עובדה", href: `#/plant?p=${p.id}` }))
+  ];
+  for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [all[i], all[j]] = [all[j], all[i]]; }
+  return all;
+}
+let POOLD = [];
 import { METHODS } from "../data/methods.js";
 import { PARTS } from "../data/plant.js";
 import { PHOTOS } from "../data/photos.js";
@@ -33,8 +48,8 @@ function today() {
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
   const block = SYNERGIES.find((s) => s.kind === "block" && (ids.has(s.a) || ids.has(s.b))) || SYNERGIES.find((s) => s.kind === "block");
   const syn = boosts.length ? pick(boosts) : syn0;
-  const start = Math.floor(Math.random() * DISCOVERIES.length);
-  return { m, inSeason, syn, block, dish, start, disc: DISCOVERIES[start] };
+  POOLD = discPool();
+  return { m, inSeason, syn, block, dish, start: 0, disc: POOLD[0] };
 }
 
 // כל מספר בדלת מגיע עם משפט שאומר מה הוא מלמד.
@@ -63,7 +78,7 @@ const door = (href, label, title, n, unit, photoId, line) => {
   </a>`;
 };
 
-const discInner = (d, i) => `<span class="tile-l">גילוי · <bdi class="num">${i + 1}/${DISCOVERIES.length}</bdi> · ${esc(d.type)}</span><b>${esc(d.title)}</b><span>${rich(d.t)}</span>`;
+const discInner = (d, i) => `<span class="tile-l">גילוי · <bdi class="num">${i + 1}/${POOLD.length}</bdi> · ${esc(d.type)}</span><b>${esc(d.title)}</b><span>${rich(d.t)}</span>`;
 let timer = null;
 
 export function mount(root) {
@@ -98,7 +113,7 @@ export function mount(root) {
       <a class="syn boost ht-syn" href="#/recipes${t.syn.dishes[0] ? "?id=" + t.syn.dishes[0] : ""}"><b class="syn-t">צירוף מעצים · ${esc(t.syn.title)}</b><p>${rich(t.syn.how)}</p><p class="syn-dish"><span class="tile-l">בצלחת</span>${rich(t.syn.suggest)}</p></a>
       <a class="syn block ht-syn" href="#/foods?id=${t.block.a}"><b class="syn-t">לא לשלב · ${esc(t.block.title)}</b><p>${rich(t.block.how)}</p></a>
       ${t.dish ? `<a class="ht-dish press" href="#/recipes?id=${t.dish.id}"><span class="tile-l">מנה לחודש</span><b>${esc(t.dish.he)}</b><span class="hint">${esc(t.dish.time)} · ${t.dish.steps.length} שלבים</span></a>` : ""}
-      <a class="ht-disc" id="ht-disc" href="#/compare?a=${t.disc.pair[0]}&b=${t.disc.pair[1]}" aria-live="polite">${discInner(t.disc, t.start)}</a>
+      <a class="ht-disc" id="ht-disc" href="${t.disc.href}" aria-live="polite">${discInner(t.disc, t.start)}</a>
     </section>
     <nav class="h-doors" aria-label="מפת האפליקציה">
       ${door("#/foods", "הכר", "מזון", FOODS.length, "מזונות", "pomegranate", L.foods)}
@@ -166,8 +181,8 @@ export function mount(root) {
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) timer = setInterval(() => {
     if (!discEl.isConnected) return clearInterval(timer);
     if (hold || document.hidden) return;
-    i = (i + 1) % DISCOVERIES.length; const d = DISCOVERIES[i];
+    i = (i + 1) % POOLD.length; const d = POOLD[i];
     discEl.classList.add("swap");
-    setTimeout(() => { discEl.href = `#/compare?a=${d.pair[0]}&b=${d.pair[1]}`; discEl.innerHTML = discInner(d, i); discEl.classList.remove("swap"); }, 250);
+    setTimeout(() => { discEl.href = d.href; discEl.innerHTML = discInner(d, i); discEl.classList.remove("swap"); }, 250);
   }, 9000);
 }

@@ -4,6 +4,7 @@ export const REGIONS = [
   { id: "me", he: "מזרח תיכון", hue: "#8a6a2a" },
   { id: "asia", he: "אסיה", hue: "#a83a3a" },
   { id: "eu", he: "אירופה והים התיכון", hue: "#1F4E79" },
+  { id: "na", he: "אמריקה", hue: "#6a4a8a" },
   { id: "global", he: "מדע עולמי", hue: "#2a2a26" }
 ];
 
@@ -81,6 +82,24 @@ export const METHODS = [
     unit: "**רכיבים ודפוסים**: סיבים, סוכר חופשי, נתרן.", principle: "**ראיות**, ועוצמת ראיה.",
     time: "**לאורך החיים**, לא לפי עונה.", conflict: "**אינטראקציות** בין מזון לתרופה, וספיגה בין מזונות.",
     example: { food: "lentil", t: "**לימון עם עדשים**: ויטמין C מגביר ספיגת ברזל." }, context: { culture: "**ניסוי מבוקר** ומחקר אוכלוסייה.", geo: "**עולמי**.", climate: "**לא תלוי אקלים**: אותה הנחיה בכל מקום." }, src: ["who-2023", "medlineplus-iron"]
+  },
+  {
+    id: "fiveday", he: "חמש ביום", place: "קליפורניה, ארצות הברית", place_la: "California", ll: [-119.4, 36.8], who: { he: "מחלקת הבריאות של קליפורניה", la: "", role: "בריאות הציבור" }, region: "na", from: 1988, to: 2003,
+    unit: "**מנות של פירות וירקות** ביום.", principle: "**מספר אחד שקל לזכור**: הרבה פירות וירקות, בכל יום.",
+    time: "**כל יום**, בכל ארוחה.", conflict: "**מיץ** לא נחשב כמו פרי שלם.",
+    example: { food: "orange", t: "**תפוז שלם**, לא מיץ." }, context: { culture: "**בריאות הציבור**: מסר פשוט לקמפיין לאומי.", geo: "**קליפורניה**, ואחר כך ההנחיה של WHO לכל העולם.", climate: "**כל אקלים**: מה שבשדה." }, src: ["who-fruit-veg-2003", "who-2023"]
+  },
+  {
+    id: "bluezones", he: "האזורים הכחולים", place: "סרדיניה, אוקינאווה, איקריה, ניקויה ולומה לינדה", place_la: "Blue Zones", ll: [9.3, 40.1], who: { he: "דן ביוטנר", la: "", role: "עיתונאי וחוקר" }, region: "global", from: 2005, to: 2005,
+    unit: "**קהילות שחיות זמן רב**, ומה משותף להן.", principle: "**הרבה צומח וקטניות**, תנועה וקהילה.",
+    time: "**ארוחה אחרונה קטנה**, מוקדם בערב.", conflict: "**הרבה בשר** ומזון מעובד.",
+    example: { food: "bean", t: "**שעועית וקטניות** הן בסיס בכל חמשת האזורים." }, context: { culture: "**קהילות מסורתיות**: משפחה, אמונה ושולחן משותף.", geo: "**איים והרים**: סרדיניה, אוקינאווה, איקריה, ניקויה ולומה לינדה.", climate: "**ממוזג וים־תיכוני** ברובם." }, src: "buettner-2005"
+  },
+  {
+    id: "mind", he: "דיאטת מיינד", place: "שיקגו, ארצות הברית", place_la: "Chicago", ll: [-87.6, 41.9], who: { he: "מרתה קלייר מוריס", la: "", role: "חוקרת" }, region: "na", from: 2015, to: 2015,
+    unit: "**קבוצות מזון**: עשר שכדאי, וחמש שמצמצמים.", principle: "**צירוף של התזונה הים־תיכונית ו-DASH**, עם דגש על **עלים ירוקים** ו**פירות יער**.",
+    time: "**כל שבוע**: עלים ירוקים כמעט כל יום.", conflict: "**חמאה, גבינה ומזון מטוגן**: מעט.",
+    example: { food: "spinach", t: "**עלים ירוקים** הם הקבוצה הראשונה ברשימה." }, context: { culture: "**מחקר מוח**: תזונה וזיכרון בגיל מבוגר.", geo: "**שיקגו**, ארצות הברית.", climate: "**יבשתי**, חורף קר." }, src: "morris-2015"
   }
 ];
 
@@ -90,6 +109,7 @@ export const TRAITS = [
   { id: "nutrient", he: "רכיבים" }, { id: "local", he: "מקומי" }, { id: "table", he: "שולחן משותף" }, { id: "mind", he: "נפש ורוח" }
 ];
 export const MATRIX = {
+  fiveday: ["nutrient"], bluezones: ["local", "table", "mind", "nutrient"], mind: ["nutrient"],
   bible: ["season", "table", "mind"], ayurveda: ["taste", "temp", "season", "order", "mind"], tcm: ["taste", "temp", "season", "mind"],
   hippocrates: ["temp", "season", "local"], galen: ["temp", "season"], rambam: ["temp", "season", "order", "mind"],
   hildegard: ["temp", "season", "mind"], washoku: ["taste", "season", "local", "table"], med: ["local", "table", "nutrient"],

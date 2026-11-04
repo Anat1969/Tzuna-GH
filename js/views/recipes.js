@@ -161,8 +161,9 @@ function render() {
   }
   const L = list();
   root.querySelector("#r-list").classList.remove("is-net");
-  root.querySelector("#r-list").innerHTML = L.map(cardHTML).join("") || `<p class="src" style="padding:12px">אין מתכון שמתאים לסינון. <button class="chip" data-clear>ניקוי הסינון</button></p>`;
-  root.querySelector("#r-year").innerHTML = yearHTML();
+  // "שנה במטבח" היא תצוגה בכפתור משלה, לא רשימה שמסתתרת בסוף.
+  root.querySelector("#r-list").innerHTML = state.v === "year" ? "" : (L.map(cardHTML).join("") || `<p class="src" style="padding:12px">אין מתכון שמתאים לסינון. <button class="chip" data-clear>ניקוי הסינון</button></p>`);
+  root.querySelector("#r-year").innerHTML = state.v === "year" ? yearHTML() : "";
   root.querySelector("#r-hits").innerHTML = `<bdi class="num">${L.length}</bdi> מתכונים`;
   root.querySelector("#f-season").setAttribute("aria-pressed", String(state.season));
   root.querySelector("#f-food").innerHTML = state.food ? `<span class="chip-wrap"><button class="chip" aria-pressed="true" data-clear-food>עם ${esc(byId(state.food).he)} ×</button></span>` : "";
@@ -182,7 +183,7 @@ function select(id) { state.id = id; patch({ id: id || undefined }); renderSheet
 
 export function mount(el, params) {
   root = el;
-  state = { id: params.id || null, food: byId(params.food) ? params.food : null, season: params.season === "1", v: params.v === "net" ? "net" : "list", syn: params.syn || null, node: null,
+  state = { id: params.id || null, food: byId(params.food) ? params.food : null, season: params.season === "1", v: ["net", "year"].includes(params.v) ? params.v : "list", syn: params.syn || null, node: null,
     k: KINDS.some(([k]) => k === params.k) ? params.k : "all", p: MATES.some(([k]) => k === params.p) ? params.p : "all" };
   if (!state.id) state.id = list()[0]?.id || null;
   root.innerHTML = `<div class="view-in focus-aside">
@@ -191,7 +192,7 @@ export function mount(el, params) {
         <div><h1 class="view-title" id="rl-title">צירופים מעצימים</h1><p class="view-sub">${rich("מתכון הוא **צירוף**: מזון אחד מפעיל איכות של אחר. ==ויטמין C פותח ברזל, פלפל פותח כורכום, שמן ובישול פותחים ליקופן.==")}</p></div>
         <span class="src" id="r-hits" aria-live="polite"></span>
       </div>
-      <div class="gallery-tools" style="padding-top:4px;padding-bottom:6px"><div class="chips" role="group" aria-label="תצוגה"><button class="chip" data-v="list">מתכונים</button><button class="chip" data-v="net">רשת הצירופים</button></div><div class="chips" id="r-filters"><button class="chip" id="f-season" data-season>מתאים לעונה עכשיו</button><span id="f-food"></span></div></div>
+      <div class="gallery-tools" style="padding-top:4px;padding-bottom:6px"><div class="chips" role="group" aria-label="תצוגה"><button class="chip" data-v="list">מתכונים</button><button class="chip" data-v="year">שנה במטבח</button><button class="chip" data-v="net">רשת הצירופים</button></div><div class="chips" id="r-filters"><button class="chip" id="f-season" data-season>מתאים לעונה עכשיו</button><span id="f-food"></span></div></div>
       <div class="scroll-in gallery-box" style="flex:1"><div class="recipe-grid" id="r-list"></div><div id="r-year" class="r-year-box"></div></div>
     </section>
     <aside class="panel" id="r-sheet" aria-labelledby="r-title"></aside>
@@ -204,7 +205,7 @@ export function mount(el, params) {
   };
   root.addEventListener("keydown", (e) => { const el = e.target.closest?.("[data-syn], [data-node]"); if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pickNet(el); } });
   root.addEventListener("click", (e) => {
-    const vb = e.target.closest("[data-v]"); if (vb) { state.v = vb.dataset.v; patch({ v: state.v === "net" ? "net" : undefined, syn: undefined }); state.syn = null; state.node = null; return render(); }
+    const vb = e.target.closest("[data-v]"); if (vb) { state.v = vb.dataset.v; patch({ v: state.v === "list" ? undefined : state.v, syn: undefined }); state.syn = null; state.node = null; return render(); }
     const nf = e.target.closest("[data-net-k], [data-net-p]");
     if (nf) { if (nf.dataset.netK) state.k = nf.dataset.netK; if (nf.dataset.netP) state.p = nf.dataset.netP;
       if (state.syn && !netList().some((s) => s.id === state.syn)) state.syn = null;
@@ -223,7 +224,7 @@ export function mount(el, params) {
 }
 
 export function update(params) {
-  const v = params.v === "net" ? "net" : "list";
+  const v = ["net", "year"].includes(params.v) ? params.v : "list";
   if (v !== state.v || (params.syn || null) !== state.syn) { state.v = v; state.syn = params.syn || null; state.node = null; return render(); }
   const food = byId(params.food) ? params.food : null;
   if (food !== state.food) { state.food = food; render(); }

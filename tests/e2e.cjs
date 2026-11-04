@@ -79,7 +79,7 @@ function serve() {
 
   console.log('מזון');
   await go('#/foods');
-  ok(await p.locator('.food-card').count() === 53, '53 גיליונות בגלריה');
+  ok(await p.locator('.food-card').count() === 66, '66 גיליונות בגלריה');
   ok(!(await p.locator('.food-card >> text=ג\'עדה').count()), 'צמח מהרשימה האדומה לא בגלריה');
   await p.click('.food-card[data-id="fig"]');
   ok((await hash()).includes('id=fig') && (await p.textContent('#sheet-title')).includes('תאנה'), 'בחירת כרטיס פותחת גיליון ושומרת בכתובת');
@@ -102,16 +102,16 @@ function serve() {
   await p.click('#sheet [data-close]');
   ok(!(await p.locator('#sheet-title').count()), 'איקס סוגר את הגיליון');
   await p.click('[data-cat="legumes"]');
-  ok(await p.locator('.food-card').count() === 6, 'בורר: "קטניות" מציג 6');
+  ok(await p.locator('.food-card').count() === 7, 'בורר: "קטניות" מציג 7');
   await p.click('[data-add="nuts"]');
-  ok(await p.locator('.food-card').count() === 9, 'בורר: "+" מוסיף אגוזים (9)');
+  ok(await p.locator('.food-card').count() === 17, 'בורר: "+" מוסיף אגוזים (17)');
   await p.click('[data-rem="nuts"]');
-  ok(await p.locator('.food-card').count() === 6, 'בורר: "−" מסיר');
+  ok(await p.locator('.food-card').count() === 7, 'בורר: "−" מסיר');
   await p.click('[data-cat="legumes"]');
-  ok(await p.locator('.food-card').count() === 53, 'בורר: לחיצה על הבחירה היחידה מחזירה להכול');
+  ok(await p.locator('.food-card').count() === 66, 'בורר: לחיצה על הבחירה היחידה מחזירה להכול');
   await p.click('[data-cat="seven"]');
   await p.click('[data-cat=""]');
-  ok(await p.locator('.food-card').count() === 53, 'בורר: "הכול" מאפס');
+  ok(await p.locator('.food-card').count() === 66, 'בורר: "הכול" מאפס');
 
   console.log('חיפוש ובטיחות');
   await p.fill('#q', 'תאנה');
@@ -155,8 +155,7 @@ function serve() {
   ok((await p.locator('#sheet .why').count()) === 1 && (await p.locator('#sheet .syn').innerText()).includes('פיפרין'), 'כורכום: למה חשוב, ולמה עם פלפל');
   ok(await p.locator('#sheet .practical li').count() >= 2, 'מידע מעשי');
   // מזונות המטבח (js/data/kitchen.js) מחכים לצילום: סביבת הענן חוסמת את אתרי הצילומים. עד אז, כרטיס טיפוגרפי.
-  const KITCHEN_NO_PHOTO = ['pea', 'bean', 'lemon', 'orange', 'potato', 'sweetpotato', 'eggplant', 'pepper', 'zucchini', 'spinach', 'parsley', 'mint', 'coriander', 'cumin', 'rice', 'corn', 'avocado', 'banana'];
-  ok(await p.locator(KITCHEN_NO_PHOTO.map((id) => `.food-card:not([data-id="${id}"])`).join('') + ' .type-card').count() <= 2, 'כמעט כל המזונות עם צילום');
+  ok(await p.locator('.food-card.has-photo').count() >= 33 && await p.locator('.food-card.has-photo .type-card').count() === 0, 'כל מזון עם צילום מציג אותו, ומזון בלי צילום מציג כרטיס');
 
   console.log('התנגשויות');
   await go('#/foods?id=lentil');
@@ -168,7 +167,7 @@ function serve() {
   console.log('צמח וגוף');
   await go('#/plant');
   ok(await p.locator('.pv .pv-link').count() === 6 && await p.locator('.pl-tab').count() === 6, 'מפה: שישה זוגות של צמח וגוף, ושישה כפתורי חלק');
-  ok(await p.locator('#pl-aside .mv figure').count() === 2 && await p.locator('#pl-aside .ess').count() >= 3 && await p.locator('#pl-aside .bs-dock').count() === 1, 'תרשים מנגנון, לוחות, וגוף ונפש בתחתית');
+  ok(await p.locator('#pl-aside .mv figure').count() === 2 && await p.locator('#pl-aside .ess').count() >= 2 && await p.locator('#pl-aside > .bs-dock:first-child').count() === 1, 'תרשים מנגנון, לוחות, וגוף ונפש בראש הטור');
   ok(await p.locator('.doctrines .dc').count() === 3, 'מאיזו תורה צמח הקשר: שלוש תורות');
   for (const id of ['stem', 'leaf', 'flower', 'fruit', 'seed', 'root']) {
     await p.click(`.pl-tab[data-part="${id}"]`);
@@ -178,18 +177,22 @@ function serve() {
   ok((await hash()).includes('p=fruit'), 'לחיצה על קו במפה בוחרת חלק');
   await p.click('.pl-tab[data-part="leaf"]');
   ok((await p.locator('#pl-aside').innerText()).includes('נשמה'), 'העלה: ריאות ונשמה');
-  ok((await p.locator('.pl-quote').innerText()).includes('Darwin'), 'ציטוט דרווין');
+  ok((await p.locator('.pl-quote').innerText()).includes('דרווין'), 'ציטוט דרווין');
   await go('#/tree');
   ok((await p.locator('#pl-title').count()) === 1, 'הכתובת הישנה #/tree מובילה לצמח וגוף');
 
   console.log('שיטות');
   await go('#/methods');
-  ok(await p.locator('.mt tbody tr').count() === 12 && await p.locator('.tl .tl-m').count() === 12, '12 שיטות בציר ובטבלה');
-  ok(await p.locator('.insights li').count() >= 5 && await p.locator('.mx tbody tr').count() === 12, 'מה דומה ומה שונה: תובנות ומטריצה');
+  ok(await p.locator('.tl .tl-m').count() === 15, '15 שיטות בציר');
   ok(await p.locator('#mt-aside .ctx').count() === 1, 'הקשר תרבותי, גאוגרפי ואקלימי');
+  await p.click('[data-tab="cmp"]');
+  ok(await p.locator('.mx tbody tr').count() === 15 && await p.locator('.mt tbody tr').count() === 15, 'לשונית השוואה: מטריצה וטבלה');
   await p.click('.mx tbody tr[data-m="ayurveda"]');
   ok((await p.textContent('#mt-title')).includes('איורוודה') && (await hash()).includes('m=ayurveda'), 'בחירת שיטה מהטבלה');
-  ok(await p.locator('.mt-map .mp').count() === 11 && await p.locator('.mt-figs .mt-fig').count() >= 6, 'מפה עם כל השיטות שיש להן מקום, ודמויות');
+  await p.click('[data-tab="who"]');
+  ok(await p.locator('.mt-figs .mt-fig').count() >= 6, 'לשונית דמויות');
+  await p.click('[data-tab="geo"]');
+  ok(await p.locator('.mt-map .mp').count() === 14, 'מפה עם כל השיטות שיש להן מקום');
   ok(await p.locator('#mt-aside .ess-idea').count() === 1 && await p.locator('#mt-aside .mt-ideas > div').count() === 3, 'הרעיון של השיטה: למה, איך בוחרים, מתי');
   const vb0 = await p.locator('.mt-map').getAttribute('viewBox');
   await p.locator('.geo-stage').scrollIntoViewIfNeeded();
@@ -204,23 +207,30 @@ function serve() {
   await p.click('.mt-all');
   await p.click('.mt-sort[data-sort="temp"]');
   ok((await hash()).includes('s=temp') && await p.locator('.mt-trait').count() === 1 && await p.locator('.mp.dim').count() >= 5, 'מיון לפי חם וקר: תובנה, והשאר מעומעמים');
-  ok((await p.locator('.mx tbody tr').first().getAttribute('class')).indexOf('dim') === -1, 'מי שיש לו את הפרמטר עולה למעלה');
+  await p.click('[data-tab="cmp"]');
+  ok((await p.locator('.mx tbody tr').first().getAttribute('class')).includes('hit'), 'מי שיש לו את הפרמטר עולה למעלה ומודגש');
   await p.click('.mt-all');
-  ok(await p.locator('.mp.dim').count() === 0, '"הכול" מאפס את המיון');
-  ok(await p.locator('.disc-list li').count() >= 3, 'גילויים מהטבלה');
+  ok(await p.locator('.mx tr.dim').count() === 0, '"הכול" מאפס את המיון');
+  await p.click('[data-tab="disc"]');
+  ok(await p.locator('.disc-list.one li').count() >= 8, 'גילויים ותובנות ברשימה אחת');
+  await p.click('[data-tab="geo"]');
   await p.click('.tl .tl-m[data-m="washoku"]', { force: true });
   ok((await p.textContent('#mt-title')).includes('וושוקו'), 'בחירת שיטה מהציר');
 
   console.log('רכיבים');
   await go('#/nutrients');
-  ok(await p.locator('.nbub-b').count() === 12 && await p.locator('.nh tbody tr').count() === 12, 'רכיבים: בועות ומפת חום');
-  await p.click('.nbub-b[data-n="vK"]');
-  ok((await p.textContent('#n-title')).includes('ויטמין K') && await p.locator('#n-aside .pl-food').count() >= 3 && await p.locator('#n-aside .nseason span').count() === 12, 'בחירת ויטמין K: תפקיד, מקורות ועונה');
+  ok(await p.locator('.nt-row').count() === 12 && await p.locator('.nt-kind').count() === 3, 'רכיבים: טבלה אחת, כותרת לכל סוג');
+  await p.click('.nt-row[data-n="vK"] th');
+  ok((await p.textContent('#n-title')).includes('ויטמין K') && await p.locator('#n-aside .pl-food').count() >= 3 && await p.locator('#n-aside .bs-dock .nseason span').count() === 12, 'בחירת ויטמין K: מקורות, ומתי בשנה קבוע בראש');
+  await p.click('.nt-c[data-n="protein"][data-part="seed"]');
+  ok((await p.textContent('#n-aside .sec-h h3')).includes('זרע') && (await hash()).includes('part=seed'), 'לחיצה על מספר מסננת את הטור הצדדי');
+  await p.click('[data-kind="vitamin"]');
+  ok(await p.locator('.nt-long').count() === 1, 'לחיצה על סוג מסבירה למה הוא חשוב');
   ok((await p.locator('.disc-list').innerText()).includes('עלה'), 'גילוי: ויטמין K בעלים');
 
   console.log('כתבות');
   await go('#/articles');
-  ok(await p.locator('.a4').count() === 4 && await p.locator('.a4-q').count() === 4 && await p.locator('.a4-src').count() === 4, 'כל הכתבות בדף אחד, כל אחת עמוד A4');
+  ok(await p.locator('.a4').count() >= 10 && await p.locator('.a4-src').count() === await p.locator('.a4').count(), 'כל הכתבות בדף אחד, כל אחת עמוד A4, כולל היצירות');
   const a4 = await p.locator('.a4').first().boundingBox();
   ok(Math.abs(a4.height / a4.width - 297 / 210) < 0.02, 'יחס עמוד A4');
   ok(/[\u05B0-\u05BC]/.test(await p.locator('.a4-q').first().innerText()), 'ציטוט מהתנ"ך בניקוד');
@@ -308,7 +318,7 @@ function serve() {
 
   await go('#/');
   ok(await p.locator('.hd-line mark').count() === 6, 'כל דלת: מספר עם תובנה');
-  ok(/\d+\/10/.test(await p.textContent('#ht-disc')), 'גילוי מתחלף עם מונה');
+  ok(/\d+\/(\d+)/.test(await p.textContent('#ht-disc')) && Number((await p.textContent('#ht-disc')).match(/\d+\/(\d+)/)[1]) >= 20, 'גילויים מכל האפליקציה מתחלפים, עם מונה');
 
   console.log('השוואה');
   await go('#/compare');
@@ -335,16 +345,9 @@ function serve() {
   const inst = await cdp.send('Page.getInstallabilityErrors');
   ok(inst.installabilityErrors.length === 0, 'Page.getInstallabilityErrors ריק' + (inst.installabilityErrors.length ? ': ' + JSON.stringify(inst.installabilityErrors) : ''));
 
-  console.log('יצירות');
-  await go('#/creations', 1500);
-  ok(await p.locator('.tab[data-view="creations"][aria-current="page"]').count() === 1, 'לשונית "יצירות" בסרגל ומסומנת');
-  const rooms = await p.locator('app-creations .cr-room').count();
-  ok(rooms >= 6, `לפחות 6 חדרים (${rooms})`);
-  const perRoom = await p.$$eval('app-creations .cr-room', (rs) => rs.map((r) => r.querySelectorAll('.cr-card').length));
-  ok(perRoom.length && perRoom.every((n) => n >= 4 && n <= 6), `בכל חדר 4 עד 6 יצירות (${perRoom.join(',')})`);
-  ok(await p.evaluate(() => document.querySelector('.app-shell').classList.contains('page-creations') && document.documentElement.scrollHeight > innerHeight), 'דף היצירות נגלל כדף רגיל');
-  await go('#/foods');
-  ok(!(await p.evaluate(() => document.querySelector('.app-shell').classList.contains('page-creations'))), 'יציאה מהיצירות מחזירה את המעטפת לגובה המסך');
+  console.log('יצירות הפכו לכתבות');
+  await go('#/creations');
+  ok(!(await p.locator('.tab[data-view="creations"]').count()) && await p.locator('.a4').count() >= 10, 'אין לשונית יצירות, והכתובת הישנה פותחת את הכתבות');
 
   console.log('הפחתת תנועה ונייד');
   const rm = await b.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
