@@ -481,6 +481,31 @@ mark.insight { background: linear-gradient(transparent 45%, var(--marker) 45%, v
 .tile strong { font-weight: 700; color: var(--ink); }
 .t-body { border-top-color: var(--known); } .t-body .tile-l { color: var(--known); }
 .t-soul { border-top-color: var(--said); } .t-soul .tile-l { color: var(--said); }
+/* גוף ונפש: לוחות של כבוד. מילה גדולה, צבע השכבה, קו רציף לגוף וקו נקודות לנפש. */
+.essence { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin: 4px 0 12px; direction: rtl; }
+.ess { position: relative; padding: 14px 18px 14px 14px; border-inline-start: 5px solid; min-width: 0; }
+.ess header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.ess-w { font-size: clamp(26px, 2.3vw, 34px); font-weight: 700; line-height: 1; letter-spacing: -0.01em; }
+.ess-s { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: var(--ink-mute); }
+.ess p { font-size: 17px; line-height: 1.55; margin: 0; color: var(--ink); }
+.ess p strong { font-weight: 700; }
+.ess footer { margin-top: 10px; padding-top: 7px; font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+.ess-body { background: var(--known-wash); border-inline-start-color: var(--known); }
+.ess-body .ess-w { color: var(--known); }
+.ess-soul { background: var(--said-wash); border-inline-start: 5px dotted var(--said); }
+.ess-soul .ess-w { color: var(--said); }
+.ess-soul footer { border-top: 1px dotted var(--said); }
+/* הולך עם: צילומי השותפים ליד ההסבר */
+.with-item { display: flex; gap: 10px; align-items: flex-start; direction: rtl; }
+.with-item + .with-item { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rule-soft); }
+.with-ph { display: flex; gap: 6px; flex: none; }
+.with-f { display: grid; gap: 2px; width: 58px; text-decoration: none; color: var(--ink); text-align: center; }
+.with-f .ph { position: relative; display: block; width: 58px; height: 58px; overflow: hidden; background: #f3f1ea; }
+.with-f .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.with-f .ph .type-card b { font-size: 11px; } .with-f .ph .type-card i { display: none; }
+.with-f b { font-size: 11px; font-weight: 600; line-height: 1.2; }
+.with-item p { flex: 1; min-width: 0; }
+.tiles > .t-with, .tiles > .t-without { grid-column: 1 / -1; }
 .t-with { border-top-color: #1D9E75; } .t-with .tile-l { color: #1D9E75; }
 .t-without { border-top-color: #A32D2D; } .t-without .tile-l { color: #A32D2D; }
 .hint { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
@@ -671,7 +696,7 @@ mark.insight { background: linear-gradient(transparent 45%, var(--marker) 45%, v
 }
 /* כרטיס טיפוגרפי: ממלא את המסגרת שלו בלבד, ולעולם לא בורח ממנה */
 .type-card { position: relative !important; inset: auto; width: 100%; height: 100%; min-height: 30px; overflow: hidden; }
-.thumb > .type-card, .ph > .type-card, .yg-ph > .type-card, .sheet-hero > .type-card, .plate-big > .type-card, .r-plates span > .type-card { position: absolute !important; inset: 0; }
+.thumb > .type-card, .ph > .type-card, .with-f .ph > .type-card, .yg-ph > .type-card, .sheet-hero > .type-card, .plate-big > .type-card, .r-plates span > .type-card { position: absolute !important; inset: 0; }
 .month-item > .type-card, .r-ing > .type-card, .r-pic > .type-card { width: 34px; height: 34px; }
 .month-item > .type-card b, .r-ing > .type-card b, .r-pic > .type-card b, .yg-ph .type-card b { font-size: 8px; }
 .month-item > .type-card i, .r-ing > .type-card i, .r-pic > .type-card i, .yg-ph .type-card i { display: none; }

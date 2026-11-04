@@ -84,8 +84,14 @@ function serve() {
   await p.click('.food-card[data-id="fig"]');
   ok((await hash()).includes('id=fig') && (await p.textContent('#sheet-title')).includes('תאנה'), 'בחירת כרטיס פותחת גיליון ושומרת בכתובת');
   ok(await p.locator('#sheet .stratum').count() >= 3, 'הגיליון מציג שלוש שכבות');
-  ok(await p.locator('#sheet .unique').count() === 1 && await p.locator('#sheet .t-body').count() === 1 && await p.locator('#sheet .t-soul').count() === 1, 'ייחודיות, גוף ונפש בגיליון');
+  ok(await p.locator('#sheet .unique').count() === 1 && await p.locator('#sheet .ess-body').count() === 1 && await p.locator('#sheet .ess-soul').count() === 1, 'ייחודיות, גוף ונפש בגיליון');
   ok(!(await p.locator('#sheet .safety-line, #sheet .tone-red').count()), 'בלי אזהרות שימוש בגיליון');
+  await go('#/foods?id=cucumber');
+  ok(await p.locator('#sheet .t-with .with-f').count() === 3 && (await p.locator('#sheet .t-with .with-f > b').allInnerTexts()).join() === 'עגבנייה,זית,לימון', 'הולך עם: צילומי השותפים ליד ההסבר, בסדר הכתיבה');
+  await p.click('#sheet .with-f[href*="lemon"]');
+  await p.waitForTimeout(200);
+  ok((await p.textContent('#sheet-title')).includes('לימון'), 'לחיצה על שותף פותחת את הגיליון שלו');
+  await go('#/foods?id=fig');
   ok(await p.locator('#sheet details.sources-box:not([open])').count() === 1, 'מקורות מקופלים במקום אחד');
   await p.click('#sheet [data-step="1"]');
   ok((await p.textContent('#sheet-title')).includes('רימון'), 'כפתור "הבא" עובר לפריט הבא');

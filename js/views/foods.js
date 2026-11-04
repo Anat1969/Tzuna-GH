@@ -153,6 +153,46 @@ function scienceHTML(f) {
       <ul class="practical">${sc.practical.map((t) => `<li>${rich(t)}</li>`).join("")}</ul></section>` : ""}`;
 }
 
+// גוף ונפש: שני לוחות עם נוכחות. גוף בקו רציף (הרכב, ידוע), נפש בקו נקודות (מסורת, נאמר).
+function essenceHTML(pr) {
+  if (!pr.body && !pr.soul) return "";
+  const panel = (cls, word, sub, x, foot) => `<section class="ess ${cls}" aria-label="${word}">
+      <header><b class="ess-w">${word}</b><span class="ess-s">${sub}</span></header>
+      <p>${rich(x.t)}</p>${foot ? `<footer>${foot}</footer>` : ""}</section>`;
+  const soulFoot = pr.soul ? [pr.soul.trad, pr.soul.ref].filter(Boolean).map(esc).join(" · ") : "";
+  return `<div class="essence">
+    ${pr.body ? panel("ess-body", "גוף", "מה יש בו", pr.body) : ""}
+    ${pr.soul ? panel("ess-soul", "נפש", "מה הוא מספר", pr.soul, soulFoot) : ""}
+  </div>`;
+}
+
+// הולך עם: המזונות מהגלריה שמוזכרים בהדגשה (לפני הנקודתיים) מופיעים בצילום ליד ההסבר.
+const STOP = ["פלפל שחור", "תה שחור", "תה ירוק", "עלים ירוקים", "דבש תמרים"];
+const NAME_INDEX = FOODS.flatMap((f) => [f.he, f.he.replace(/\s*\(.*\)/, ""), (f.he.match(/\((.*)\)/) || [])[1], ...(f.alt || [])]
+  .filter(Boolean).map((n) => [bare(n), f.id])).sort((a, b) => b[0].length - a[0].length);
+export function partnersOf(t, selfId) {
+  const head = t.split(":")[0];
+  let txt = " " + bare((head.match(/\*\*[^*]+\*\*/g) || [head]).join(" , ")) + " ";
+  for (const w of STOP) txt = txt.split(bare(w)).join(" ");
+  const hits = [];
+  for (const [n, id] of NAME_INDEX) {
+    const re = new RegExp(`(^|[^\u05D0-\u05EA])[ובהל]?${n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=$|[^\u05D0-\u05EA])`);
+    const m = txt.match(re);
+    if (!m) continue;
+    // מחליפים ברווחים באותו אורך, כדי שהמיקום של השאר יישמר.
+    txt = txt.slice(0, m.index) + " ".repeat(m[0].length) + txt.slice(m.index + m[0].length);
+    if (id !== selfId && !hits.some((h) => h.id === id)) hits.push({ id, at: m.index });
+  }
+  // בסדר שבו הם כתובים.
+  return hits.sort((a, b) => a.at - b.at).map((h) => byId(h.id));
+}
+function withHTML(f, arr) {
+  return arr.map((x) => {
+    const ps = partnersOf(x.t, f.id);
+    return `<div class="with-item">${ps.length ? `<div class="with-ph">${ps.map((p) => `<a class="with-f press" href="#/foods?id=${p.id}" aria-label="${esc(p.he)}, לגיליון"><span class="ph">${foodImage(p)}</span><b>${esc(p.he.replace(/\s*\(.*\)/, ""))}</b></a>`).join("")}</div>` : ""}<p>${rich(x.t)}</p></div>`;
+  }).join("");
+}
+
 const tile = (label, cls, body) => `<div class="tile ${cls}"><span class="tile-l">${label}</span>${body}</div>`;
 
 function sheetHTML(f) {
@@ -174,10 +214,9 @@ function sheetHTML(f) {
       <h2 class="sheet-name" id="sheet-title">${esc(f.he)} <span class="latin">${esc(f.la)}</span></h2>
       <div class="sheet-tags"><span>${esc(catName(f.cat))}</span><span>משפחת ה<b>${esc(f.family)}</b></span><span>נאכל: <b>${esc(f.part)}</b></span></div>
       ${pr.unique ? `<p class="unique">${rich(pr.unique)}</p>` : ""}
+      ${essenceHTML(pr)}
       <div class="tiles">
-        ${pr.body ? tile("לגוף", "t-body", `<p>${rich(pr.body.t)}</p>`) : ""}
-        ${pr.soul ? tile("לנפש", "t-soul", `<p>${rich(pr.soul.t)}</p>`) : ""}
-        ${pr.with?.length ? tile("הולך עם", "t-with", lines(pr.with)) : ""}
+        ${pr.with?.length ? tile("הולך עם", "t-with", withHTML(f, pr.with)) : ""}
         ${pr.without?.length ? tile("לא הולך עם", "t-without", lines(pr.without)) : ""}
       </div>
       ${scienceHTML(f)}
