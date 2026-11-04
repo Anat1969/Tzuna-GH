@@ -32,7 +32,9 @@ export const ALLERGENS = {
   sulphites: "סולפיטים"
 };
 
-export const FOODS = [
+import { KITCHEN_FOODS } from "./kitchen.js";
+
+const BASE_FOODS = [
   {
     id: "olive", he: "זית", en: "Olive", la: "Olea europaea",
     family: "זיתיים", family_la: "Oleaceae", part: "פרי ושמן",
@@ -546,5 +548,8 @@ export const FOODS = [
     safety: { flags: [], note: "" }
   }
 ];
+
+// מזונות המטבח (js/data/kitchen.js) מצטרפים לגלריה.
+export const FOODS = [...BASE_FOODS, ...KITCHEN_FOODS];
 
 export const byId = (id) => FOODS.find((f) => f.id === id);

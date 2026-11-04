@@ -47,6 +47,7 @@ export const SOURCES = {
   "medlineplus-iron": { title: "MedlinePlus, Iron in diet", type: "מאגר", year: 2024, url: "https://medlineplus.gov/ency/article/002422.htm" },
   "medlineplus-calcium": { title: "MedlinePlus, Calcium in diet", type: "מאגר", year: 2024, url: "https://medlineplus.gov/ency/article/002412.htm" },
   "cfr-101-81": { title: "21 CFR 101.81, Soluble fiber from certain foods (oat and barley beta-glucan)", type: "רגולציה", year: 1997, url: "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101/subpart-E/section-101.81" },
+  "fda-badbug": { title: "FDA, Bad Bug Book, 2nd ed.: Phytohaemagglutinin (kidney bean lectin)", type: "מאגר", year: 2012, url: "https://www.fda.gov/food/foodborne-pathogens/bad-bug-book-second-edition" },
   "medlineplus-g6pd": { title: "MedlinePlus, G6PD deficiency", type: "מאגר", year: 2023, url: "https://medlineplus.gov/genetics/condition/glucose-6-phosphate-dehydrogenase-deficiency/" },
 
   // הרכב, בוטניקה ואלרגנים

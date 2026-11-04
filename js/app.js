@@ -62,7 +62,7 @@ q.addEventListener("input", () => {
 });
 q.addEventListener("keydown", (e) => {
   if (e.key === "Escape") { q.value = ""; q.dispatchEvent(new Event("input")); }
-  if (e.key === "Enter" && current !== "foods") go("foods", { q: q.value.trim() });
+  if (e.key === "Enter") { if (current === "foods") foods.search(q.value.trim(), { commit: true }); else go("foods", { q: q.value.trim() }); }
 });
 q.addEventListener("focus", () => q.select());
 $("#q-x").addEventListener("click", () => { q.value = ""; q.dispatchEvent(new Event("input")); q.focus(); });
