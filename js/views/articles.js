@@ -10,6 +10,8 @@ import { overviewSVG, icon } from "../plantviz.js";
 import { foodImage } from "./foods.js";
 import { MONTH_HUE, SEASON_OF } from "./seasons.js";
 import { patch } from "../route.js";
+import { stratum } from "../ui.js";
+import { SOURCES, EVIDENCE } from "../data/sources.js";
 
 export const title = "כתבות";
 let root, sel;
@@ -19,6 +21,22 @@ const partOf = (f) => PARTS.find((p) => p.foods.includes(f.id));
 const said = (id, ref) => byId(id).layers.said.find((x) => x.ref === ref)?.t || "";
 
 const ARTICLES = [
+  {
+    id: "how-we-know", kicker: "שיטה", head: "איך יודעים מה יודעים על מזון.",
+    deck: "שמן זית, שלוש טענות ושלוש רמות של ודאות: **מדריך קצר** לקריאת טענה.",
+    figure: () => { const o = byId("olive"); return `<div class="a4-fig a4-strata">${["known", "said", "believed"].map((k) => stratum(k, [o.layers[k][0]])).join("")}</div>`; },
+    body: () => [
+      "כל משפט על מזון מגיע ממקום אחר. **מחקר** מודד. **מסורת** זוכרת. **אמונה** עוברת מפה לאוזן.",
+      "הבעיה היא שהשלושה מגיעים לרוב **באותו משפט**, באותו טון ובאותו שלט בשוק.",
+      `לכל שכבה **צבע וקו** קבועים: רציף לידוע, נקודות לנאמר, מקווקו למאמינים. וגם בתוך "ידוע" יש **${EVIDENCE.length} מדרגות** של ראיה.`,
+      "תרגיל לשוק, ב**אשדוד** או בכל עיר: בחרו שלט אחד, וסמנו כל טענה בו. רוב השלטים מערבבים את שלושתן."
+    ],
+    quote: () => ({ q: "\"וְיַיִן יְשַׂמַּח לְבַב־אֱנוֹשׁ לְהַצְהִיל פָּנִים מִשָּׁמֶן וְלֶחֶם לְבַב־אֱנוֹשׁ יִסְעָד\"", who: "תהלים קד טו" }),
+    insight: "==ההפרדה ביניהן היא הכלי, לא התוכן.==",
+    stats: () => [[3, "שכבות: ידוע, נאמר, מאמינים"], [EVIDENCE.length, "מדרגות של עוצמת ראיה"], [Object.keys(SOURCES).length, "מקורות בדאטה"]],
+    haiku: ["עלה זית כסוף", "הופך את גבו לשמש", "חוסך מים לדור"],
+    src: ["predimed-2018", "tanakh", "smiles-2017"]
+  },
   {
     id: "plant-body", kicker: "צמח וגוף", head: "הזרע אוגר, העלה נושם.",
     deck: "שישה חלקים בכל צמח, ולכל אחד **מקבילה בתפקוד** בגוף. מה שהצמח עושה קובע מה יש בו.",
@@ -95,9 +113,9 @@ const val = (x) => (typeof x === "function" ? x() : x);
 function pageHTML(a) {
   const q = a.quote(), qText = (q.q.match(/^(\\?"[^"]+")/) || [q.q])[0];
   const body = a.body();
-  return `<article class="a4" dir="rtl" aria-labelledby="a4-h">
+  return `<article class="a4" dir="rtl" aria-labelledby="a4-h-${a.id}">
     <header class="a4-top"><span class="a4-k">${icon("leaf")} ${esc(a.kicker)}</span><span class="a4-n">צומחה · כתבה</span></header>
-    <h1 id="a4-h">${esc(val(a.head))}</h1>
+    <h1 id="a4-h-${a.id}">${esc(val(a.head))}</h1>
     <p class="a4-deck">${rich(val(a.deck))}</p>
     ${a.figure()}
     <div class="a4-cols">${body.map((t, i) => `<p class="${i === 0 ? "dropcap" : ""}">${rich(t)}</p>`).join("")}</div>
@@ -108,11 +126,12 @@ function pageHTML(a) {
   </article>`;
 }
 
+// כל הכתבות בדף אחד, כל אחת עמוד A4. התפריט קופץ לכתבה, וההדפסה מוציאה עמוד לכל כתבה.
 function render() {
-  const a = ARTICLES.find((x) => x.id === sel);
   root.querySelector("#a4-tabs").innerHTML = ARTICLES.map((x) => `<button class="seg-b" data-a="${x.id}" aria-pressed="${x.id === sel}">${esc(val(x.head))}</button>`).join("");
-  root.querySelector("#a4-page").innerHTML = pageHTML(a);
+  root.querySelector("#a4-page").innerHTML = ARTICLES.map((a) => `<div class="a4-slot" id="art-${a.id}">${pageHTML(a)}</div>`).join("");
 }
+function jump(id, smooth = true) { root.querySelector(`#art-${id}`)?.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" }); }
 
 export function mount(el, params) {
   root = el;
@@ -122,9 +141,10 @@ export function mount(el, params) {
     <div class="a4-stage" id="a4-page"></div>
   </div>`;
   render();
+  if (params.a) requestAnimationFrame(() => jump(sel, false));
   root.addEventListener("click", (e) => {
     if (e.target.closest("[data-print]")) return window.print();
-    const t = e.target.closest("[data-a]"); if (t) { sel = t.dataset.a; patch({ a: sel }); render(); }
+    const t = e.target.closest("[data-a]"); if (t) { sel = t.dataset.a; patch({ a: sel }); root.querySelectorAll("[data-a]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.a === sel))); jump(sel); }
   });
 }
-export function update(params) { if (params.a && params.a !== sel) { sel = params.a; render(); } }
+export function update(params) { if (params.a && params.a !== sel) { sel = params.a; jump(sel); } }

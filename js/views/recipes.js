@@ -4,6 +4,7 @@ import { ALLERGENS, byId } from "../data/foods.js";
 import { rich, stratum, esc, iconBtn, MONTHS, MONTHS_SHORT, nowMonth, triangle } from "../ui.js";
 import { plate } from "../plates.js";
 import { timeBadge } from "../plantviz.js";
+import { dock } from "../frame.js";
 import { foodImage } from "./foods.js";
 import { patch } from "../route.js";
 import { synergiesInRecipe, SYNERGIES } from "../data/synergies.js";
@@ -174,6 +175,7 @@ function renderSheet() {
   const r = RECIPES.find((x) => x.id === state.id);
   root.querySelectorAll(".recipe-card").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.id === state.id)));
   aside.innerHTML = r ? sheetHTML(r) : `<div class="panel-body" style="display:grid;place-items:center;height:100%;color:var(--ink-soft)">${rich("**בחרו מתכון** מהרשימה.")}</div>`;
+  if (r) { const sy = synergiesInRecipe(r.id)[0]; dock(aside, { body: sy ? { t: sy.how, sub: sy.title } : null, soul: { t: r.tradition.t, sub: [r.tradition.trad, r.tradition.ref].filter(Boolean).join(" · ") } }); }
 }
 
 function select(id) { state.id = id; patch({ id: id || undefined }); renderSheet(); root.querySelector("#r-sheet .scroll-in")?.scrollTo(0, 0); }

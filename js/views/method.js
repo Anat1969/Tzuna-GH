@@ -1,4 +1,4 @@
-// שיטה ומקורות: כתבה מוזיאלית. נקראת בגלילה, כמו מגזין (החריג שבסעיף 2.9 א).
+// מקורות והערות: כל המקורות, הרשימה האדומה, קווי העזרה והפוסט. הכתבה עצמה בדף הכתבות, כעמוד A4.
 import { SOURCES, EVIDENCE } from "../data/sources.js";
 import { FOODS } from "../data/foods.js";
 import { rich, stratum, srcLine, esc, iconBtn } from "../ui.js";
@@ -6,7 +6,7 @@ import { plate } from "../plates.js";
 import { REDLIST, LINES } from "../data/safety-data.js";
 import { lineCard } from "../safety.js";
 
-export const title = "שיטה ומקורות";
+export const title = "מקורות והערות";
 
 const EV_TEXT = {
   "גבוהה": "הנחיה רשמית, מאגר הרכב, או הרבה מחקרים שמסכימים.",
@@ -29,41 +29,9 @@ export function mount(root) {
   const olive = FOODS.find((f) => f.id === "olive");
   const byType = Object.entries(SOURCES).reduce((a, [id, s]) => { (a[s.type] ||= []).push([id, s]); return a; }, {});
   root.innerHTML = `<div class="scroll-in" style="height:100%"><article class="article" dir="rtl">
-    <div class="label">כתבה · שיטה ומקורות</div>
-    <h1 style="margin-top:8px">איך יודעים מה יודעים על מזון.</h1>
-    <p class="deck">${rich("שמן זית, שבעת המינים וטבעות של עץ: **מדריך קצר** לקריאת טענה.")}</p>
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:24px;align-items:center;margin-top:24px" class="split">
-      <div>
-        <p class="body dropcap">${rich("כל משפט על מזון מגיע ממקום אחר. **מחקר** מודד. **מסורת** זוכרת. **אמונה** עוברת מפה לאוזן.")}</p>
-        <p class="body">${rich("הבעיה היא שהשלושה מגיעים לרוב **באותו משפט**, באותו טון ובאותו שלט בשוק.")}</p>
-        <p class="body">${rich("==ההפרדה ביניהם היא הכלי, לא התוכן.==")}</p>
-      </div>
-      <figure style="margin:0;background:var(--herb);border:1px solid var(--rule);aspect-ratio:1;display:grid;place-items:center">${plate(olive)}<figcaption class="src" style="padding:6px 10px;align-self:end;justify-self:stretch;border-top:1px solid var(--rule);background:#fff">איור קו בקוד, בהשראת גיליונות Flora Graeca של פרדיננד באואר (Ferdinand Bauer), 1806–1840.</figcaption></figure>
-    </div>
-
-    <h2>שלוש שכבות, שלושה קווים</h2>
-    <p class="body">${rich("לכל שכבה **צבע** ו**סוג קו** קבועים, בכל מסך. כך אפשר להבחין גם בלי לקרוא.")}</p>
-    <div class="strata-figure">${["known", "said", "believed"].map((k) => stratum(k, [olive.layers[k][0]])).join("")}</div>
-
-    <h2>עוצמת ראיה: חמש מדרגות</h2>
-    <p class="body">${rich("גם \"ידוע\" הוא לא דבר אחד. **ניסוי קטן** ו**הנחיה לאומית** הם לא אותה ודאות.")}</p>
-    <div class="ev-scale">${EVIDENCE.map((e, i) => `<div style="border-top-color:color-mix(in srgb, var(--known) ${100 - i * 20}%, #fff)"><b>${esc(e)}</b><br><span class="src">${esc(EV_TEXT[e])}</span></div>`).join("")}</div>
-
-    <blockquote class="pull">"ויין ישמח לבב אנוש, להצהיל פנים משמן, ולחם לבב אנוש יסעד."<cite>תהלים קד טו. שלושה מזונות, ושלושתם על הלב ועל הפנים: מזון כעניין של נפש.</cite></blockquote>
-
-    <h2>גוף ונפש</h2>
-    <p class="body">${rich("בניסוי **SMILES**, ליווי תזונתי לדפוס ים־תיכוני, לצד הטיפול הקיים, נקשר לשיפור בתסמיני דיכאון.")}</p>
-    <p class="body">${rich("המדגם **קטן**, וללא סמיות מלאה. לכן עוצמת הראיה כאן **ראשונית**, וזה לא תחליף לטיפול.")} <span class="src">${srcLine("smiles-2017")}</span></p>
-
-    <h2>למה אין כאן קלוריות</h2>
-    <p class="body">${rich("במחקר על אנשים עם **הפרעות אכילה**, רבים תיארו אפליקציית ספירת קלוריות כגורם שתרם להפרעה.")} <span class="src">${srcLine("levinson-2017")}</span></p>
-    <p class="body">${rich("אי אפשר לדעת מי פגיע. לכן הכלל חל על **כולם**: בלי ספירה, בלי משקל ובלי \"חריגה\".")}</p>
-
-    <h2>תרגיל לשוק</h2>
-    <p class="body">בשוק העירוני הקרוב, ב<strong>אשדוד</strong> <span class="latin">Ashdod</span> או בכל עיר, בחרו שלט אחד.</p>
-    <p class="body">${rich("סמנו כל טענה בו: **ידוע**, **נאמר** או **מאמינים**. רוב השלטים מערבבים את שלושתן.")}</p>
-
-    <div class="haiku"><span>עלה זית כסוף</span><span>הופך את גבו לשמש</span><span>חוסך מים לדור</span><small>הייקו מקורי. מה הוא מאיר: ==המבנה מסביר את ההישרדות==, ולכן הכרה באה לפני הבנה.</small></div>
+    <div class="label">מקורות והערות</div>
+    <h1 style="margin-top:8px">מקורות והערות.</h1>
+    <p class="deck">${rich("כל מקור, הרשימה האדומה וקווי העזרה, במקום אחד. הכתבה \"איך יודעים מה יודעים על מזון\" עברה ל**כתבות**, בעמוד A4 אחד.")} <a href="#/articles?a=how-we-know">לכתבה</a></p>
 
     <h2>פוסט, מוכן להעתקה</h2>
     <div class="post" id="post">${POST.map((p) => `<p>${esc(p)}</p>`).join("")}</div>

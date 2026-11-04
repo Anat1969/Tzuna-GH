@@ -14,6 +14,7 @@ export const SOURCES = {
 
   "sa-oc-583": { title: "שולחן ערוך, אורח חיים, סימן תקפג (עם הגהות הרמ\"א)", type: "מסורת", year: 1565, url: "https://www.sefaria.org/Shulchan_Arukh%2C_Orach_Chayim.583" },
   "bavli-keritot-6a": { title: "תלמוד בבלי, כריתות ו ע\"א", type: "מסורת", year: 500, url: "https://www.sefaria.org/Keritot.6a" },
+  "beck-2018": { title: "Beck et al., Present and future Köppen-Geiger climate classification maps at 1-km resolution, Scientific Data 5", type: "מאגר", year: 2018, url: "https://doi.org/10.1038/sdata.2018.214" },
   "bennett-2007": { title: "Bennett, Doctrine of Signatures: An Explanation of Medicinal Plant Discovery or Dissemination of Knowledge?, Economic Botany 61(3)", type: "סקירה", year: 2007, url: "https://doi.org/10.1663/0013-0001(2007)61[246:DOSAEO]2.0.CO;2" },
   "darwin-1880": { title: "Charles Darwin, The Power of Movement in Plants", type: "מסורת", year: 1880, url: "https://www.gutenberg.org/ebooks/5605" },
   "charaka": { title: "צ'רקה סמהיטה (Charaka Samhita), הטקסט היסודי של האיורוודה", type: "מסורת", year: null, url: "" },

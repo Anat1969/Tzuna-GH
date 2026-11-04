@@ -7,6 +7,7 @@ import { rich, esc, sourcesBox } from "../ui.js";
 import { foodImage } from "./foods.js";
 import { patch } from "../route.js";
 import { overviewSVG, mechanismSVG, icon, ORGAN_ICON } from "../plantviz.js";
+import { dock } from "../frame.js";
 
 export const title = "צמח וגוף";
 let root, sel;
@@ -26,8 +27,6 @@ function asideHTML() {
       ${mechanismSVG(p.id, p.hue)}
       <div class="essence pl-ess">
         ${panel("ess-plant", "plant", "בצמח", "מה הוא עושה", `<p>${rich(p.plant.t)}</p>`, "", `style="--c:${p.hue}"`)}
-        ${panel("ess-body", "body", "בגוף", esc(p.organ), `<p>${rich(p.body.t)}</p>`)}
-        ${panel("ess-soul", "mind", "בנפש", "מה זה אומר לנו", `<p>${rich(p.mind.t)}</p>`, p.mind.src ? `${esc(p.mind.who)}. תרגום.` : esc(p.mind.who || ""))}
         ${panel("ess-lang", "lang", "בשפה", "מילים מהצמח", `<p>${rich(p.lang)}</p>`)}
       </div>
       <div class="ess ess-origin">${`<header>${icon("origin", "ess-ic")}<b class="ess-w">הקשר</b><span class="ess-s">מאיפה ההשוואה</span></header><p>${rich(p.origin.t)}</p><footer>ביולוגיה השוואתית · שכבת ידוע</footer>`}</div>
@@ -47,7 +46,9 @@ function doctrinesHTML() {
 
 function render() {
   root.querySelector("#pv-box").innerHTML = overviewSVG(PARTS, sel);
-  root.querySelector("#pl-aside").innerHTML = asideHTML();
+  const aside = root.querySelector("#pl-aside"), p = PARTS.find((x) => x.id === sel);
+  aside.innerHTML = asideHTML();
+  dock(aside, { body: { t: p.body.t, sub: p.organ }, soul: { t: p.mind.t, sub: p.mind.who + (p.mind.src ? ". תרגום" : "") } });
   root.querySelectorAll(".pl-tab").forEach((t) => t.setAttribute("aria-pressed", String(t.dataset.part === sel)));
 }
 function select(id) { sel = id; patch({ p: id }); render(); }
