@@ -9,67 +9,67 @@ export const REGIONS = [
 
 export const METHODS = [
   {
-    id: "bible", he: "המקרא", place: "ארץ ישראל", place_la: "Land of Israel", region: "me", from: -1000, to: -400, approx: true,
+    id: "bible", he: "המקרא", place: "ארץ ישראל", place_la: "Land of Israel", ll: [35.2, 31.8], region: "me", from: -1000, to: -400, approx: true,
     unit: "**מינים וברכה**: שבעת המינים.", principle: "מזון כ**ברכה של הארץ** ושל העונה.",
     time: "**חגים לפי קציר**: שעורה בפסח, חיטה בשבועות.", conflict: "**כשרות**: מה מותר ומה אסור.",
     example: { food: "olive", t: "\"ארץ **זית שמן** ודבש\"." }, context: { culture: "חקלאות **בעל**: תלויה בגשם, בלי נהר גדול.", geo: "**ארץ ישראל**: הרים ומדבר, צומת בין מצרים לבבל.", climate: "**חורף גשום וקיץ יבש**: שבעת המינים עמידים ליובש." }, src: "tanakh"
   },
   {
-    id: "ayurveda", he: "איורוודה", place: "הודו", place_la: "India", region: "asia", from: -200, to: 200, approx: true,
+    id: "ayurveda", he: "איורוודה", place: "הודו", place_la: "India", ll: [76.5, 28.5], who: { he: "צ'רקה", la: "Charaka", role: "הטקסט היסודי" }, region: "asia", from: -200, to: 200, approx: true,
     unit: "**שישה טעמים**: מתוק, חמוץ, מלוח, חריף, מר, עפיץ.", principle: "איזון בין **שלוש דושות**: ואטה, פיטה וקאפה.",
     time: "**לפי עונה ושעה ביום**.", conflict: "**ויירודהה אהרה**: מזונות שלא משלבים, כמו **חלב ודג**.",
     example: { food: "turmeric", t: "**כורכום** הוא תבלין יסוד במטבח ההודי." }, context: { culture: "**דת וטקס**: אוכל כחלק מסדר קוסמי ומעמדי.", geo: "**תת־היבשת ההודית**: מישורים, הרים ונהרות.", climate: "**מונסון**: עונות חדות של חום, גשם ויובש." }, src: ["charaka", "nccih-ayurveda"]
   },
   {
-    id: "tcm", he: "רפואה סינית", place: "סין", place_la: "China", region: "asia", from: -200, to: -100, approx: true,
+    id: "tcm", he: "רפואה סינית", place: "סין", place_la: "China", ll: [112.5, 34.8], who: { he: "הקיסר הצהוב", la: "Huangdi", role: "דמות מסורתית" }, region: "asia", from: -200, to: -100, approx: true,
     unit: "**חמישה טעמים**, ומזון **חם, ניטרלי או קר**.", principle: "איזון **יין ויאנג**.",
     time: "**חמש עונות** וחמש תמורות.", conflict: "**עודף קור או חום** בארוחה.",
     example: { food: "ginger", t: "**ג'ינג'ר** נחשב מחמם." }, context: { culture: "**חקלאות אורז ודוחן**, ומסורת של מינהל ורישום.", geo: "**עמק הנהר הצהוב**, סין.", climate: "**חמש עונות** ברורות, וחורף קר." }, src: ["huangdi", "nccih-tcm"]
   },
   {
-    id: "hippocrates", he: "היפוקרטס", place: "יוון", place_la: "Greece", region: "eu", from: -420, to: -370, approx: true,
+    id: "hippocrates", he: "היפוקרטס", place: "יוון", place_la: "Greece", ll: [27.3, 36.9], who: { he: "היפוקרטס", la: "Hippocrates", role: "רופא" }, region: "eu", from: -420, to: -370, approx: true,
     unit: "**מזון ותנועה** כשני כוחות שצריך לאזן.", principle: "**בריאות כמשטר יומי**: מזון, שינה ופעילות.",
     time: "**לפי עונה, גיל ומקום**.", conflict: "**חוסר איזון** בין אכילה למאמץ.",
     example: { food: "barley", t: "**מי שעורה** (פטיסאנה) בכתבי היפוקרטס." }, context: { culture: "**רפואה חילונית** ראשונה: סיבה טבעית, לא אלים.", geo: "**האי קוס**, יוון.", climate: "**ים־תיכוני**: רוחות, מים ומקום משנים את הבריאות." }, src: "hippocrates"
   },
   {
-    id: "galen", he: "גלנוס", place: "רומא", place_la: "Rome", region: "eu", from: 160, to: 200, approx: true,
+    id: "galen", he: "גלנוס", place: "רומא", place_la: "Rome", ll: [12.5, 41.9], who: { he: "גלנוס", la: "Galen", role: "רופא" }, region: "eu", from: 160, to: 200, approx: true,
     unit: "**ארבע איכויות**: חם, קר, לח, יבש, במדרגות.", principle: "איזון **ארבע הליחות**.",
     time: "**מזון חם בחורף, קר בקיץ**.", conflict: "מזון ש**מגביר** את מה שכבר עודף בגוף.",
     example: { food: "wheat", t: "**לחם** מדורג לפי סוג הקמח ואופן האפייה." }, context: { culture: "**האימפריה הרומית**: רופא של גלדיאטורים ושל קיסרים.", geo: "**פרגמון ורומא**.", climate: "**ים־תיכוני**: אותה שפה של חם, קר, לח ויבש." }, src: "galen"
   },
   {
-    id: "rambam", he: "הרמב\"ם", place: "פוסטאט, מצרים", place_la: "Fustat, Egypt", region: "me", from: 1180, to: 1198,
+    id: "rambam", he: "הרמב\"ם", place: "פוסטאט, מצרים", place_la: "Fustat, Egypt", ll: [31.2, 30.0], who: { he: "הרמב\"ם", la: "Maimonides", role: "רופא ופוסק" }, region: "me", from: 1180, to: 1198,
     unit: "**סדר ועונה**: מה לפני הארוחה, מה אחריה, מה בחמה ומה בגשמים.", principle: "**הגוף כתנאי להבנה**.",
     time: "\"בימות החמה **מאכלים הקרים**, ובימות הגשמים **החמים**\".", conflict: "**משלשלין עם המזון**: לא מערבבים.",
     example: { food: "fig", t: "**תאנה קודם** הארוחה, **רימון אחריה**." }, context: { culture: "**רופא החצר** בקהיר, ורב. מחבר רפואה יוונית־ערבית והלכה.", geo: "**פוסטאט, מצרים**: עיר על הנילוס.", climate: "**חם ויבש**: מכאן הדגש על מאכלים קרים בקיץ." }, src: "rambam-deot"
   },
   {
-    id: "hildegard", he: "הילדגרד מבינגן", place: "בינגן, גרמניה", place_la: "Bingen, Germany", region: "eu", from: 1150, to: 1160, approx: true,
+    id: "hildegard", he: "הילדגרד מבינגן", place: "בינגן, גרמניה", place_la: "Bingen, Germany", ll: [7.9, 49.97], who: { he: "הילדגרד מבינגן", la: "Hildegard von Bingen", role: "נזירה וכותבת" }, region: "eu", from: 1150, to: 1160, approx: true,
     unit: "**חם וקר** לכל צמח, ברוח גלנוס.", principle: "**ויררידיטאס**: כוח הירוק והצמיחה.",
     time: "**מחזור השנה** במנזר.", conflict: "מזון ש**מגביר** חום או קור עודפים, לפי שיטת גלנוס.",
     example: { food: "sage", t: "**מרווה** בגינת התבלינים של המנזר." }, context: { culture: "**מנזר בנדיקטיני**: גינת תבלינים, צום ומחזור תפילות.", geo: "**עמק הריין**, גרמניה.", climate: "**קר ולח**: מזון \"מחמם\" מועדף." }, src: "hildegard"
   },
   {
-    id: "washoku", he: "וושוקו", place: "יפן", place_la: "Japan", region: "asia", from: 2013, to: 2013,
+    id: "washoku", he: "וושוקו", place: "יפן", place_la: "Japan", ll: [139.7, 35.7], region: "asia", from: 2013, to: 2013,
     unit: "**מרק ושלוש מנות** (איצ'יג'ו סנסאי).", principle: "**כבוד לעונה ולטבע**.",
     time: "**שון**: כל מזון ברגע השיא שלו.", conflict: "**אחידות**: אותו טעם, צבע ושיטת בישול בכל המנות.",
     example: { food: "sesame", t: "**שומשום** קלוי, ברוטב גומה.", }, context: { culture: "**בודהיזם ושינטו**: איסור על בשר במשך דורות, וכבוד לטבע.", geo: "**ארכיפלג**: ים בכל כיוון, מעט אדמה.", climate: "**ארבע עונות חדות**, ולחות גבוהה." }, src: "unesco-washoku"
   },
   {
-    id: "med", he: "התזונה הים־תיכונית", place: "אגן הים התיכון", place_la: "Mediterranean", region: "eu", from: 2010, to: 2018,
+    id: "med", he: "התזונה הים־תיכונית", place: "אגן הים התיכון", place_la: "Mediterranean", ll: [17.5, 38.5], region: "eu", from: 2010, to: 2018,
     unit: "**דפוס**, לא מזון בודד: שמן זית, קטניות, ירקות.", principle: "**השולחן המשותף** הוא חלק מהתזונה.",
     time: "**מקומי ועונתי**.", conflict: "**מזון מעובד** במקום מזון שלם.",
     example: { food: "olive", t: "**שמן זית כתית** בניסוי PREDIMED." }, context: { culture: "**שולחן משותף** בכפר: ארוחה כמפגש.", geo: "**אגן הים התיכון**: יוון, איטליה, ספרד ומרוקו.", climate: "**קיץ חם ויבש**: זית, חיטה וגפן." }, src: ["unesco-med", "predimed-2018"]
   },
   {
-    id: "nordic", he: "המטבח הנורדי החדש", place: "קופנהגן, דנמרק", place_la: "Copenhagen, Denmark", region: "eu", from: 2004, to: 2004,
+    id: "nordic", he: "המטבח הנורדי החדש", place: "קופנהגן, דנמרק", place_la: "Copenhagen, Denmark", ll: [12.6, 55.7], who: { he: "קלאוס מאייר ושפים נורדיים", la: "Claus Meyer et al.", role: "שפים" }, region: "eu", from: 2004, to: 2004,
     unit: "**מקומי ועונתי**.", principle: "**טוהר, פשטות וטריות**.",
     time: "**עונות הצפון**, עם שימור וכבישה.", conflict: "**מזון מיובא** מרחוק.",
     example: { food: "cabbage", t: "**כרוב כבוש** לחורף ארוך." }, context: { culture: "**מניפסט של שפים**, תגובה למזון מתועש ומיובא.", geo: "**סקנדינביה**.", climate: "**קר, ועונת גידול קצרה**: שימור, כבישה ועישון." }, src: "new-nordic-2004"
   },
   {
-    id: "rogel", he: "על רוח וחומר", place: "ישראל", place_la: "Israel", region: "me", from: 2007, to: 2007, approx: true,
+    id: "rogel", he: "על רוח וחומר", place: "ישראל", place_la: "Israel", ll: [34.8, 32.1], who: { he: "אילנה רוגל", la: "Ilana Rogel", role: "כותבת" }, region: "me", from: 2007, to: 2007, approx: true,
     unit: "**ארבעה ערוצים**: גוף, רגש, שכל ואינטואיציה.", principle: "**איזון רוחני** משפיע על האיזון הגופני.",
     time: "**עידן הדלי**, ומפת המזלות האישית.", conflict: "**חוסר איזון רגשי** כשורש של מחלה.",
     example: { food: "olive", t: "לכל מזון: סקירה **\"ארצית\"** (מדעית) לצד מידע **\"קוסמי\"**." },
@@ -77,7 +77,7 @@ export const METHODS = [
     layer: "believed", src: "rogel"
   },
   {
-    id: "science", he: "מדע התזונה", place: "עולמי", place_la: "Global", region: "global", from: 2023, to: 2026,
+    id: "science", he: "מדע התזונה", place: "עולמי", place_la: "Global", ll: null, region: "global", from: 2023, to: 2026,
     unit: "**רכיבים ודפוסים**: סיבים, סוכר חופשי, נתרן.", principle: "**ראיות**, ועוצמת ראיה.",
     time: "**לאורך החיים**, לא לפי עונה.", conflict: "**אינטראקציות** בין מזון לתרופה, וספיגה בין מזונות.",
     example: { food: "lentil", t: "**לימון עם עדשים**: ויטמין C מגביר ספיגת ברזל." }, context: { culture: "**ניסוי מבוקר** ומחקר אוכלוסייה.", geo: "**עולמי**.", climate: "**לא תלוי אקלים**: אותה הנחיה בכל מקום." }, src: ["who-2023", "medlineplus-iron"]

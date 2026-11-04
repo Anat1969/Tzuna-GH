@@ -167,12 +167,16 @@ function serve() {
 
   console.log('צמח וגוף');
   await go('#/plant');
-  ok(await p.locator('.pcard img').count() === 6 && !(await p.locator('.pl-svg, .bd-svg').count()), 'שישה צילומים, בלי איורים');
+  ok(await p.locator('.pv .pv-link').count() === 6 && await p.locator('.pl-tab').count() === 6, 'מפה: שישה זוגות של צמח וגוף, ושישה כפתורי חלק');
+  ok(await p.locator('#pl-aside .mv figure').count() === 2 && await p.locator('#pl-aside .ess').count() >= 5, 'תרשים מנגנון ולוחות בפורמט גוף ונפש');
+  ok(await p.locator('.doctrines .dc').count() === 3, 'מאיזו תורה צמח הקשר: שלוש תורות');
   for (const id of ['stem', 'leaf', 'flower', 'fruit', 'seed', 'root']) {
-    await p.click(`.pcard[data-part="${id}"]`);
-    ok((await hash()).includes('p=' + id) && await p.locator(`.pcard[data-part="${id}"][aria-pressed="true"]`).count() === 1, `חלק ${id} נפתח`);
+    await p.click(`.pl-tab[data-part="${id}"]`);
+    ok((await hash()).includes('p=' + id) && await p.locator(`.pl-tab[data-part="${id}"][aria-pressed="true"]`).count() === 1 && await p.locator(`.pv-link.on[data-part="${id}"]`).count() === 1, `חלק ${id} נפתח`);
   }
-  await p.click('.pcard[data-part="leaf"]');
+  await p.click('.pv-link[data-part="fruit"] .pv-hit', { force: true });
+  ok((await hash()).includes('p=fruit'), 'לחיצה על קו במפה בוחרת חלק');
+  await p.click('.pl-tab[data-part="leaf"]');
   ok((await p.locator('#pl-aside').innerText()).includes('נשמה'), 'העלה: ריאות ונשמה');
   ok((await p.locator('.pl-quote').innerText()).includes('Darwin'), 'ציטוט דרווין');
   await go('#/tree');
@@ -183,10 +187,33 @@ function serve() {
   ok(await p.locator('.mt tbody tr').count() === 12 && await p.locator('.tl .tl-m').count() === 12, '12 שיטות בציר ובטבלה');
   ok(await p.locator('.insights li').count() >= 5 && await p.locator('.mx tbody tr').count() === 12, 'מה דומה ומה שונה: תובנות ומטריצה');
   ok(await p.locator('#mt-aside .ctx').count() === 1, 'הקשר תרבותי, גאוגרפי ואקלימי');
-  await p.click('.mt tbody tr[data-m="ayurveda"]');
+  await p.click('.mx tbody tr[data-m="ayurveda"]');
   ok((await p.textContent('#mt-title')).includes('איורוודה') && (await hash()).includes('m=ayurveda'), 'בחירת שיטה מהטבלה');
+  ok(await p.locator('.mt-map .mp').count() === 12 && await p.locator('.mt-figs .mt-fig').count() >= 6, 'מפה עם כל השיטות, ודמויות');
+  await p.click('.mt-sort[data-sort="temp"]');
+  ok((await hash()).includes('s=temp') && await p.locator('.mt-trait').count() === 1 && await p.locator('.mp.dim').count() >= 5, 'מיון לפי חם וקר: תובנה, והשאר מעומעמים');
+  ok((await p.locator('.mx tbody tr').first().getAttribute('class')).indexOf('dim') === -1, 'מי שיש לו את הפרמטר עולה למעלה');
+  await p.click('.mt-all');
+  ok(await p.locator('.mp.dim').count() === 0, '"הכול" מאפס את המיון');
+  ok(await p.locator('.disc-list li').count() >= 3, 'גילויים מהטבלה');
   await p.click('.tl .tl-m[data-m="washoku"]', { force: true });
   ok((await p.textContent('#mt-title')).includes('וושוקו'), 'בחירת שיטה מהציר');
+
+  console.log('רכיבים');
+  await go('#/nutrients');
+  ok(await p.locator('.nbub-b').count() === 12 && await p.locator('.nh tbody tr').count() === 12, 'רכיבים: בועות ומפת חום');
+  await p.click('.nbub-b[data-n="vK"]');
+  ok((await p.textContent('#n-title')).includes('ויטמין K') && await p.locator('#n-aside .pl-food').count() >= 3 && await p.locator('#n-aside .nseason span').count() === 12, 'בחירת ויטמין K: תפקיד, מקורות ועונה');
+  ok((await p.locator('.disc-list').innerText()).includes('עלה'), 'גילוי: ויטמין K בעלים');
+
+  console.log('כתבות');
+  await go('#/articles');
+  ok(await p.locator('.a4').count() === 1 && await p.locator('.a4-q').count() === 1 && await p.locator('.a4-src').count() === 1, 'כתבה בעמוד A4: ציטוט ומקורות');
+  const a4 = await p.locator('.a4').boundingBox();
+  ok(Math.abs(a4.height / a4.width - 297 / 210) < 0.02, 'יחס עמוד A4');
+  ok(/[\u05B0-\u05BC]/.test(await p.locator('.a4-q').innerText()), 'ציטוט מהתנ"ך בניקוד');
+  await p.click('.seg-b[data-a="hot-cold"]');
+  ok((await p.textContent('.a4 h1')).includes('חם וקר'), 'מעבר בין כתבות');
 
   console.log('עונות');
   await go('#/seasons?m=6');
@@ -221,7 +248,7 @@ function serve() {
   await go('#/foods?id=olive');
   const med = p.locator('#sheet .med-links a');
   ok(await med.count() === 1 && await med.getAttribute('href') === 'https://refua-gh.vercel.app/#s=cardio&v=disease&d=ischemic' && await med.getAttribute('target') === '_blank' && (await med.getAttribute('rel')).includes('noopener'), 'זית: קישור "ברפואה" למחלת לב איסכמית, בלשונית חדשה');
-  await go('#/foods?id=fig');
+  await go('#/foods?id=pomegranate');
   ok(!(await p.locator('#sheet .med-links').count()), 'מזון בלי גשר: בלי בלוק "ברפואה"');
   await go('#/recipes');
   await p.click('#f-season');

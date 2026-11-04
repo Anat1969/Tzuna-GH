@@ -15,11 +15,13 @@ import * as help from "./views/help.js";
 import * as method from "./views/method.js";
 import * as recipes from "./views/recipes.js";
 import * as creations from "./views/exhibit.js";
+import * as nutrients from "./views/nutrients.js";
+import * as articles from "./views/articles.js";
 
-const VIEWS = { home, foods, plant, methods, seasons, recipes, compare, creations, redlist, help, method };
+const VIEWS = { home, foods, nutrients, articles, plant, methods, seasons, recipes, compare, creations, redlist, help, method };
 const ALIASES = { tree: "plant" };
 const NAV = [
-  ["foods", "מזון"], ["plant", "צמח וגוף"], ["methods", "שיטות"], ["seasons", "עונות"], ["recipes", "צירופים"], ["compare", "השוואה"], ["creations", "יצירות"]
+  ["foods", "מזון"], ["nutrients", "רכיבים"], ["plant", "צמח וגוף"], ["methods", "שיטות"], ["seasons", "עונות"], ["recipes", "צירופים"], ["compare", "השוואה"], ["articles", "כתבות"], ["creations", "יצירות"]
 ];
 
 const $ = (s) => document.querySelector(s);

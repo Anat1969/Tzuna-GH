@@ -9,7 +9,8 @@ import { PHOTOS } from "../js/data/photos.js";
 import { SCIENCE } from "../js/data/science.js";
 import { SYNERGIES } from "../js/data/synergies.js";
 import { DISCOVERIES } from "../js/data/discoveries.js";
-import { PARTS } from "../js/data/plant.js";
+import { PARTS, DOCTRINES } from "../js/data/plant.js";
+import { NUTRIENTS } from "../js/data/nutrients.js";
 import { METHODS } from "../js/data/methods.js";
 import { MEDICINE, MEDICINE_BASE } from "../js/data/medicine.js";
 import { existsSync } from "node:fs";
@@ -104,9 +105,11 @@ for (const [id, p] of Object.entries(PHOTOS)) {
   if (!p.credit || !p.license) err(`photo:${id}`, "צילום בלי קרדיט או רישיון");
 }
 for (const pt of PARTS) {
-  for (const k of ["plant", "body", "mind"]) { checkText(`part:${pt.id}.${k}`, pt[k].t); if (pt[k].src) checkSrc(`part:${pt.id}.${k}`, pt[k].src); }
+  for (const k of ["plant", "body", "mind", "origin"]) { if (!pt[k]) { err(`part:${pt.id}`, `חסר ${k}`); continue; } checkText(`part:${pt.id}.${k}`, pt[k].t); if (pt[k].src) checkSrc(`part:${pt.id}.${k}`, pt[k].src); }
   for (const id of pt.foods) if (!ids.has(id)) err(`part:${pt.id}`, `מזון לא קיים "${id}"`);
 }
+for (const n of NUTRIENTS) { checkText(`nutrient:${n.id}`, n.role.t); checkSrc(`nutrient:${n.id}`, n.role.src); }
+for (const d of DOCTRINES) { checkText(`doctrine:${d.he}`, d.t); checkSrc(`doctrine:${d.he}`, d.src); }
 for (const m of METHODS) {
   for (const k of ["unit", "principle", "time", "conflict"]) checkText(`method:${m.id}.${k}`, m[k]);
   checkSrc(`method:${m.id}`, m.src);

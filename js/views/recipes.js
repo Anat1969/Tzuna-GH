@@ -3,6 +3,7 @@ import { RECIPES } from "../data/recipes.js";
 import { ALLERGENS, byId } from "../data/foods.js";
 import { rich, stratum, esc, iconBtn, MONTHS, MONTHS_SHORT, nowMonth, triangle } from "../ui.js";
 import { plate } from "../plates.js";
+import { timeBadge } from "../plantviz.js";
 import { foodImage } from "./foods.js";
 import { patch } from "../route.js";
 import { synergiesInRecipe, SYNERGIES } from "../data/synergies.js";
@@ -21,7 +22,7 @@ function cardHTML(r) {
   const al = allergensOf(r);
   return `<button class="recipe-card press" data-id="${r.id}" aria-pressed="${state.id === r.id}">
     <span class="r-plates">${r.foods.slice(0, 4).map((id) => `<span>${foodImage(byId(id))}</span>`).join("")}</span>
-    <span class="cap"><b>${esc(r.he)}</b>
+    <span class="cap"><b>${esc(r.he)}</b>${timeBadge(r.months)}
       ${synergiesInRecipe(r.id).slice(0, 1).map((x) => `<span class="r-syn">${esc(x.title)}</span>`).join("")}
       <span class="r-meta"><span>${esc(r.time)}</span><span><bdi class="num" style="font-weight:400">${r.steps.length}</bdi> שלבים</span>${al.length ? `<span class="warn">${esc(al.map((a) => ALLERGENS[a]).join(", "))}</span>` : ""}</span>
     </span>
@@ -125,8 +126,8 @@ function netHTML() {
   const nodes = Object.entries(pos).map(([k, p]) => { const ext = k.startsWith("m:"); const lab = nodeLabel(k); const w = Math.max(44, lab.length * 9 + 18);
     return `<g class="nn ${ext ? "ext" : ""}" data-node="${esc(k)}" tabindex="0" role="button" transform="translate(${p.x},${p.y})"><rect x="${-w / 2}" y="-13" width="${w}" height="26"/><text y="5">${esc(lab)}</text>${adj[k].length > 1 ? `<circle cx="${w / 2}" cy="-13" r="9"/><text class="nn-n" x="${w / 2}" y="-9">${adj[k].length}</text>` : ""}</g>`; }).join("");
   return `<div class="net-box">
-    <div class="net-f"><span class="chips" role="group" aria-label="סוג">${KINDS.map(([k, he]) => `<button class="chip" data-net-k="${k}" aria-pressed="${state.k === k}">${he}</button>`).join("")}</span>
-      <span class="chips" role="group" aria-label="שותף">${MATES.map(([k, he]) => `<button class="chip" data-net-p="${k}" aria-pressed="${state.p === k}">${he}</button>`).join("")}</span>
+    <div class="net-f"><span class="chips" role="group" aria-label="סוג">${KINDS.map(([k, he]) => `<button class="${k === "all" ? "chip-all" : "chip"}" data-net-k="${k}" aria-pressed="${state.k === k}">${he}</button>`).join("")}</span>
+      <span class="chips" role="group" aria-label="שותף">${MATES.map(([k, he]) => `<button class="${k === "all" ? "chip-all" : "chip"}" data-net-p="${k}" aria-pressed="${state.p === k}">${he}</button>`).join("")}</span>
       <span class="src"><bdi class="num">${SYN.length}</bdi> מתוך <bdi class="num">${SYNERGIES.length}</bdi></span></div>
     <ol class="insights net-ins">${netInsights(adj).map((x) => `<li><span class="label">${x.type}</span> ${rich(x.t)}</li>`).join("")}</ol>
     <div class="net-list" role="list">${SYN.map((s) => `<button class="net-row ${s.kind} ${sel === s.id ? "on" : ""}" data-syn="${s.id}" role="listitem"><b>${esc(nodeLabel(nodeKey(s, "a")))}</b><i></i><b>${esc(nodeLabel(nodeKey(s, "b")))}</b></button>`).join("")}</div>
