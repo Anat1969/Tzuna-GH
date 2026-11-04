@@ -1436,3 +1436,15 @@ q.qt::before { content: open-quote; } q.qt::after { content: close-quote; }
 }
 .ph-use { display: flex; gap: 6px; align-items: flex-start; margin: 8px 0 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); } .ph-use .ic { width: 16px; height: 16px; color: var(--known); flex: none; margin-top: 2px; }
 .disc-list { grid-template-columns: minmax(0, 1fr) !important; }
+/* נייד: גוף ונפש נצמדים לראש הטור בזמן הגלילה, בגרסה קומפקטית */
+@media (max-width: 920px) {
+  .bs-dock { position: sticky; top: 0; z-index: 3; box-shadow: 0 6px 12px -8px rgba(0,0,0,.25); }
+  .bs-h { padding: 8px 10px; }
+  .bs-h header b { font-size: 16px; }
+  .bs-h p { font-size: 13px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .bs-extra { display: none; }
+}
+@media (max-width: 920px) {
+  [data-view="foods"] .view-in.framed.focus-aside { grid-template-rows: auto auto minmax(0, 1fr) !important; }
+  .gb-k { display: none; }
+}
