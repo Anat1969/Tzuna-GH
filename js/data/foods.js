@@ -36,7 +36,7 @@ import { KITCHEN_FOODS } from "./kitchen.js";
 
 const BASE_FOODS = [
   {
-    id: "olive", he: "זית", en: "Olive", la: "Olea europaea",
+    id: "olive", he: "זית", en: "Olive", la: "Olea europaea", alt: ["זיתים", "שמן זית"],
     family: "זיתיים", family_la: "Oleaceae", part: "פרי ושמן",
     cat: "seven", months: [10, 11, 12], season_kind: "מסיק", meal: null,
     allergens: [], shape: "olive", hue: "#5b7f3a",
@@ -53,7 +53,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "wheat", he: "חיטה", en: "Wheat", la: "Triticum aestivum",
+    id: "wheat", he: "חיטה", en: "Wheat", la: "Triticum aestivum", alt: ["חיטים", "בורגול", "קמח"],
     family: "דגניים", family_la: "Poaceae", part: "גרעין",
     cat: "seven", months: [5, 6], season_kind: "קציר", meal: null,
     allergens: ["gluten"], shape: "grain", hue: "#b8862b",
@@ -87,7 +87,7 @@ const BASE_FOODS = [
     safety: { flags: ["allergen"], note: "" }
   },
   {
-    id: "grape", he: "ענבים", en: "Grape", la: "Vitis vinifera",
+    id: "grape", he: "ענבים", en: "Grape", la: "Vitis vinifera", alt: ["ענב", "צימוקים", "גפן"],
     family: "גפניים", family_la: "Vitaceae", part: "פרי",
     cat: "seven", months: [7, 8, 9], season_kind: "בציר", meal: "before",
     allergens: [], shape: "grape", hue: "#6b3a6e",
@@ -104,7 +104,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "fig", he: "תאנה", en: "Fig", la: "Ficus carica",
+    id: "fig", he: "תאנה", en: "Fig", la: "Ficus carica", alt: ["תאנים"],
     family: "תותיים", family_la: "Moraceae", part: "פרי",
     cat: "seven", months: [6, 7, 8, 9], season_kind: "פרי", meal: "before",
     allergens: [], shape: "fig", hue: "#7a4a5a",
@@ -121,7 +121,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "pomegranate", he: "רימון", en: "Pomegranate", la: "Punica granatum",
+    id: "pomegranate", he: "רימון", en: "Pomegranate", la: "Punica granatum", alt: ["רימונים"],
     family: "כופריים", family_la: "Lythraceae", part: "זרעים עטופי ציפה",
     cat: "seven", months: [9, 10, 11], season_kind: "פרי", meal: "after",
     allergens: [], shape: "pomegranate", hue: "#a32d3a",
@@ -138,7 +138,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "date", he: "תמר", en: "Date", la: "Phoenix dactylifera",
+    id: "date", he: "תמר", en: "Date", la: "Phoenix dactylifera", alt: ["תמרים", "סילאן"],
     family: "דקליים", family_la: "Arecaceae", part: "פרי",
     cat: "seven", months: [8, 9, 10], season_kind: "פרי", meal: null,
     allergens: [], shape: "date", hue: "#8a5a2b",
@@ -152,7 +152,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "lentil", he: "עדשים", en: "Lentil", la: "Lens culinaris",
+    id: "lentil", he: "עדשים", en: "Lentil", la: "Lens culinaris", alt: ["עדשה", "מג'דרה"],
     family: "קטניות", family_la: "Fabaceae", part: "זרע",
     cat: "legumes", months: [4, 5], season_kind: "קציר", meal: null,
     allergens: [], shape: "legume", hue: "#9a6a3a",
@@ -169,7 +169,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "chickpea", he: "חומוס", en: "Chickpea", la: "Cicer arietinum",
+    id: "chickpea", he: "חומוס", en: "Chickpea", la: "Cicer arietinum", alt: ["גרגרי חומוס"],
     family: "קטניות", family_la: "Fabaceae", part: "זרע",
     cat: "legumes", months: [3, 4], season_kind: "ירוק", meal: null,
     allergens: [], shape: "chickpea", hue: "#c4a46a",
@@ -183,7 +183,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "fava", he: "פול", en: "Fava bean", la: "Vicia faba",
+    id: "fava", he: "פול", en: "Fava bean", la: "Vicia faba", alt: ["פול מדמס"],
     family: "קטניות", family_la: "Fabaceae", part: "זרע",
     cat: "legumes", months: [2, 3, 4], season_kind: "ירוק", meal: null,
     allergens: [], shape: "pod", hue: "#6a8a3a",
@@ -197,7 +197,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "**חסר G6PD**: לא אוכלים פול, גם לא ירוק. בירור אצל רופא." }
   },
   {
-    id: "lupin", he: "תורמוס", en: "Lupin", la: "Lupinus albus",
+    id: "lupin", he: "תורמוס", en: "Lupin", la: "Lupinus albus", alt: ["תורמוסים"],
     family: "קטניות", family_la: "Fabaceae", part: "זרע",
     cat: "legumes", months: [4, 5], season_kind: "קציר", meal: null,
     allergens: ["lupin"], shape: "lupin", hue: "#d1b45a",
@@ -211,7 +211,7 @@ const BASE_FOODS = [
     safety: { flags: ["allergen"], note: "" }
   },
   {
-    id: "almond", he: "שקד", en: "Almond", la: "Prunus amygdalus",
+    id: "almond", he: "שקד", en: "Almond", la: "Prunus amygdalus", alt: ["שקדים"],
     family: "ורדיים", family_la: "Rosaceae", part: "זרע",
     cat: "nuts", months: [3, 4, 7, 8], season_kind: "ירוק ובשל", meal: null,
     allergens: ["nuts"], shape: "almond", hue: "#a8784a",
@@ -228,7 +228,7 @@ const BASE_FOODS = [
     safety: { flags: ["allergen"], note: "" }
   },
   {
-    id: "walnut", he: "אגוז מלך", en: "Walnut", la: "Juglans regia",
+    id: "walnut", he: "אגוז מלך", en: "Walnut", la: "Juglans regia", alt: ["אגוזים", "אגוזי מלך", "אגוז"],
     family: "אגוזיים", family_la: "Juglandaceae", part: "זרע",
     cat: "nuts", months: [9, 10], season_kind: "פרי", meal: null,
     allergens: ["nuts"], shape: "walnut", hue: "#7a5a3a",
@@ -242,7 +242,7 @@ const BASE_FOODS = [
     safety: { flags: ["allergen"], note: "" }
   },
   {
-    id: "sesame", he: "שומשום", en: "Sesame", la: "Sesamum indicum",
+    id: "sesame", he: "שומשום", en: "Sesame", la: "Sesamum indicum", alt: ["טחינה", "שומשומין"],
     family: "שומשומיים", family_la: "Pedaliaceae", part: "זרע",
     cat: "nuts", months: [8, 9], season_kind: "קציר", meal: null,
     allergens: ["sesame"], shape: "sesame", hue: "#c8a868",
@@ -256,7 +256,7 @@ const BASE_FOODS = [
     safety: { flags: ["allergen"], note: "" }
   },
   {
-    id: "watermelon", he: "אבטיח", en: "Watermelon", la: "Citrullus lanatus",
+    id: "watermelon", he: "אבטיח", en: "Watermelon", la: "Citrullus lanatus", alt: ["אבטיחים"],
     family: "דלועיים", family_la: "Cucurbitaceae", part: "פרי",
     cat: "veg", months: [6, 7, 8], season_kind: "פרי", meal: "before",
     allergens: [], shape: "round", hue: "#3a7a4a",
@@ -273,7 +273,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "cucumber", he: "מלפפון", en: "Cucumber", la: "Cucumis sativus",
+    id: "cucumber", he: "מלפפון", en: "Cucumber", la: "Cucumis sativus", alt: ["מלפפונים"],
     family: "דלועיים", family_la: "Cucurbitaceae", part: "פרי",
     cat: "veg", months: [4, 5, 6, 7, 8, 9, 10], season_kind: "פרי", meal: "before",
     allergens: [], shape: "long", hue: "#4a7a3a",
@@ -287,7 +287,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "onion", he: "בצל", en: "Onion", la: "Allium cepa",
+    id: "onion", he: "בצל", en: "Onion", la: "Allium cepa", alt: ["בצלים"],
     family: "נרקיסיים", family_la: "Amaryllidaceae", part: "בצל (גבעול ועלים)",
     cat: "veg", months: [4, 5, 6], season_kind: "אסיף", meal: null,
     allergens: [], shape: "bulb", hue: "#a8643a",
@@ -315,7 +315,7 @@ const BASE_FOODS = [
     safety: { flags: ["medication_interaction"], note: "תוספי שום ו**מדללי דם**: לבדוק עם רוקח." }
   },
   {
-    id: "tomato", he: "עגבנייה", en: "Tomato", la: "Solanum lycopersicum",
+    id: "tomato", he: "עגבנייה", en: "Tomato", la: "Solanum lycopersicum", alt: ["עגבניות", "רסק עגבניות"],
     family: "סולניים", family_la: "Solanaceae", part: "פרי",
     cat: "veg", months: [5, 6, 7, 8, 9, 10], season_kind: "פרי", meal: null,
     allergens: [], shape: "tomato", hue: "#c43a2a",
@@ -329,7 +329,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "zaatar", he: "זעתר (אזוב)", en: "Syrian oregano", la: "Origanum syriacum",
+    id: "zaatar", he: "זעתר (אזוב)", en: "Syrian oregano", la: "Origanum syriacum", alt: ["זעתר", "אזוב"],
     family: "שפתניים", family_la: "Lamiaceae", part: "עלים",
     cat: "herbs", months: [3, 4, 5, 6], season_kind: "עלים", meal: null,
     allergens: [], shape: "herb", hue: "#5a7a4a", concentrated: true,
@@ -346,7 +346,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "sage", he: "מרווה", en: "Greek sage", la: "Salvia fruticosa",
+    id: "sage", he: "מרווה", en: "Greek sage", la: "Salvia fruticosa", alt: ["מרמיה"],
     family: "שפתניים", family_la: "Lamiaceae", part: "עלים",
     cat: "herbs", months: [3, 4, 5], season_kind: "עלים", meal: null,
     allergens: [], shape: "herb2", hue: "#7a8a7a", concentrated: true,
@@ -374,7 +374,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "turmeric", he: "כורכום (תבלין)", en: "Turmeric", la: "Curcuma longa",
+    id: "turmeric", he: "כורכום (תבלין)", en: "Turmeric", la: "Curcuma longa", alt: ["כורכום"],
     family: "זנגביליים", family_la: "Zingiberaceae", part: "קנה שורש",
     cat: "herbs", months: [], season_kind: "יבוא", meal: null,
     allergens: [], shape: "rhizome2", hue: "#d49a1a", concentrated: true,
@@ -388,7 +388,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "**תוסף** כורכום מרוכז נמצא ברשימה האדומה.", redlink: "turmeric-supp" }
   },
   {
-    id: "grapefruit", he: "אשכולית", en: "Grapefruit", la: "Citrus × paradisi",
+    id: "grapefruit", he: "אשכולית", en: "Grapefruit", la: "Citrus × paradisi", alt: ["אשכוליות"],
     family: "פיגמיים", family_la: "Rutaceae", part: "פרי",
     cat: "veg", months: [11, 12, 1, 2, 3], season_kind: "פרי", meal: null,
     allergens: [], shape: "citrus", hue: "#d4704a",
@@ -402,7 +402,7 @@ const BASE_FOODS = [
     safety: { flags: ["medication_interaction"], note: "נוטלים תרופות קבועות? לשאול **רוקח** לפני אשכולית." }
   },
   {
-    id: "carob", he: "חרוב", en: "Carob", la: "Ceratonia siliqua",
+    id: "carob", he: "חרוב", en: "Carob", la: "Ceratonia siliqua", alt: ["חרובים"],
     family: "קטניות", family_la: "Fabaceae", part: "תרמיל",
     cat: "veg", months: [8, 9, 10], season_kind: "פרי", meal: null,
     allergens: [], shape: "carob", hue: "#5a3a2a",
@@ -416,7 +416,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "oat", he: "שיבולת שועל", en: "Oat", la: "Avena sativa",
+    id: "oat", he: "שיבולת שועל", en: "Oat", la: "Avena sativa", alt: ["קוואקר", "שיבולת"],
     family: "דגניים", family_la: "Poaceae", part: "גרעין",
     cat: "grains", months: [4, 5], season_kind: "קציר", meal: null,
     allergens: ["gluten"], shape: "oat", hue: "#b4a46a",
@@ -433,7 +433,7 @@ const BASE_FOODS = [
     safety: { flags: ["allergen"], note: "" }
   },
   {
-    id: "apple", he: "תפוח", en: "Apple", la: "Malus domestica",
+    id: "apple", he: "תפוח", en: "Apple", la: "Malus domestica", alt: ["תפוחים"],
     family: "ורדיים", family_la: "Rosaceae", part: "פרי",
     cat: "veg", months: [8, 9, 10], season_kind: "פרי", meal: "after",
     allergens: [], shape: "apple", hue: "#b8403a",
@@ -450,7 +450,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "pear", he: "אגס", en: "Pear", la: "Pyrus communis",
+    id: "pear", he: "אגס", en: "Pear", la: "Pyrus communis", alt: ["אגסים"],
     family: "ורדיים", family_la: "Rosaceae", part: "פרי",
     cat: "veg", months: [7, 8, 9], season_kind: "פרי", meal: "before",
     allergens: [], shape: "pear", hue: "#a8a43a",
@@ -478,7 +478,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "quince", he: "חבוש", en: "Quince", la: "Cydonia oblonga",
+    id: "quince", he: "חבוש", en: "Quince", la: "Cydonia oblonga", alt: ["חבושים"],
     family: "ורדיים", family_la: "Rosaceae", part: "פרי",
     cat: "veg", months: [9, 10, 11], season_kind: "פרי", meal: "after",
     allergens: [], shape: "quince", hue: "#d8b43a",
@@ -492,7 +492,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "cabbage", he: "כרוב", en: "Cabbage", la: "Brassica oleracea",
+    id: "cabbage", he: "כרוב", en: "Cabbage", la: "Brassica oleracea", alt: ["כרוב לבן", "כרוב סגול"],
     family: "מצליבים", family_la: "Brassicaceae", part: "עלים (ניצן)",
     cat: "veg", months: [11, 12, 1, 2, 3], season_kind: "חורף", meal: null,
     allergens: [], shape: "cabbage", hue: "#7a9a6a",
@@ -506,7 +506,7 @@ const BASE_FOODS = [
     safety: { flags: [], note: "" }
   },
   {
-    id: "chard", he: "מנגולד (תרדין)", en: "Chard", la: "Beta vulgaris var. cicla",
+    id: "chard", he: "מנגולד (תרדין)", en: "Chard", la: "Beta vulgaris var. cicla", alt: ["מנגולד", "תרדין", "סלקא"],
     family: "ירבוזיים", family_la: "Amaranthaceae", part: "עלים",
     cat: "veg", months: [11, 12, 1, 2, 3, 4], season_kind: "חורף", meal: null,
     allergens: [], shape: "chard", hue: "#5a8a4a",
@@ -534,7 +534,7 @@ const BASE_FOODS = [
     safety: { flags: ["allergen"], note: "" }
   },
   {
-    id: "fenugreek", he: "חילבה (תלתן)", en: "Fenugreek", la: "Trigonella foenum-graecum",
+    id: "fenugreek", he: "חילבה (תלתן)", en: "Fenugreek", la: "Trigonella foenum-graecum", alt: ["חילבה", "תלתן"],
     family: "קטניות", family_la: "Fabaceae", part: "זרעים ועלים",
     cat: "herbs", months: [3, 4], season_kind: "פריחה", meal: null,
     allergens: [], shape: "pod", hue: "#c8a43a", concentrated: true,

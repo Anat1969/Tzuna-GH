@@ -358,7 +358,7 @@ export const KITCHEN = [
   },
   {
     food: food({
-      id: "coriander", he: "כוסברה", en: "Coriander", la: "Coriandrum sativum", alt: ["כוסבר", "זרעי כוסברה", "סחוג"],
+      id: "coriander", he: "כוסברה", en: "Coriander", la: "Coriandrum sativum", alt: ["כוסבר", "זרעי כוסברה"],
       family: "סוככיים", family_la: "Apiaceae", part: "עלים וזרעים",
       cat: "herbs", months: [11, 12, 1, 2, 3, 4], season_kind: "עלים", shape: "herb", hue: "#4a8a3a",
       recognize: { t: "**עלים** ירוקים, ו**זרעים** עגולים ויבשים שהם תבלין אחר.", src: "powo" },
