@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>דף הבית: דוגמת עיצוב</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* שפת העיצוב שזוקקה מהתמונה:
+   1. צבע: יער כהה במדרג, מרווה כצבע הדגשה יחיד, טקסט בהיר.
+   2. חומר: זכוכית חלבית (שקיפות, טשטוש, קו בהיר דק, צל רך וארוך).
+   3. טיפוגרפיה: סריף אלגנטי לכותרות, סאנס נקי לטקסט, תוויות קטנות ומרווחות.
+   4. תמונה: צילום אמיתי שמרחף על עומק, ועלווה מטושטשת ברקע.
+   5. רכיבים: כפתור גלולה עם חץ, שבבי אייקון, כרטיס עם צילום, ופס של ארבעה מדדים עם מפרידים דקים. */
+:root {
+  --forest-0: #142019; --forest-1: #1c2b22; --forest-2: #27382d; --forest-3: #34493b;
+  --sage: #c5d6ae; --sage-2: #a9c08c; --sage-ink: #22301f;
+  --text: #eef2ea; --text-2: #b9c6b4; --text-3: #8a9a86;
+  --glass: rgba(255,255,255,.065); --glass-2: rgba(255,255,255,.1); --edge: rgba(255,255,255,.14);
+  --r: 26px; --r-s: 18px;
+  --shadow: 0 30px 60px -20px rgba(0,0,0,.55), 0 10px 20px -10px rgba(0,0,0,.35);
+  --serif: "Frank Ruhl Libre", Georgia, serif;
+  --sans: "IBM Plex Sans Hebrew", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { background: var(--forest-0); }
+html, body { margin: 0; min-height: 100%; }
+body { font-family: var(--sans); color: var(--text); background: radial-gradient(120% 80% at 80% 0%, var(--forest-3), var(--forest-1) 55%, var(--forest-0)); direction: rtl; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 22px clamp(16px, 3vw, 40px) 120px; }
+.glass { background: linear-gradient(160deg, var(--glass-2), var(--glass)); border: 1px solid var(--edge); border-radius: var(--r); box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(18px) saturate(120%); -webkit-backdrop-filter: blur(18px) saturate(120%); }
+.ic { width: 22px; height: 22px; }
+/* סרגל */
+.top { display: flex; align-items: center; gap: 18px; margin-bottom: 22px; }
+.brand { font-family: var(--serif); font-size: 28px; font-weight: 500; letter-spacing: .01em; display: flex; align-items: center; gap: 10px; }
+.brand svg { width: 30px; height: 30px; color: var(--sage); }
+.search { flex: 1; max-width: 460px; margin-inline-start: auto; display: flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; color: var(--text-2); font-size: 14px; }
+.nav { display: flex; gap: 22px; font-size: 14px; color: var(--text-2); }
+.nav a.on { color: var(--text); }
+/* גיבור */
+.hero { position: relative; overflow: hidden; min-height: 420px; display: grid; grid-template-columns: 1.05fr 1fr; align-items: center; padding: 44px 48px; }
+.hero-bg { position: absolute; inset: -40px; background-size: cover; background-position: center; filter: blur(14px) brightness(.62) saturate(1.15); transform: scale(1.1); z-index: 0; }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(20,32,25,.05), rgba(20,32,25,.7) 62%); z-index: 0; }
+.hero > * { position: relative; z-index: 1; }
+.hero > .hero-bg { position: absolute; z-index: 0; }
+.s { display: block; } .s + .s { margin-top: .2em; }
+mark.insight { background: none; color: var(--sage); font-weight: 600; }
+q.qt { quotes: none; }
+.kicker { font-size: 13px; letter-spacing: .12em; color: var(--sage); }
+.hero h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(36px, 4.4vw, 58px); line-height: 1.08; margin: 12px 0 14px; }
+.hero p { color: var(--text-2); font-size: 16px; line-height: 1.6; max-width: 420px; margin: 0 0 26px; }
+.pill { display: inline-flex; align-items: center; gap: 14px; padding: 14px 26px; border-radius: 999px; background: linear-gradient(180deg, #d6e4c2, var(--sage-2)); color: var(--sage-ink); font-weight: 600; font-size: 15px; box-shadow: 0 10px 24px -8px rgba(169,192,140,.55), inset 0 1px 0 rgba(255,255,255,.5); border: 0; cursor: pointer; transition: transform .2s; }
+.pill:hover { transform: translateY(-2px); }
+.pill svg { width: 18px; height: 18px; }
+.hero-photo { justify-self: center; position: relative; width: min(100%, 380px); aspect-ratio: 1; }
+.hero-photo .disc { position: absolute; inset: 6%; border-radius: 50%; background: radial-gradient(circle at 40% 35%, rgba(255,255,255,.12), rgba(255,255,255,.02) 70%); border: 1px solid var(--edge); }
+.hero-photo img { position: absolute; inset: 12%; width: 76%; height: 76%; object-fit: cover; border-radius: 50%; box-shadow: 0 40px 60px -20px rgba(0,0,0,.7); }
+.hero-photo .tag { position: absolute; bottom: 4%; inset-inline-start: 0; padding: 10px 16px; border-radius: 16px; font-size: 13px; }
+.hero-photo .tag b { display: block; font-family: var(--serif); font-size: 18px; font-weight: 500; }
+.dots { display: flex; gap: 6px; justify-content: center; margin: 14px 0 0; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); } .dots i.on { width: 18px; border-radius: 6px; background: var(--sage); }
+/* שבבים */
+.chips { display: flex; gap: 14px; margin: 30px 0 34px; overflow-x: auto; padding-bottom: 4px; }
+.chip { display: grid; justify-items: center; gap: 8px; min-width: 86px; color: var(--text-2); font-size: 12.5px; }
+.chip span.box { width: 64px; height: 64px; border-radius: 20px; display: grid; place-items: center; }
+.chip.on span.box { background: linear-gradient(180deg, rgba(197,214,174,.28), rgba(197,214,174,.1)); border-color: rgba(197,214,174,.55); }
+.chip.on { color: var(--text); }
+.chip .ic { color: var(--sage); }
+/* כותרות אזור */
+.sh { display: flex; align-items: baseline; justify-content: space-between; margin: 0 0 14px; }
+.sh h2 { font-family: var(--serif); font-weight: 500; font-size: 26px; margin: 0; }
+.sh a { font-size: 13px; color: var(--text-2); display: inline-flex; gap: 6px; align-items: center; }
+/* כרטיסי מזון */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
+.card { border-radius: var(--r-s); overflow: hidden; display: grid; }
+.card .ph { aspect-ratio: 1; position: relative; overflow: hidden; background: radial-gradient(circle, rgba(255,255,255,.08), transparent 70%); }
+.card .ph img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.card:hover .ph img { transform: scale(1.05); }
+.card .ph::after { content: ""; position: absolute; inset: 55% 0 0; background: linear-gradient(transparent, rgba(20,32,25,.7)); }
+.card .cap { padding: 10px 14px 14px; display: flex; justify-content: space-between; align-items: flex-end; gap: 6px; }
+.card b { font-size: 15px; font-weight: 600; display: block; } .card small { font-family: var(--serif); font-style: italic; color: var(--text-3); font-size: 12px; direction: ltr; display: block; text-align: right; }
+.card .ic { width: 18px; height: 18px; color: var(--sage); flex: none; }
+/* גיליון מוצג: פס ארבעה מדדים */
+.feature { display: grid; grid-template-columns: .9fr 1.1fr; gap: 0; margin-top: 40px; overflow: hidden; }
+.feature .fp { position: relative; min-height: 340px; }
+.feature .fp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.feature .fp::after { content: ""; position: absolute; inset: 0; background: linear-gradient(270deg, rgba(28,43,34,0) 40%, rgba(28,43,34,.95)); }
+.feature .fb { padding: 34px 38px; display: grid; gap: 14px; align-content: center; }
+.feature h3 { font-family: var(--serif); font-weight: 500; font-size: 36px; margin: 0; }
+.feature .la { font-family: var(--serif); font-style: italic; color: var(--sage); font-size: 16px; margin-top: -8px; direction: ltr; text-align: right; }
+.feature .meta { display: flex; gap: 18px; color: var(--text-2); font-size: 13.5px; }
+.feature .meta span { display: inline-flex; align-items: center; gap: 6px; } .feature .meta .ic { width: 16px; height: 16px; color: var(--sage); }
+.feature .lead { font-size: 16px; line-height: 1.6; color: var(--text); margin: 0; }
+.strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--edge); border-bottom: 1px solid var(--edge); margin-top: 6px; }
+.strip > div { display: grid; justify-items: center; text-align: center; gap: 5px; padding: 16px 8px; }
+.strip > div + div { border-inline-start: 1px solid var(--edge); }
+.strip .ic { color: var(--sage); }
+.strip b { font-size: 13.5px; font-weight: 600; } .strip span { font-size: 12.5px; color: var(--text-2); line-height: 1.45; }
+.feature .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 4px; }
+.feature .q { font-family: var(--serif); font-size: 19px; color: var(--sage); }
+/* גילוי */
+.disc-card { margin-top: 40px; padding: 30px 36px; display: grid; grid-template-columns: auto 1fr auto; gap: 24px; align-items: center; }
+.disc-card .n { font-family: var(--serif); font-size: 64px; line-height: 1; color: var(--sage); }
+.disc-card b { font-family: var(--serif); font-size: 22px; font-weight: 500; display: block; margin-bottom: 4px; }
+.disc-card p { margin: 0; color: var(--text-2); line-height: 1.6; }
+/* מקרא השפה */
+.tokens { margin-top: 56px; padding: 26px 30px; }
+.tokens h2 { font-family: var(--serif); font-weight: 500; font-size: 22px; margin: 0 0 14px; }
+.tok { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; font-size: 13px; color: var(--text-2); line-height: 1.5; }
+.tok b { display: block; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+.sw { display: flex; gap: 6px; margin-top: 8px; } .sw i { width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--edge); }
+/* ניווט תחתון בנייד */
+.tabbar { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); display: none; gap: 4px; padding: 8px; border-radius: 26px; }
+.tabbar a { display: grid; justify-items: center; gap: 2px; font-size: 11px; color: var(--text-2); padding: 6px 12px; border-radius: 18px; }
+.tabbar a.on { background: rgba(197,214,174,.2); color: var(--text); }
+.tabbar .ic { width: 20px; height: 20px; color: var(--sage); }
+.note { margin: 0 0 18px; padding: 10px 16px; border-radius: 14px; font-size: 13px; color: var(--text-2); }
+.note b { color: var(--sage); }
+@media (max-width: 860px) {
+  .nav, .search { display: none; } .top .brand { margin-inline-end: auto; }
+  .hero { grid-template-columns: 1fr; padding: 30px 24px; text-align: center; } .hero p { margin-inline: auto; }
+  .hero-photo { width: 78%; margin-top: 20px; }
+  .feature { grid-template-columns: 1fr; } .feature .fp { min-height: 260px; } .feature .fp::after { background: linear-gradient(0deg, rgba(28,43,34,.95), transparent 50%); }
+  .feature .fb { padding: 24px; } .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } .strip > div:nth-child(3) { border-inline-start: 0; }
+  .disc-card { grid-template-columns: auto 1fr; } .disc-card .pill { grid-column: 1 / -1; justify-self: start; }
+  .tok { grid-template-columns: 1fr 1fr; }
+  .tabbar { display: flex; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script type="module">
+import { FOODS, CATEGORIES, byId } from "../js/data/foods.js";
+import { PHOTOS } from "../js/data/photos.js";
+import { PROFILES } from "../js/data/profiles.js";
+import { PARTS } from "../js/data/plant.js";
+import { DISCOVERIES } from "../js/data/discoveries.js";
+import { rich, esc, MONTHS, nowMonth } from "../js/ui.js";
+import { icon } from "../js/plantviz.js";
+
+const m = nowMonth();
+const photo = (f) => PHOTOS[f.id] ? "../" + PHOTOS[f.id].src : "";
+const inSeason = FOODS.filter((f) => f.months.includes(m) && PHOTOS[f.id]);
+const hero = inSeason.find((f) => f.id === "pomegranate") || inSeason[0] || FOODS.find((f) => PHOTOS[f.id]);
+const feat = byId("olive");
+const leafBg = PHOTOS.chard ? "../" + PHOTOS.chard.src : photo(hero);
+const season = [12, 1, 2].includes(m) ? ["חורף", "snow"] : [3, 4, 5].includes(m) ? ["אביב", "bloom"] : [6, 7, 8].includes(m) ? ["קיץ", "sun"] : ["סתיו", "leaffall"];
+const part = (f) => PARTS.find((p) => p.foods.includes(f.id));
+const CAT_IC = { seven: "fruit", grains: "seed", legumes: "seed", nuts: "seed", veg: "leaf", herbs: "leaf" };
+const d = DISCOVERIES[Math.floor(Math.random() * DISCOVERIES.length)];
+const pr = PROFILES[feat.id] || {};
+const plain = (t) => esc(String(t || "").replace(/\*\*|==/g, ""));
+
+document.getElementById("app").innerHTML = `
+  <p class="note glass"><b>דוגמת עיצוב.</b> שפת העיצוב שזוקקה מהתמונה, על התוכן האמיתי של האפליקציה. הדף החי לא השתנה.</p>
+  <header class="top">
+    <a class="brand" href="../#/">${icon("plant")}צומחה</a>
+    <nav class="nav"><a class="on" href="#">בית</a><a href="../#/foods">מזון</a><a href="../#/nutrients">רכיבים</a><a href="../#/plant">צמח וגוף</a><a href="../#/methods">שיטות</a><a href="../#/seasons">עונות</a><a href="../#/articles">כתבות</a></nav>
+    <div class="search glass">${icon("taste")}חיפוש מזון, צמח או מקור</div>
+  </header>
+
+  <section class="hero glass">
+    <div class="hero-bg" style="background-image:url('${leafBg}')"></div>
+    <div>
+      <span class="kicker">${esc(MONTHS[m - 1])} · ${season[0]} · ישראל</span>
+      <h1>כל מזון<br>בשלוש שכבות.</h1>
+      <p>מה ידוע, מה נאמר, ובמה מאמינים. וכל ארוחה היא צירוף שמחליט מה נספג.</p>
+      <a class="pill" href="../#/foods">לגלריה ${icon("next") || "←"}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>
+    </div>
+    <div class="hero-photo">
+      <span class="disc"></span><img src="${photo(hero)}" alt="${esc(hero.he)}">
+      <span class="tag glass"><small>בשדה עכשיו</small><b>${esc(hero.he)}</b></span>
+    </div>
+  </section>
+  <div class="dots"><i class="on"></i><i></i><i></i></div>
+
+  <nav class="chips" aria-label="קטגוריות">
+    <a class="chip on" href="../#/foods"><span class="box glass">${icon("plant")}</span>הכול</a>
+    ${CATEGORIES.map((c) => `<a class="chip" href="../#/foods?cat=${c.id}"><span class="box glass">${icon(CAT_IC[c.id])}</span>${esc(c.he)}</a>`).join("")}
+  </nav>
+
+  <div class="sh"><h2>בשדה ב${esc(MONTHS[m - 1])}</h2><a href="../#/seasons">לכל העונה <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a></div>
+  <div class="cards">${inSeason.slice(0, 6).map((f) => `<a class="card glass" href="../#/foods?id=${f.id}"><span class="ph"><img src="${photo(f)}" alt="${esc(f.he)}" loading="lazy"></span><span class="cap"><span><b>${esc(f.he)}</b><small>${esc(f.la)}</small></span><span style="color:${part(f)?.hue}">${icon(part(f)?.id || "plant")}</span></span></a>`).join("")}</div>
+
+  <section class="feature glass">
+    <div class="fp"><img src="${photo(feat)}" alt="${esc(feat.he)}"></div>
+    <div class="fb">
+      <h3>${esc(feat.he)}</h3><div class="la">${esc(feat.la)}</div>
+      <div class="meta"><span>${icon("fruit")}${esc(part(feat)?.he || "")}</span><span>${icon("leaffall")}${esc(feat.season_kind)}</span><span>${icon("origin")}שבעת המינים</span></div>
+      <p class="lead">${rich(pr.unique || "")}</p>
+      <div class="strip">
+        <div>${icon("body")}<b>גוף</b><span>${plain(pr.body?.t).slice(0, 60)}</span></div>
+        <div>${icon("mind")}<b>נפש</b><span>${plain(pr.soul?.t).split(":")[0]}</span></div>
+        <div>${icon(season[1])}<b>עונה</b><span>${esc(feat.months.map((x) => MONTHS[x - 1]).slice(0, 3).join(", "))}</span></div>
+        <div>${icon(part(feat)?.id || "plant")}<b>חלק בצמח</b><span>${esc(part(feat)?.he || "")} ↔ ${esc(part(feat)?.organ || "")}</span></div>
+      </div>
+      <div class="row"><span class="q">${rich((pr.with?.[0]?.t || "").split(":")[0])}</span><a class="pill" href="../#/foods?id=${feat.id}">לגיליון המלא</a></div>
+    </div>
+  </section>
+
+  <section class="disc-card glass">
+    <span class="n">${DISCOVERIES.indexOf(d) + 1}</span>
+    <div><b>${esc(d.title)}</b><p>${rich(d.t)}</p></div>
+    <a class="pill" href="../#/compare?a=${d.pair[0]}&b=${d.pair[1]}">להשוואה</a>
+  </section>
+
+  <section class="tokens glass">
+    <h2>השפה שזוקקה מהתמונה</h2>
+    <div class="tok">
+      <div><b>צבע</b>יער כהה במדרג, ומרווה כהדגשה יחידה.<div class="sw"><i style="background:#142019"></i><i style="background:#27382d"></i><i style="background:#34493b"></i><i style="background:#c5d6ae"></i><i style="background:#eef2ea"></i></div></div>
+      <div><b>חומר</b>זכוכית חלבית: שקיפות, טשטוש, קו בהיר דק וצל רך וארוך.</div>
+      <div><b>טיפוגרפיה</b>סריף לכותרות (פרנק רוהל), סאנס לטקסט (IBM Plex).</div>
+      <div><b>תמונה</b>צילום אמיתי שמרחף, ועלווה מטושטשת מאחור.</div>
+      <div><b>רכיבים</b>גלולה עם חץ, שבבי אייקון, כרטיס צילום, ופס ארבעה מדדים.</div>
+    </div>
+  </section>
+
+  <nav class="tabbar glass"><a class="on" href="#">${icon("plant")}בית</a><a href="../#/foods">${icon("leaf")}מזון</a><a href="../#/seasons">${icon("season")}עונות</a><a href="../#/articles">${icon("lang")}כתבות</a></nav>`;
+</script>
+</body>
+</html>

@@ -264,5 +264,245 @@ export const PHOTOS = {
   "credit": "Diogo Luiz, iNaturalist",
   "license": "CC BY",
   "page": ""
+ },
+ "pea": {
+  "src": "img/foods/pea.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Stephen Thorpe, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/157076485"
+ },
+ "pepper": {
+  "src": "img/foods/pepper.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Leonel Roget, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/26673070"
+ },
+ "eggplant": {
+  "src": "img/foods/eggplant.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Diogo Luiz, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/236442471"
+ },
+ "avocado": {
+  "src": "img/foods/avocado.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Maria Janeiro, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/257431632"
+ },
+ "potato": {
+  "src": "img/foods/potato.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Татьяна Максимова, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/248687374"
+ },
+ "sweetpotato": {
+  "src": "img/foods/sweetpotato.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Alan Rockefeller, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/2410682"
+ },
+ "zucchini": {
+  "src": "img/foods/zucchini.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Karim Haddad, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/72014449"
+ },
+ "spinach": {
+  "src": "img/foods/spinach.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Adam Kranz, iNaturalist",
+  "license": "CC0",
+  "page": "https://www.inaturalist.org/photos/38286907"
+ },
+ "parsley": {
+  "src": "img/foods/parsley.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Pto, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/348273372"
+ },
+ "mint": {
+  "src": "img/foods/mint.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Andrew Tree, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/296108094"
+ },
+ "coriander": {
+  "src": "img/foods/coriander.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Brian Finzel, iNaturalist",
+  "license": "CC BY-SA",
+  "page": "https://www.inaturalist.org/photos/601895203"
+ },
+ "rice": {
+  "src": "img/foods/rice.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "WATANABE Hitoshi, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/426727496"
+ },
+ "corn": {
+  "src": "img/foods/corn.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Diogo Luiz, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/57590552"
+ },
+ "bean": {
+  "src": "img/foods/bean.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "四角銅鑼, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/194171827"
+ },
+ "lemon": {
+  "src": "img/foods/lemon.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Jenny Saito, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/180489342"
+ },
+ "banana": {
+  "src": "img/foods/banana.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Brian Finzel, iNaturalist",
+  "license": "CC BY-SA",
+  "page": "https://www.inaturalist.org/photos/597559266"
+ },
+ "cumin": {
+  "src": "img/foods/cumin.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Andrew Sebastian, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/173908720"
+ },
+ "fenugreek": {
+  "src": "img/foods/fenugreek.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Milan Chytrý, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/403302217"
+ },
+ "pistachio": {
+  "src": "img/foods/pistachio.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Cesar Ormazabal, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/504123560"
+ },
+ "hazelnut": {
+  "src": "img/foods/hazelnut.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "zebedeugalinha, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/532599395"
+ },
+ "cashew": {
+  "src": "img/foods/cashew.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Kai Squires, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/59196941"
+ },
+ "peanut": {
+  "src": "img/foods/peanut.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "lejones417, iNaturalist",
+  "license": "CC BY-SA",
+  "page": "https://www.inaturalist.org/photos/453526912"
+ },
+ "sunflower": {
+  "src": "img/foods/sunflower.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "The Great Walter, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/749613979"
+ },
+ "flax": {
+  "src": "img/foods/flax.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Neptalí Ramírez Marcial, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/421229426"
+ },
+ "chia": {
+  "src": "img/foods/chia.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Neptalí Ramírez Marcial, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/329511036"
+ },
+ "buckwheat": {
+  "src": "img/foods/buckwheat.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Patrick Hacker, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/155709342"
+ },
+ "quinoa": {
+  "src": "img/foods/quinoa.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Steven Bodzin, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/286469441"
+ },
+ "rye": {
+  "src": "img/foods/rye.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Marius K., iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/299243117"
+ },
+ "millet": {
+  "src": "img/foods/millet.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Sam Kieschnick, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/102527168"
+ },
+ "spelt": {
+  "src": "img/foods/spelt.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Gabriel Mayrhofer, iNaturalist",
+  "license": "CC BY",
+  "page": "https://www.inaturalist.org/photos/145080925"
  }
 };
