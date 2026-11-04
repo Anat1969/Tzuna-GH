@@ -27,7 +27,6 @@ function asideHTML() {
       ${mechanismSVG(p.id, p.hue)}
       <div class="essence pl-ess">
         ${panel("ess-plant", "plant", "בצמח", "מה הוא עושה", `<p>${rich(p.plant.t)}</p>`, "", `style="--c:${p.hue}"`)}
-        ${panel("ess-lang", "lang", "בשפה", "מילים מהצמח", `<p>${rich(p.lang)}</p>`)}
       </div>
       <div class="ess ess-origin">${`<header>${icon("origin", "ess-ic")}<b class="ess-w">הקשר</b><span class="ess-s">מאיפה ההשוואה</span></header><p>${rich(p.origin.t)}</p><footer>ביולוגיה השוואתית · שכבת ידוע</footer>`}</div>
       ${p.note ? `<p class="unique" style="font-size:18px;margin:14px 0 8px">${rich(p.note)}</p>` : ""}
@@ -66,7 +65,7 @@ export function mount(el, params) {
         <div class="pl-tabs" role="group" aria-label="חלקי הצמח">${PARTS.map((p) => `<button class="pl-tab" data-part="${p.id}" style="--c:${p.hue}">${icon(p.id)}<b>${esc(p.he)}</b><span>${icon(ORGAN_ICON[p.id])}${esc(p.organ)}</span></button>`).join("")}</div>
         <div id="pv-box" class="pv-box"></div>
         ${doctrinesHTML()}
-        <blockquote class="pl-quote">"It is hardly an exaggeration to say that the tip of the radicle... acts like the brain of one of the lower animals."<cite>צ'ארלס דרווין (Charles Darwin), תנועה בצמחים, 1880: קצה השורש פועל כמו מוח.</cite></blockquote>
+        <blockquote class="pl-quote">${rich("\"קצה השורש... פועל כמו **המוח** של אחד מבעלי החיים הנמוכים.\"")}<cite>צ'ארלס דרווין, תנועה בצמחים, 1880. תרגום.</cite></blockquote>
       </div>
     </section>
     <aside class="panel sheet" id="pl-aside" aria-labelledby="pl-title"></aside>

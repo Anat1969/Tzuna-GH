@@ -69,7 +69,7 @@ function wheelSVG() {
   const rings = SEASONAL.map((f, i) => {
     const r = R_MON - 10 - i * STEP;
     const on = f.months.includes(month);
-    const segs = runs(f.months).map(([s0, e]) => `<path class="arc ${on ? "on" : ""}" pathLength="1" style="--i:${on ? k++ : 0}" d="${arc(r, ang(s0) + .02, ang(e + 1) - .02)}" stroke="${on ? `url(#wg-arc)` : "#E4E2DC"}" stroke-width="${Math.max(2.4, STEP - 2.2).toFixed(1)}"><title>${esc(f.he)}: ${esc(f.months.map((x) => MONTHS[x - 1]).join(", "))}</title></path>`).join("");
+    const segs = runs(f.months).map(([s0, e]) => `<path class="arc ${on ? "on" : ""}" data-food="${esc(f.he)}" data-on="${on ? 1 : 0}" pathLength="1" style="--i:${on ? k++ : 0}" d="${arc(r, ang(s0) + .02, ang(e + 1) - .02)}" stroke="${on ? `url(#wg-arc)` : "#E4E2DC"}" stroke-width="${Math.max(2.4, STEP - 2.2).toFixed(1)}"><title>${esc(f.he)}: ${esc(f.months.map((x) => MONTHS[x - 1]).join(", "))}</title></path>`).join("");
     return segs;
   }).join("");
   const grads = MONTHS.map((_, i) => `<radialGradient id="wg-${i + 1}" cx="${C}" cy="${C}" r="${R_OUT}" gradientUnits="userSpaceOnUse"><stop offset="${(R_MON / R_OUT).toFixed(3)}" stop-color="${MONTH_HUE[i]}" stop-opacity=".55"/><stop offset="1" stop-color="${MONTH_HUE[i]}"/></radialGradient>`).join("");
@@ -90,7 +90,7 @@ function wheelSVG() {
     <g class="wheel-rot">${rings}<g filter="url(#wg-sh)">${secs}</g>
     <path class="now-tick" d="${arc(R_OUT + 5, nowA0, nowA1)}" fill="none"/></g>
     <circle cx="${C}" cy="${C}" r="${R_IN - 6}" fill="#fff" stroke="${hue}" stroke-opacity=".35" filter="url(#wg-sh)"/>
-    <text x="${C}" y="${C - 22}" text-anchor="middle" font-family="IBM Plex Sans Hebrew" font-size="19" font-weight="700" fill="${hue}">${MONTHS[month - 1]}</text>
+    <text id="wc-top" x="${C}" y="${C - 22}" text-anchor="middle" font-family="IBM Plex Sans Hebrew" font-size="19" font-weight="700" fill="${hue}">${MONTHS[month - 1]}</text>
     <text x="${C}" y="${C + 8}" text-anchor="middle" font-family="IBM Plex Mono" font-size="24" font-weight="600" fill="#1A1A18">${count}</text>
     <text x="${C}" y="${C + 27}" text-anchor="middle" font-family="IBM Plex Sans Hebrew" font-size="10.5" fill="#84837D">בעונה · ${sn.he}</text>
   </svg>`;
@@ -116,14 +116,14 @@ function asideHTML() {
       <p class="unique" style="margin-top:0">${rich(`**${inSeason.length}** מזונות בשדה ב${MONTHS[month - 1]}.`)}</p>
       <div class="stratum st-said"><div class="st-name">נאמר</div><div class="st-text">${esc(r.q)}</div><div class="st-meta"><span class="src">הרמב"ם, הלכות דעות ד ח</span></div></div>
       <div class="sec"><div class="sec-h"><h3>בשדה עכשיו</h3><span class="label"><bdi class="num">${inSeason.length}</bdi> פריטים</span></div>
-        <div class="month-list">${inSeason.map((f) => `<a class="month-item" href="#/foods?id=${f.id}">${foodImage(f)}<span><b>${esc(f.he)}</b> <span class="latin">${esc(f.la)}</span></span><span class="kind">${esc(f.season_kind)}</span></a>`).join("") || `<p class="src">אין פריטים בעונה בחודש הזה.</p>`}</div>
+        ${inSeason.length ? CATEGORIES.map((c) => { const l = inSeason.filter((f) => f.cat === c.id); return l.length ? `<h4 class="ml-h">${esc(c.he)} <bdi class="num">${l.length}</bdi></h4><div class="month-list">${l.map((f) => `<a class="month-item" href="#/foods?id=${f.id}">${foodImage(f)}<span><b>${esc(f.he)}</b></span><span class="kind">${esc(f.season_kind)}</span></a>`).join("")}</div>` : ""; }).join("") : `<p class="src">אין פריטים בעונה בחודש הזה.</p>`}
       </div>
       <div class="sec"><div class="sec-h"><h3>כל השנה</h3><span class="label">יבוא</span></div><p style="font-size:13.5px">${always.map((f) => `<a href="#/foods?id=${f.id}">${esc(f.he)}</a>`).join(", ")}</p></div>
     </div>`;
 }
 
 function render() {
-  root.querySelector("#wheel").innerHTML = mode === "wheel" ? wheelSVG() : gridHTML();
+  root.querySelector("#wheel").innerHTML = mode === "wheel" ? wheelSVG() + `<p class="wheel-how">${rich("**איך קוראים את הגלגל:** כל **טבעת** היא מזון אחד. הקשת היא **החודשים** שבהם הוא בשדה. קשת **צבועה**: בשדה בחודש שבחרתם, ואפורה: בחודש אחר. ריחוף על טבעת מראה את שמה במרכז.")}</p>` : gridHTML();
   root.querySelector("#wheel").classList.toggle("is-grid", mode !== "wheel");
   root.querySelectorAll("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
   const aside = root.querySelector("#m-aside"), r = rambamFor(month);
@@ -157,6 +157,8 @@ export function mount(el, params) {
     const s = e.target.closest("[data-m]"); if (s) return setMonth(Number(s.dataset.m));
     const st = e.target.closest("[data-mstep]"); if (st) return setMonth(month + Number(st.dataset.mstep));
   });
+  // ריחוף על טבעת: שם המזון במרכז הגלגל
+  root.addEventListener("mouseover", (e) => { const a = e.target.closest(".arc"); const t = root.querySelector("#wc-top"); if (!t) return; t.textContent = a ? a.dataset.food : MONTHS[month - 1]; root.querySelectorAll(".arc.hov").forEach((x) => x.classList.remove("hov")); if (a) root.querySelectorAll(`.arc[data-food="${a.dataset.food}"]`).forEach((x) => x.classList.add("hov")); });
   root.addEventListener("keydown", (e) => { const s = e.target.closest("[data-m]"); if (s && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); setMonth(Number(s.dataset.m)); } });
 }
 

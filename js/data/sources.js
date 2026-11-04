@@ -14,6 +14,9 @@ export const SOURCES = {
 
   "sa-oc-583": { title: "שולחן ערוך, אורח חיים, סימן תקפג (עם הגהות הרמ\"א)", type: "מסורת", year: 1565, url: "https://www.sefaria.org/Shulchan_Arukh%2C_Orach_Chayim.583" },
   "bavli-keritot-6a": { title: "תלמוד בבלי, כריתות ו ע\"א", type: "מסורת", year: 500, url: "https://www.sefaria.org/Keritot.6a" },
+  "who-fruit-veg-2003": { title: "WHO/FAO, Diet, Nutrition and the Prevention of Chronic Diseases (TRS 916)", type: "הנחיה", year: 2003, url: "https://www.who.int/publications/i/item/924120916X" },
+  "buettner-2005": { title: "Buettner, The Secrets of Long Life, National Geographic", type: "סקירה", year: 2005, url: "" },
+  "morris-2015": { title: "Morris et al., MIND diet associated with reduced incidence of Alzheimer's disease, Alzheimer's & Dementia 11(9)", type: "ניסוי", year: 2015, url: "https://doi.org/10.1016/j.jalz.2014.11.009" },
   "beck-2018": { title: "Beck et al., Present and future Köppen-Geiger climate classification maps at 1-km resolution, Scientific Data 5", type: "מאגר", year: 2018, url: "https://doi.org/10.1038/sdata.2018.214" },
   "bennett-2007": { title: "Bennett, Doctrine of Signatures: An Explanation of Medicinal Plant Discovery or Dissemination of Knowledge?, Economic Botany 61(3)", type: "סקירה", year: 2007, url: "https://doi.org/10.1663/0013-0001(2007)61[246:DOSAEO]2.0.CO;2" },
   "darwin-1880": { title: "Charles Darwin, The Power of Movement in Plants", type: "מסורת", year: 1880, url: "https://www.gutenberg.org/ebooks/5605" },
@@ -73,6 +76,7 @@ export const SOURCES = {
   "rogel": { title: "אילנה רוגל, על רוח וחומר: אנציקלופדיה לתזונה ורוחניות, הוצאת מגדלור (ynet)", type: "מסורת", year: null, url: "https://www.ynet.co.il/articles/0,7340,L-3414523,00.html" },
   "usda-fdc": { title: "USDA FoodData Central", type: "מאגר", year: 2024, url: "https://fdc.nal.usda.gov/" },
   "powo": { title: "Plants of the World Online, Kew", type: "מאגר", year: 2024, url: "https://powo.science.kew.org/" },
+  "zohary-2012": { title: "Zohary, Hopf & Weiss, Domestication of Plants in the Old World, 4th ed., Oxford University Press", type: "סקירה", year: 2012, url: "" },
   "flora-il": { title: "צמחיית ישראל ברשת (Flora of Israel Online)", type: "מאגר", year: 2024, url: "https://flora.org.il/" },
   "eu-1169": { title: "EU Regulation 1169/2011, Annex II: 14 האלרגנים העיקריים", type: "רגולציה", year: 2011, url: "https://eur-lex.europa.eu/eli/reg/2011/1169/oj" },
 

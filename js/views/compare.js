@@ -45,7 +45,7 @@ function table() {
   return `<div class="cmp">
     <div class="rh ch"></div>
     ${[x, y].map((f) => `<div class="ch"><a href="#/foods?id=${f.id}" style="display:flex;gap:10px;align-items:center;text-decoration:none;color:inherit"><span style="width:56px;height:56px;background:var(--herb);border:1px solid var(--rule);display:grid;place-items:center;flex:0 0 auto">${foodImage(f)}</span><span><b style="font-size:19px">${esc(f.he)}</b><br><span class="latin">${esc(f.la)}</span></span></a></div>`).join("")}
-    ${row("משפחה", (f) => `${esc(f.family)} <span class="latin">${esc(f.family_la)}</span>`)}
+    ${row("משפחה", (f) => `${esc(f.family)}`)}
     ${row("נאכל", (f) => `<b>${esc(f.part)}</b>`)}
     ${row("עונה", months)}
     ${row("ארוחה", (f) => f.meal ? rich(f.meal === "before" ? "**קודם** הארוחה" : "**אחרי** הארוחה") : `<span class="src">אין הוראה</span>`)}
@@ -53,6 +53,21 @@ function table() {
     ${row("אלרגנים", (f) => f.allergens.length ? `<b style="color:var(--red)">${esc(f.allergens.map((k) => ALLERGENS[k]).join(", "))}</b>` : `<span class="src">אין מהרשימה</span>`)}
   </div>`;
 }
+
+// השוואות מובנות: זוגות שכדאי להעמיד זה מול זה, ולמה.
+const BUILT = [
+  ["spinach", "chard", "**שני עלים** מאותה משפחה, ואותה חומצה אוקסלית."],
+  ["lemon", "orange", "**שני הדרים**: חמוץ מול מתוק."],
+  ["potato", "sweetpotato", "**גבעול מול שורש**: שני \"תפוחי אדמה\" ממשפחות שונות."],
+  ["lentil", "chickpea", "**שתי קטניות היסוד** של המטבח המזרחי."],
+  ["wheat", "spelt", "**דגן מודרני מול עתיק**: חיטה וכוסמין."],
+  ["olive", "avocado", "**שני פירות שומניים**: עולם ישן מול עולם חדש."],
+  ["tomato", "pepper", "**שני סולניים**: ליקופן מול ויטמין C."],
+  ["almond", "walnut", "**שני אגוזים** מהמקרא: שקד בירמיהו, אגוז בשיר השירים."],
+  ["fava", "pea", "**שתי קטניות ירוקות** של אביב."],
+  ["cumin", "coriander", "**שני זרעים של סוככיים**: שני תבלינים מאותה משפחה."]
+].filter(([x, y]) => byId(x) && byId(y));
+const pairsHTML = () => `<div class="cmp-pairs" role="group" aria-label="השוואות מובנות">${BUILT.map(([x, y, t]) => `<button class="cp" data-pair="${x},${y}"><span class="cp-ph"><span>${foodImage(byId(x))}</span><span>${foodImage(byId(y))}</span></span><b>${esc(byId(x).he)} מול ${esc(byId(y).he)}</b><span class="cp-t">${rich(t)}</span></button>`).join("")}</div>`;
 
 function render() {
   const syn = SYNERGIES.filter((x) => [x.a, x.b].includes(a) && [x.a, x.b].includes(b));
@@ -72,7 +87,7 @@ export function mount(el, params) {
         <div><h1 class="view-title" id="c-title">השוואה, שכבה מול שכבה</h1><p class="view-sub">${rich("שני מזונות. **אותן שורות**, כדי לראות מה ייחודי.")}</p></div>
         <div class="cmp-pick">${select(a, "a")}<span class="label">מול</span>${select(b, "b")}</div>
       </div>
-      <div class="scroll-in" style="flex:1;padding:0 14px 14px" id="cmp"></div>
+      <div class="scroll-in" style="flex:1;padding:0 14px 14px"><div class="sec-h" style="margin-top:12px"><h3>השוואות מובנות</h3><span class="label">לחיצה על זוג מעמידה אותו בטבלה</span></div>${pairsHTML()}<div id="cmp"></div></div>
     </section>
     <aside class="panel" aria-labelledby="s-title">
       <div class="panel-head"><div><span class="label">השוואות שעשיתי בשבילך</span><h2 class="sheet-name" id="s-title" style="font-size:24px;font-weight:700">גילויים</h2></div></div>

@@ -157,8 +157,8 @@ export function overviewSVG(parts, sel) {
     </defs>
     <rect width="640" height="440" fill="#fcfbf8"/>
     <path d="M326 14V426" stroke="#e5e2da"/>
-    <text x="482" y="20" class="pv-h" text-anchor="middle">צמח · Plantae</text>
-    <text x="150" y="20" class="pv-h" text-anchor="middle">גוף · Homo sapiens</text>
+    <text x="482" y="20" class="pv-h" text-anchor="middle">צמח</text>
+    <text x="150" y="20" class="pv-h" text-anchor="middle">גוף</text>
     <g class="pv-body"><ellipse cx="150" cy="44" rx="19" ry="24" fill="url(#pv-skin)" stroke="${INK}" stroke-width="1"/><path d="${BODY_D}" fill="url(#pv-skin)" stroke="${INK}" stroke-width="1"/><path d="${BODY_D}" fill="url(#pv-hatch)"/>${organs(parts, sel)}</g>
     ${plantDrawing(sel)}
     ${links}

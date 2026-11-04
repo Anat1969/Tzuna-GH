@@ -80,7 +80,7 @@ const visible = () => FOODS.filter((f) => !state.cats.length || state.cats.inclu
 // קיבוץ הגלריה: לפי קטגוריה, עונה, חלק בצמח או עוצמת ראיה. בכל קבוצה מיון לפי השם.
 const SEASON_OF = [["חורף", [12, 1, 2]], ["אביב", [3, 4, 5]], ["קיץ", [6, 7, 8]], ["סתיו", [9, 10, 11]]];
 const GROUPS = {
-  none: { he: "בלי קיבוץ" },
+  none: { he: "הכול" },
   cat: { he: "קטגוריה", key: (f) => catName(f.cat), order: CATEGORIES.map((c) => c.he) },
   season: { he: "עונה", key: (f) => { if (!f.months.length || f.months.length >= 11) return "כל השנה"; const best = SEASON_OF.map(([n, ms]) => [n, ms.filter((m) => f.months.includes(m)).length]).sort((a, b) => b[1] - a[1])[0]; return best[0]; }, order: ["חורף", "אביב", "קיץ", "סתיו", "כל השנה"] },
   part: { he: "חלק בצמח", key: (f) => PARTS.find((p) => p.foods.includes(f.id))?.he || "אחר", order: [...PARTS.map((p) => p.he), "אחר"] },
@@ -95,8 +95,26 @@ function groups() {
 }
 // סדר התצוגה בפועל, גם לקודם והבא בגיליון.
 const ordered = () => groups().flatMap(([, l]) => l);
+// שפת הסימנים של המיון: אותו סימן בכפתור (מקרא חי), בכותרת הקבוצה ובאריח.
+const CAT_VIS = { seven: ["#7a5b2a", "fruit"], grains: ["#c09a3a", "seed"], legumes: ["#9a5a32", "seed"], nuts: ["#6f4f2f", "seed"], veg: ["#5f8f3a", "leaf"], herbs: ["#3f7f5a", "leaf"] };
+const SEASON_VIS = { "חורף": ["#3d6f9e", "snow"], "אביב": ["#6fae5a", "bloom"], "קיץ": ["#d9a12a", "sun"], "סתיו": ["#b8642c", "leaffall"], "כל השנה": ["#84837d", "allyear"] };
+const evBars = (i) => `<span class="evb" aria-hidden="true">${[0, 1, 2, 3, 4].map((j) => `<i class="${j < 5 - i ? "on" : ""}"></i>`).join("")}</span>`;
+function groupMark(g, k) {
+  if (g === "cat") { const c = CATEGORIES.find((x) => x.he === k); const [h, ic] = CAT_VIS[c?.id] || ["#888", "leaf"]; return `<span class="gm" style="color:${h}">${icon(ic)}</span>`; }
+  if (g === "season") { const [h, ic] = SEASON_VIS[k] || ["#888", "allyear"]; return `<span class="gm" style="color:${h}">${icon(ic)}</span>`; }
+  if (g === "part") { const p = PARTS.find((x) => x.he === k); return `<span class="gm" style="color:${p?.hue || "#888"}">${icon(p?.id || "plant")}</span>`; }
+  if (g === "ev") { const i = EVIDENCE.findIndex((e) => "ראיה " + e === k); return evBars(i < 0 ? 5 : i); }
+  return "";
+}
+function legendOf(g) {
+  if (g === "cat") return CATEGORIES.map((c) => groupMark("cat", c.he)).join("");
+  if (g === "season") return Object.keys(SEASON_VIS).map((k) => groupMark("season", k)).join("");
+  if (g === "part") return PARTS.map((p) => groupMark("part", p.he)).join("");
+  if (g === "ev") return evBars(0);
+  return "";
+}
 function groupedHTML() {
-  return groups().map(([k, l]) => (k ? `<h3 class="g-head"><span>${esc(k)}</span><bdi class="num">${l.length}</bdi></h3>` : "") + l.map(cardHTML).join("")).join("");
+  return groups().map(([k, l]) => (k ? `<h3 class="g-head">${groupMark(state.g, k)}<span>${esc(k)}</span><bdi class="num">${l.length}</bdi></h3>` : "") + l.map(cardHTML).join("")).join("");
 }
 // משפט תובנה לכל קיבוץ: מה הוא חושף.
 function groupInsight() {
@@ -111,7 +129,9 @@ function groupInsight() {
   };
   return T[state.g] ? `<span class="g-ins">${rich(T[state.g])}</span>` : "";
 }
-const groupChips = () => `<span class="label" style="margin-inline-end:4px">קיבוץ</span>` + Object.entries(GROUPS).map(([k, g]) => `<button class="chip" data-group="${k}" aria-pressed="${state.g === k}">${g.he}</button>`).join("") + groupInsight();
+// כפתורי המיון הם גם מקרא: כל כפתור מראה את הסימנים שלו. "הכול" בסוף השורה.
+const groupChips = () => `<span class="label gb-title">מיון לפי</span>` + Object.entries(GROUPS).filter(([k]) => k !== "none").map(([k, g]) => `<button class="gb" data-group="${k}" aria-pressed="${state.g === k}"><b>${g.he}</b><span class="gb-k">${legendOf(k)}</span></button>`).join("")
+  + `<button class="chip-all" data-group="none" aria-pressed="${state.g === "none"}">הכול</button>` + groupInsight();
 
 function chipsHTML() {
   const all = `<button class="chip-all" data-cat="" aria-pressed="${!state.cats.length}">הכול<span class="count">${FOODS.length}</span></button>`;
@@ -125,11 +145,13 @@ function chipsHTML() {
   }).join("") + all;
 }
 
+// אייקון החלק בצמח ליד כל אריח, באותה שפה של המיון.
+function partBadge(f) { const p = PARTS.find((x) => x.foods.includes(f.id)); return p ? `<span class="pb" style="color:${p.hue}" title="חלק בצמח: ${esc(p.he)}">${icon(p.id)}</span>` : ""; }
 function cardHTML(f) {
   const marks = LAYERS.map((l) => `<i class="layer-mark lm-${l.key} ${f.layers[l.key].length ? "" : "off"}" title="${l.he}: ${f.layers[l.key].length}"></i>`).join("");
   return `<button class="food-card press ${PHOTOS[f.id] ? "has-photo" : ""}" data-id="${f.id}" aria-pressed="${state.id === f.id}" aria-label="${esc(f.he)}">
     <span class="thumb">${foodImage(f)}</span>
-    <span class="cap"><b>${esc(f.he)}</b><span class="latin">${esc(f.la)}</span><span class="marks">${marks}${timeBadge(f.months, f.meal ? (f.meal === "before" ? ", קודם הארוחה" : ", אחרי הארוחה") : "")}</span></span>
+    <span class="cap"><b>${esc(f.he)}</b><span class="latin">${esc(f.la)}</span><span class="marks">${marks}${partBadge(f)}${timeBadge(f.months, f.meal ? (f.meal === "before" ? ", קודם הארוחה" : ", אחרי הארוחה") : "")}</span></span>
   </button>`;
 }
 

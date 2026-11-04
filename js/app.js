@@ -20,9 +20,9 @@ import * as nutrients from "./views/nutrients.js";
 import * as articles from "./views/articles.js";
 
 const VIEWS = { home, foods, nutrients, articles, plant, methods, seasons, recipes, compare, creations, redlist, help, method };
-const ALIASES = { tree: "plant" };
+const ALIASES = { tree: "plant", creations: "articles" };
 const NAV = [
-  ["foods", "מזון"], ["nutrients", "רכיבים"], ["plant", "צמח וגוף"], ["methods", "שיטות"], ["seasons", "עונות"], ["recipes", "צירופים"], ["compare", "השוואה"], ["articles", "כתבות"], ["creations", "יצירות"]
+  ["foods", "מזון"], ["nutrients", "רכיבים"], ["plant", "צמח וגוף"], ["methods", "שיטות"], ["seasons", "עונות"], ["recipes", "צירופים"], ["compare", "השוואה"], ["articles", "כתבות"]
 ];
 
 const $ = (s) => document.querySelector(s);

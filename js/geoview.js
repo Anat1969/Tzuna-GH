@@ -4,7 +4,9 @@ import { MAP, project } from "./data/worldmap.js";
 import { LAND } from "./data/worldland.js";
 
 const RAD = Math.PI / 180;
-const st = { mode: "map", k: 1, cx: MAP.W / 2, cy: MAP.H / 2, rot: [-40, -28], gk: 1 };
+// מבט פתיחה: העולם הישן במרכז. אפשר להזיז לאמריקה.
+const HOME = () => { const [x, y] = project(62, 33); return { k: 1.65, cx: x, cy: y, gk: 1, rot: [-40, -28] }; };
+const st = { mode: "map", ...HOME() };
 let el, pts = [], onPick = () => {}, drag = null, moved = 0, bound = false;
 
 // הקרנה אורתוגרפית: [x, y, נראה]
@@ -35,15 +37,32 @@ function graticule() {
   return d;
 }
 
+// נקודות ותוויות בגודל קבוע על המסך (בפיקסלים), ותוויות שלא עולות זו על זו:
+// לכל תווית ארבעה מקומות אפשריים (ימין, שמאל, מעל, מתחת). אם כולם תפוסים, השם מופיע בריחוף.
 function pointsSVG(globe) {
-  return pts.map((p) => {
+  const box = el?.querySelector(".geo-stage");
+  const wPx = box?.clientWidth || 800;
+  const u = globe ? 500 / Math.min(wPx, 460) : (MAP.W / st.k) / wPx; // יחידות SVG לפיקסל אחד
+  const placed = [], lab = [];
+  const items = pts.map((p) => {
     let x, y, v = true;
     if (globe) [x, y, v] = ortho(p.ll[0], p.ll[1]); else [x, y] = project(p.ll[0], p.ll[1]);
-    if (!v) return "";
-    const s = globe ? 1 : 1 / st.k; // גודל קבוע על המסך
-    return `<g class="mp ${p.on ? "on" : ""} ${p.dim ? "dim" : ""}" data-m="${p.id}" role="button" tabindex="0" aria-label="${p.label}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${s})">
-      ${p.on ? `<circle class="mp-ring" r="10" stroke="${p.hue}"/>` : ""}<circle r="${p.on ? 7 : 5}" fill="${p.hue}" stroke="#fff" stroke-width="1.5"/>
-      ${!globe || p.on ? `<text x="${p.dx}" y="${p.dy}" text-anchor="${p.anchor}" class="mp-t">${p.label}</text>` : `<title>${p.label}</title>`}</g>`;
+    return { p, x, y, v };
+  }).filter((o) => o.v).sort((a, b) => Number(b.p.on) - Number(a.p.on) || Number(a.p.dim) - Number(b.p.dim));
+  for (const o of items) placed.push([o.x / u - 8, o.y / u - 8, 16, 16]); // הנקודות עצמן תפוסות
+  const hit = (r) => placed.some((q) => r[0] < q[0] + q[2] && r[0] + r[2] > q[0] && r[1] < q[1] + q[3] && r[1] + r[3] > q[1]);
+  for (const o of items) {
+    const w = o.p.label.length * 7.4 + 6, h = 17, X = o.x / u, Y = o.y / u;
+    const cands = [[10, -h / 2, "start"], [-10 - w, -h / 2, "end"], [-w / 2, -h - 9, "middle"], [-w / 2, 9, "middle"]];
+    let got = null;
+    for (const [dx, dy, a] of cands) { const r = [X + dx, Y + dy, w, h]; if (!hit(r)) { got = [dx, dy, a]; placed.push(r); break; } }
+    lab.push({ ...o, got });
+  }
+  return lab.map(({ p, x, y, got }) => {
+    const tx = got ? (got[2] === "start" ? got[0] : got[2] === "end" ? got[0] + p.label.length * 7.4 + 6 : 0) : 0, ty = got ? got[1] + 13 : 0;
+    return `<g class="mp ${p.on ? "on" : ""} ${p.dim ? "dim" : ""}" data-m="${p.id}" role="button" tabindex="0" aria-label="${p.label}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${u.toFixed(4)})">
+      ${p.on ? `<circle class="mp-ring" r="11" stroke="${p.hue}"/>` : ""}<circle r="${p.on ? 8 : 6}" fill="${p.hue}" stroke="#fff" stroke-width="2"/>
+      ${got ? `<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="${got[2]}" class="mp-t">${p.label}</text>` : ""}<title>${p.label}</title></g>`;
   }).join("");
 }
 
@@ -117,7 +136,7 @@ export function attachGeo(container, pick) {
 function onClick(e) {
   {
     const g = e.target.closest("[data-geo]"); if (g) { st.mode = g.dataset.geo; return draw(); }
-    const z = e.target.closest("[data-z]"); if (z) { const f = Number(z.dataset.z); if (!f) { Object.assign(st, { k: 1, cx: MAP.W / 2, cy: MAP.H / 2, gk: 1, rot: [-40, -28] }); return draw(); } return zoom(f); }
+    const z = e.target.closest("[data-z]"); if (z) { const f = Number(z.dataset.z); if (!f) { Object.assign(st, HOME()); return draw(); } return zoom(f); }
     const p = e.target.closest("[data-m]"); if (p && moved < 4) { e.stopPropagation(); onPick(p.dataset.m); }
   }
 }
