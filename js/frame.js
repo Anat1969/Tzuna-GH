@@ -17,13 +17,17 @@ export function frame(viewEl, name) {
   const titleBox = t ? t.parentElement : null;
   const head = document.createElement("header");
   head.className = "page-head";
-  head.innerHTML = `<div class="ph-title"></div><dl class="lens">${LENS_CELLS.map(([k, he, ic]) => `<div class="lens-c lens-${k}">${icon(ic)}<dt>${he}</dt><dd>${rich(typeof lens[k] === "function" ? lens[k]() : lens[k])}</dd></div>`).join("")}</dl>`;
+  // הכותרת בשורה אחת. ההסברים (למה, דומה ושונה, איך בוחרים, מתי, איך משתמשים) הם כפתורי אייקון שנפתחים בחלון קטן.
+  const cells = [...LENS_CELLS, ["use", "איך משתמשים", "origin"]].filter(([k]) => lens[k]);
+  head.innerHTML = `<div class="ph-title"></div><div class="ph-tips">${cells.map(([k, he, ic]) => `<details class="tip"><summary>${icon(ic)}<span>${he}</span></summary><div class="tip-pop">${rich(typeof lens[k] === "function" ? lens[k]() : lens[k])}</div></details>`).join("")}</div>`;
   if (titleBox) {
     const tools = titleBox.parentElement;
     head.querySelector(".ph-title").append(titleBox);
-    if (lens.use) head.querySelector(".ph-title").insertAdjacentHTML("beforeend", `<p class="ph-use">${icon("origin")}<span><b>איך משתמשים:</b> ${rich(lens.use)}</span></p>`);
     if (tools && tools.classList.contains("gallery-tools") && !tools.textContent.trim()) tools.remove();
   }
+  // חלון אחד פתוח בכל פעם, ולחיצה בחוץ סוגרת
+  head.addEventListener("toggle", (e) => { if (e.target.open) head.querySelectorAll("details.tip[open]").forEach((d) => d !== e.target && (d.open = false)); }, true);
+  document.addEventListener("click", (e) => { if (!e.target.closest(".tip")) head.querySelectorAll("details.tip[open]").forEach((d) => (d.open = false)); });
   grid.prepend(head);
   grid.classList.add("framed");
 }
