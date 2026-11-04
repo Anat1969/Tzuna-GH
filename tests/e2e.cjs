@@ -87,8 +87,8 @@ function serve() {
   ok(await p.locator('#sheet .unique').count() === 1 && await p.locator('#sheet .bs-dock .bs-body p').count() === 1 && await p.locator('#sheet .bs-dock .bs-soul p').count() === 1, 'ייחודיות, וגוף ונפש במקום הקבוע בתחתית');
   ok(!(await p.locator('#sheet .safety-line, #sheet .tone-red').count()), 'בלי אזהרות שימוש בגיליון');
   await go('#/foods?id=cucumber');
-  ok(await p.locator('#sheet .t-with .with-f').count() === 3 && (await p.locator('#sheet .t-with .with-f > b').allInnerTexts()).join() === 'עגבנייה,זית,לימון', 'הולך עם: צילומי השותפים ליד ההסבר, בסדר הכתיבה');
-  await p.click('#sheet .with-f[href*="lemon"]');
+  ok(await p.locator('#sheet .p-with .pi-f').count() === 3 && (await p.locator('#sheet .p-with .pi-f').evaluateAll((a) => a.map((x) => x.title))).join() === 'עגבנייה,זית,לימון', 'הולך עם: צילומי השותפים ליד ההסבר, בסדר הכתיבה');
+  await p.click('#sheet .pi-f[href*="lemon"]');
   await p.waitForTimeout(200);
   ok((await p.textContent('#sheet-title')).includes('לימון'), 'לחיצה על שותף פותחת את הגיליון שלו');
   await go('#/foods?id=fig');
@@ -159,10 +159,10 @@ function serve() {
 
   console.log('התנגשויות');
   await go('#/foods?id=lentil');
-  ok((await p.locator('#sheet .t-without').innerText()).includes('תה שחור'), 'עדשים: "לא הולך עם" תה שחור (ספיגת ברזל)');
-  ok((await p.locator('#sheet .t-with').innerText()).includes('לימון'), 'עדשים: "הולך עם" לימון');
+  ok((await p.locator('#sheet .p-without').textContent()).includes('תה שחור'), 'עדשים: "לא הולך עם" תה שחור (ספיגת ברזל)');
+  ok((await p.locator('#sheet .p-with').textContent()).includes('לימון'), 'עדשים: "הולך עם" לימון');
   await go('#/foods?id=grapefruit');
-  ok((await p.locator('#sheet .t-without').innerText()).includes('תרופות'), 'אשכולית: התנגשות עם תרופות כתוכן');
+  ok((await p.locator('#sheet .p-without').textContent()).includes('תרופות'), 'אשכולית: התנגשות עם תרופות כתוכן');
 
   console.log('צמח וגוף');
   await go('#/plant');

@@ -49,7 +49,9 @@ function today() {
   const block = SYNERGIES.find((s) => s.kind === "block" && (ids.has(s.a) || ids.has(s.b))) || SYNERGIES.find((s) => s.kind === "block");
   const syn = boosts.length ? pick(boosts) : syn0;
   POOLD = discPool();
-  return { m, inSeason, syn, block, dish, start: 0, disc: POOLD[0] };
+  const withPh = inSeason.filter((f) => PHOTOS[f.id]);
+  const hero = withPh.length ? pick(withPh) : byId("olive");
+  return { m, inSeason, syn, block, dish, start: 0, disc: POOLD[0], hero };
 }
 
 // כל מספר בדלת מגיע עם משפט שאומר מה הוא מלמד.
@@ -90,7 +92,9 @@ export function mount(root) {
   const L = doorLines(t);
   root.innerHTML = `<div class="view-in home2">
     <section class="h-lead">
-      <div class="rise">
+      <div class="h-bg" aria-hidden="true" style="background-image:url('${(PHOTOS[t.hero.id] || PHOTOS.olive).src}')"></div>
+      <a class="h-orb" href="#/foods?id=${t.hero.id}" aria-label="${esc(t.hero.he)}, לגיליון"><span class="h-orb-ring"></span>${foodImage(t.hero)}<span class="h-orb-tag"><span>בעונה עכשיו</span><b>${esc(t.hero.he)}</b></span></a>
+      <div class="rise h-copy">
         <div class="kicker">מזון, גוף ונפש · הכרה, הבנה ושימוש</div>
         <h1 class="headline" style="margin-top:6px">כל מזון בשלוש שכבות, <span class="k">וכל ארוחה צירוף</span>.</h1>
         <p class="lede"><span>${rich("**ידוע, נאמר ומאמינים**: מאיזו שכבה מגיעה הטענה.")}</span><span>${rich("==ואז: עם מה המזון מתעצם, ולמה.==")}</span></p>

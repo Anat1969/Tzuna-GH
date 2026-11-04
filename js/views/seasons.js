@@ -59,7 +59,7 @@ function gridHTML() {
     <span class="yg-lab">עונה</span>${MONTHS.map((_, i) => { const k = rambamFor(i + 1).kind; return `<i class="yg-season ${k === "ימות החמה" ? "hot" : k === "ימות הגשמים" ? "rain" : "mid"}" title="${MONTHS[i]}: ${k}"></i>`; }).join("")}
     <span class="yg-lab">בשדה</span>${MONTHS.map((_, i) => { const n = SEASONAL.filter((f) => f.months.includes(i + 1)).length; return `<span class="yg-bar" title="${MONTHS[i]}: ${n}" style="--mh:${MONTH_HUE[i]}"><i style="height:${Math.round(n / maxN * 100)}%"></i><b class="num">${n}</b></span>`; }).join("")}
     <span class="yg-legend">${rich("**חמה** · **גשמים** · מעבר, לפי הרמב\"ם. העמודה: כמה מזונות בשדה.")}</span>
-    ${LINEAR.map((f) => `<a class="yg-name" href="#/foods?id=${f.id}"><span class="yg-ph">${foodImage(f)}</span><b>${esc(f.he)}</b></a>${MONTHS.map((_, i) => `<i class="${f.months.includes(i + 1) ? "on" : ""} ${i + 1 === month ? "col" : ""}" style="--mh:${MONTH_HUE[i]}" title="${esc(f.he)}: ${MONTHS[i]}"></i>`).join("")}`).join("")}
+    ${[...LINEAR].sort((a, b) => Number(b.months.includes(month)) - Number(a.months.includes(month))).map((f) => { const out = f.months.includes(month) ? "" : "out"; return `<a class="yg-name ${out}" href="#/foods?id=${f.id}"><span class="yg-ph">${foodImage(f)}</span><b>${esc(f.he)}</b></a>${MONTHS.map((_, i) => `<i class="${f.months.includes(i + 1) ? "on" : ""} ${i + 1 === month ? "col" : ""} ${out}" style="--mh:${MONTH_HUE[i]}" title="${esc(f.he)}: ${MONTHS[i]}"></i>`).join("")}`; }).join("")}
   </div>`;
 }
 

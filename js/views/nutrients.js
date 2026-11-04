@@ -48,13 +48,13 @@ export function discoveries() {
 // העיגול גדל עם מספר המקורות. לחיצה על מספר מסננת את הטור הצדדי לחלק הזה.
 function tableHTML() {
   const max = Math.max(...NUTRIENTS.flatMap((n) => PARTS.map((p) => SOURCES_OF[n.id].filter((f) => partOf(f) === p).length)));
-  const head = `<tr class="nt-head"><th></th>${PARTS.map((p) => `<th><span style="color:${p.hue}">${icon(p.id)}</span><b>${esc(p.he)}</b></th>`).join("")}<th><b>סה"כ</b></th></tr>`;
+  const head = `<tr class="nt-head"><th></th>${PARTS.map((p) => `<th class="${part === p.id ? "c-on" : ""}"><button class="nt-col" data-col="${p.id}" aria-pressed="${part === p.id}"><span style="color:${p.hue}">${icon(p.id)}</span><b>${esc(p.he)}</b></button></th>`).join("")}<th><b>סה"כ</b></th></tr>`;
   const body = Object.keys(KIND_HE).map((k) => {
     const info = KIND_INFO[k], isOpen = open === k;
     return `<tr class="nt-kind"><th colspan="${PARTS.length + 2}"><button class="nt-k" data-kind="${k}" aria-expanded="${isOpen}"><span class="nb nb-${k} sm">${icon(k === "macro" ? "seed" : k === "vitamin" ? "sun" : "root")}</span><b>${esc(KIND_HE[k])}</b><span class="nt-short">${rich(info.short)}</span><span class="nt-more">${isOpen ? "פחות" : "למה זה חשוב"}</span></button>${isOpen ? `<p class="nt-long">${rich(info.long)}</p>` : ""}</th></tr>`
-      + NUTRIENTS.filter((n) => n.kind === k).map((n) => `<tr class="nt-row ${n.id === sel ? "on" : ""}" data-n="${n.id}"><th><span class="nt-nm">${badge(n, "sm")}<span>${esc(n.he)}</span></span></th>${PARTS.map((p) => { const c = SOURCES_OF[n.id].filter((f) => partOf(f) === p).length; const on = n.id === sel && part === p.id; return `<td>${c ? `<button class="nt-c ${on ? "on" : ""}" data-n="${n.id}" data-part="${p.id}" style="--h:${p.hue};--r:${(10 + 16 * Math.sqrt(c / max)).toFixed(1)}px" aria-label="${esc(n.he)} ב${esc(p.he)}: ${c}">${c}</button>` : ""}</td>`; }).join("")}<td class="nt-t"><button class="nt-c tot ${n.id === sel && !part ? "on" : ""}" data-n="${n.id}" data-part="">${SOURCES_OF[n.id].length}</button></td></tr>`).join("");
+      + NUTRIENTS.filter((n) => n.kind === k).map((n) => `<tr class="nt-row ${n.id === sel ? "on" : ""}" data-n="${n.id}"><th><span class="nt-nm">${badge(n, "sm")}<span>${esc(n.he)}</span></span></th>${PARTS.map((p) => { const c = SOURCES_OF[n.id].filter((f) => partOf(f) === p).length; const on = n.id === sel && part === p.id; return `<td class="${part === p.id ? "c-on" : ""}">${c ? `<button class="nt-c ${on ? "on" : ""}" data-n="${n.id}" data-part="${p.id}" style="--h:${p.hue};--r:${(10 + 16 * Math.sqrt(c / max)).toFixed(1)}px" aria-label="${esc(n.he)} ב${esc(p.he)}: ${c}">${c}</button>` : ""}</td>`; }).join("")}<td class="nt-t"><button class="nt-c tot ${n.id === sel && !part ? "on" : ""}" data-n="${n.id}" data-part="">${SOURCES_OF[n.id].length}</button></td></tr>`).join("");
   }).join("");
-  return `<table class="nt">${head}${body}</table>`;
+  return `<table class="nt${part ? " has-col" : ""}">${head}${body}</table>`;
 }
 
 function seasonBar(n) {
@@ -78,7 +78,7 @@ function asideHTML() {
 function render() {
   root.querySelector("#n-main").innerHTML = `
     <section class="mt-disc"><div class="sec-h"><h3>מה הטבלה מחביאה</h3><span class="label">גילויים מההצלבה</span></div>
-      <ul class="disc-list one">${discoveries().map((d) => `<li>${badge(d.n, "sm")}<span>${rich(d.t)}</span></li>`).join("")}</ul></section>
+      <ul class="disc-list one">${discoveries().map((d) => `<li class="disc-pick ${d.n.id === sel ? "on" : ""}" data-n="${d.n.id}" role="button" tabindex="0">${badge(d.n, "sm")}<span>${rich(d.t)}</span></li>`).join("")}</ul></section>
     <section><div class="sec-h"><h3>באיזה חלק של הצמח</h3><span class="label">עיגול גדול: יותר מקורות. לחיצה על מספר מציגה את המזונות.</span></div>${tableHTML()}</section>`;
   const aside = root.querySelector("#n-aside"), n = NUTRIENTS.find((x) => x.id === sel);
   aside.innerHTML = asideHTML();
@@ -102,6 +102,8 @@ export function mount(el, params) {
   render();
   root.addEventListener("click", (e) => {
     const k = e.target.closest("[data-kind]"); if (k) { open = open === k.dataset.kind ? null : k.dataset.kind; return render(); }
+    // לחיצה על טור: החלק הזה בולט בכל הרכיבים, והשאר מוצנע. לחיצה שנייה מבטלת.
+    const c = e.target.closest("[data-col]"); if (c) { part = part === c.dataset.col ? null : c.dataset.col; patch({ part: part || undefined }); return render(); }
     const t = e.target.closest("[data-n]"); if (!t) return;
     part = t.dataset.part || null; sel = t.dataset.n; patch({ n: sel, part: part || undefined }); render();
   });

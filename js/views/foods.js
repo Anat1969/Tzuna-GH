@@ -198,10 +198,15 @@ export function partnersOf(t, selfId) {
   // בסדר שבו הם כתובים.
   return hits.sort((a, b) => a.at - b.at).map((h) => byId(h.id));
 }
-function withHTML(f, arr) {
+// הולך עם ולא הולך עם: שורה קצרה (מה שלפני הנקודתיים) עם צילומי השותפים. לחיצה פותחת את המנגנון.
+function pairHTML(f, arr) {
   return arr.map((x) => {
     const ps = partnersOf(x.t, f.id);
-    return `<div class="with-item">${ps.length ? `<div class="with-ph">${ps.map((p) => `<a class="with-f press" href="#/foods?id=${p.id}" aria-label="${esc(p.he)}, לגיליון"><span class="ph">${foodImage(p)}</span><b>${esc(p.he.replace(/\s*\(.*\)/, ""))}</b></a>`).join("")}</div>` : ""}<p>${rich(x.t)}</p></div>`;
+    const i = x.t.indexOf(":");
+    const head = i > 0 ? x.t.slice(0, i) : x.t;
+    const rest = i > 0 ? x.t.slice(i + 1).trim() : "";
+    const bubbles = ps.length ? `<span class="pi-ph">${ps.map((p) => `<a class="pi-f" href="#/foods?id=${p.id}" title="${esc(p.he)}" aria-label="${esc(p.he)}, לגיליון">${foodImage(p)}</a>`).join("")}</span>` : "";
+    return `<div class="pi${rest ? " has-more" : ""}">${bubbles}<div class="pi-t"${rest ? ` role="button" tabindex="0" aria-expanded="false"` : ""}><span class="pi-h">${rich(head)}</span>${rest ? `<span class="pi-more">${rich(rest)}</span>` : ""}</div></div>`;
   }).join("");
 }
 
@@ -211,7 +216,6 @@ function sheetHTML(f) {
   const list = ordered();
   const idx = list.findIndex((x) => x.id === f.id);
   const pr = PROFILES[f.id] || {};
-  const lines = (arr) => arr.map((x) => `<p>${rich(x.t)}</p>`).join("");
   const meal = f.meal ? `<dt>ארוחה</dt><dd>${rich(f.meal === "before" ? "**קודם** הארוחה, לפי הרמב\"ם" : "**תכף אחרי** הארוחה, לפי הרמב\"ם")}</dd>` : "";
   const allergens = f.allergens.length ? `<dt>אלרגנים</dt><dd><b>${esc(f.allergens.map((a) => ALLERGENS[a]).join(", "))}</b></dd>` : "";
   const recs = recipesWith(f.id);
@@ -219,17 +223,20 @@ function sheetHTML(f) {
   const months = f.months.length ? `${monthsBar(f)}<p class="hint">${esc(f.season_kind)}: <b>${esc(f.months.map((m) => MONTHS[m - 1]).join(", "))}</b></p>` : `<p style="font-size:14px">${rich("**כל השנה**, ביבוא.")}</p>`;
   const srcIds = [...(SCIENCE[f.id]?.studied || []).map((x) => x.src), ...synergiesFor(f.id).map((x) => x.src), f.recognize.src, f.use.src, pr.body?.src, pr.soul?.src, ...(pr.with || []).map((x) => x.src), ...(pr.without || []).map((x) => x.src),
     ...LAYERS.flatMap((l) => f.layers[l.key].map((x) => x.src)), "season-est"];
+  // תמונה, שם, ייחודיות ו"הולך עם" במבט אחד: השם והמשפט על הצילום, והצירופים מיד מתחתיו.
   return `<div class="sheet-hero zoomable" data-zoom-cap="${esc(f.he)}">${foodImage(f, { big: true })}${photoCredit(f)}
       <div class="ops on-photo">${iconBtn("prev", "הקודם", `data-step="-1" ${idx <= 0 ? "disabled" : ""}`)}<span class="pos"><bdi class="num" style="font-weight:400">${idx + 1}/${list.length}</bdi></span>${iconBtn("next", "הבא", `data-step="1" ${idx >= list.length - 1 ? "disabled" : ""}`)}${iconBtn("x", "סגירה", "data-close")}</div>
+      <div class="hero-cap">
+        <h2 class="sheet-name" id="sheet-title">${esc(f.he)} <span class="latin">${esc(f.la)}</span></h2>
+        <div class="sheet-tags"><span>${esc(catName(f.cat))}</span><span>משפחת ה<b>${esc(f.family)}</b></span><span>נאכל: <b>${esc(f.part)}</b></span></div>
+        ${pr.unique ? `<p class="unique">${rich(pr.unique)}</p>` : ""}
+      </div>
     </div>
     <div class="panel-body scroll-in" style="flex:1">
-      <h2 class="sheet-name" id="sheet-title">${esc(f.he)} <span class="latin">${esc(f.la)}</span></h2>
-      <div class="sheet-tags"><span>${esc(catName(f.cat))}</span><span>משפחת ה<b>${esc(f.family)}</b></span><span>נאכל: <b>${esc(f.part)}</b></span></div>
-      ${pr.unique ? `<p class="unique">${rich(pr.unique)}</p>` : ""}
-      <div class="tiles">
-        ${pr.with?.length ? tile("הולך עם", "t-with", withHTML(f, pr.with)) : ""}
-        ${pr.without?.length ? tile("לא הולך עם", "t-without", lines(pr.without)) : ""}
-      </div>
+      ${pr.with?.length || pr.without?.length ? `<div class="pairs">
+        ${pr.with?.length ? `<section class="pair p-with"><h4>הולך עם</h4>${pairHTML(f, pr.with)}</section>` : ""}
+        ${pr.without?.length ? `<section class="pair p-without"><h4>לא הולך עם</h4>${pairHTML(f, pr.without)}</section>` : ""}
+      </div>` : ""}
       ${scienceHTML(f)}
       <section class="sec"><div class="sec-h"><h3>מה ידוע, מה נאמר, במה מאמינים</h3></div>
         ${LAYERS.map((l) => stratum(l.key, f.layers[l.key])).join("")}
@@ -259,6 +266,12 @@ function renderSheet({ scroll = false } = {}) {
     return;
   }
   aside.innerHTML = sheetHTML(f);
+  // לחיצה על צירוף פותחת את המנגנון שלו, ומצניעה את האחרים.
+  aside.querySelectorAll(".pi.has-more .pi-t").forEach((t) => {
+    const go = () => { const on = t.getAttribute("aria-expanded") !== "true"; aside.querySelectorAll(".pi-t[aria-expanded]").forEach((o) => o.setAttribute("aria-expanded", "false")); t.setAttribute("aria-expanded", String(on)); aside.querySelector(".pairs").classList.toggle("focus", on); };
+    t.addEventListener("click", go);
+    t.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+  });
   const pr = PROFILES[f.id] || {};
   dock(aside, { body: pr.body && { t: pr.body.t, sub: f.he }, soul: pr.soul && { t: pr.soul.t, sub: [pr.soul.trad, pr.soul.ref].filter(Boolean).join(" · ") } });
   root.querySelectorAll(".food-card").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.id === state.id)));
