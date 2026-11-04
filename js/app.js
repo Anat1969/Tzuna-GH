@@ -48,8 +48,6 @@ function render() {
   viewEl.replaceWith(fresh);
   viewEl = fresh;
   viewEl.dataset.view = name;
-  // דף הבית כהה (יער וזכוכית), והגיליונות בהירים (נייר הרבריום).
-  document.body.classList.toggle("dark-home", name === "home");
   cleanup = VIEWS[name].mount(viewEl, params, { query: $("#q").value.trim() }) || null;
   frame(viewEl, name);
   document.title = (VIEWS[name].title ? VIEWS[name].title + " · " : "") + "מזון, גוף ונפש";

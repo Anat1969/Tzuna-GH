@@ -92,7 +92,6 @@ export function mount(root) {
   const L = doorLines(t);
   root.innerHTML = `<div class="view-in home2">
     <section class="h-lead">
-      <div class="h-bg" aria-hidden="true" style="background-image:url('${(PHOTOS[t.hero.id] || PHOTOS.olive).src}')"></div>
       <a class="h-orb" href="#/foods?id=${t.hero.id}" aria-label="${esc(t.hero.he)}, לגיליון"><span class="h-orb-ring"></span>${foodImage(t.hero)}<span class="h-orb-tag"><span>בעונה עכשיו</span><b>${esc(t.hero.he)}</b></span></a>
       <div class="rise h-copy">
         <div class="kicker">מזון, גוף ונפש · הכרה, הבנה ושימוש</div>
@@ -116,7 +115,6 @@ export function mount(root) {
       <div class="ht-strip">${t.inSeason.slice(0, 6).map((f) => `<a class="ht-food" href="#/foods?id=${f.id}"><span class="ph">${foodImage(f)}</span><b>${esc(f.he)}</b></a>`).join("")}</div>
       <a class="syn boost ht-syn" href="#/recipes${t.syn.dishes[0] ? "?id=" + t.syn.dishes[0] : ""}"><b class="syn-t">צירוף מעצים · ${esc(t.syn.title)}</b><p>${rich(t.syn.how)}</p><p class="syn-dish"><span class="tile-l">בצלחת</span>${rich(t.syn.suggest)}</p></a>
       <a class="syn block ht-syn" href="#/foods?id=${t.block.a}"><b class="syn-t">לא לשלב · ${esc(t.block.title)}</b><p>${rich(t.block.how)}</p></a>
-      ${t.dish ? `<a class="ht-dish press" href="#/recipes?id=${t.dish.id}"><span class="tile-l">מנה לחודש</span><b>${esc(t.dish.he)}</b><span class="hint">${esc(t.dish.time)} · ${t.dish.steps.length} שלבים</span></a>` : ""}
       <a class="ht-disc" id="ht-disc" href="${t.disc.href}" aria-live="polite">${discInner(t.disc, t.start)}</a>
     </section>
     <nav class="h-doors" aria-label="מפת האפליקציה">
