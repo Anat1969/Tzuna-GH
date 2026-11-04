@@ -12,7 +12,7 @@ export function rich(text) {
     // הדגשה בתוך מרקר: **מילה** בתוך ==תובנה==
     if (p.startsWith("==")) return `<mark class="insight">${nums(p.slice(2, -2)).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")}</mark>`;
     return nums(p);
-  }).join("");
+  }).join("").replace(/&quot;([^&<]*(?:<\/?strong>[^&<]*)*)&quot;/g, '<q class="qt">$1</q>');
 }
 
 export const LAYERS = [

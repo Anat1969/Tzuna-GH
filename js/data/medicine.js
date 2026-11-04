@@ -5,6 +5,8 @@ export const MEDICINE_BASE = "https://refua-gh.vercel.app/";
 
 const HEART = { he: "מחלת לב איסכמית", href: "#s=cardio&v=disease&d=ischemic" };
 const FIBER = { he: "סיבים תזונתיים וסרטן המעי הגס", href: "#s=digestive&v=disease&d=colorectal-cancer" };
+const BONE = { he: "אוסטאופורוזיס", href: "#s=skeletal&v=disease&d=osteoporosis" };
+const ALLERGY = { he: "אלרגיה ואנפילקסיס", href: "#s=immune&v=disease&d=allergy" };
 
 export const MEDICINE = {
   olive: [HEART],
@@ -15,7 +17,19 @@ export const MEDICINE = {
   lentil: [FIBER],
   chickpea: [FIBER],
   fava: [FIBER],
-  sesame: [{ he: "השלד והעצם", href: "#s=skeletal&v=disease&d=osteoporosis" }],
+  sesame: [BONE, ALLERGY],
+  // 04.11.2026: הרחבה משני הכיוונים. כל קישור נשען על טענה עם מקור בשתי האפליקציות:
+  // PREDIMED (שמן זית ותערובת אגוזים), סיבים (קטניות ודגנים), סידן (תאנה, ותרד שהחומצה האוקסלית בו קושרת סידן),
+  // ואלרגנים מסומנים (אגוזים, שומשום, תורמוס, חרדל) מול "אלרגיה ואנפילקסיס", שמזכיר מזון כגורם.
+  almond: [HEART, ALLERGY],
+  walnut: [HEART, ALLERGY],
+  lupin: [ALLERGY],
+  mustard: [ALLERGY],
+  pea: [FIBER],
+  bean: [FIBER],
+  corn: [FIBER],
+  fig: [BONE],
+  spinach: [BONE],
   grape: [{ he: "אלכוהול וסרטן השד", href: "#s=reproductive&v=disease&d=breast-cancer" }],
 };
 

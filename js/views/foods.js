@@ -12,6 +12,7 @@ import { synergiesFor } from "../data/synergies.js";
 import { evMeter } from "../ui.js";
 import { medicineFor } from "../data/medicine.js";
 import { PARTS } from "../data/plant.js";
+import { icon, timeBadge } from "../plantviz.js";
 import { EVIDENCE } from "../data/sources.js";
 
 export const title = "מזון";
@@ -112,21 +113,22 @@ function groupInsight() {
 const groupChips = () => `<span class="label" style="margin-inline-end:4px">קיבוץ</span>` + Object.entries(GROUPS).map(([k, g]) => `<button class="chip" data-group="${k}" aria-pressed="${state.g === k}">${g.he}</button>`).join("") + groupInsight();
 
 function chipsHTML() {
-  const all = `<span class="chip-wrap"><button class="chip" data-cat="" aria-pressed="${!state.cats.length}">הכול<span class="count">${FOODS.length}</span></button></span>`;
-  return all + CATEGORIES.map((c) => {
+  const all = `<button class="chip-all" data-cat="" aria-pressed="${!state.cats.length}">הכול<span class="count">${FOODS.length}</span></button>`;
+  // "הכול" לא נראה כמו קטגוריה: קישור שקט בסוף השורה.
+  return CATEGORIES.map((c) => {
     const on = state.cats.includes(c.id);
     const n = FOODS.filter((f) => f.cat === c.id).length;
     const add = state.cats.length && !on ? `<button class="chip-add" data-add="${c.id}" title="הוספה לבחירה" aria-label="הוספת ${c.he} לבחירה">+</button>` : "";
     const rem = on && state.cats.length > 1 ? `<button class="chip-add" data-rem="${c.id}" title="הסרה מהבחירה" aria-label="הסרת ${c.he} מהבחירה" style="opacity:1">−</button>` : "";
     return `<span class="chip-wrap"><button class="chip" data-cat="${c.id}" aria-pressed="${on}">${c.he}<span class="count">${n}</span></button>${add}${rem}</span>`;
-  }).join("");
+  }).join("") + all;
 }
 
 function cardHTML(f) {
   const marks = LAYERS.map((l) => `<i class="layer-mark lm-${l.key} ${f.layers[l.key].length ? "" : "off"}" title="${l.he}: ${f.layers[l.key].length}"></i>`).join("");
   return `<button class="food-card press ${PHOTOS[f.id] ? "has-photo" : ""}" data-id="${f.id}" aria-pressed="${state.id === f.id}" aria-label="${esc(f.he)}">
     <span class="thumb">${foodImage(f)}</span>
-    <span class="cap"><b>${esc(f.he)}</b><span class="latin">${esc(f.la)}</span><span class="marks">${marks}</span></span>
+    <span class="cap"><b>${esc(f.he)}</b><span class="latin">${esc(f.la)}</span><span class="marks">${marks}${timeBadge(f.months, f.meal ? (f.meal === "before" ? ", קודם הארוחה" : ", אחרי הארוחה") : "")}</span></span>
   </button>`;
 }
 
@@ -157,7 +159,7 @@ function scienceHTML(f) {
 function essenceHTML(pr) {
   if (!pr.body && !pr.soul) return "";
   const panel = (cls, word, sub, x, foot) => `<section class="ess ${cls}" aria-label="${word}">
-      <header><b class="ess-w">${word}</b><span class="ess-s">${sub}</span></header>
+      <header>${icon(cls === "ess-body" ? "body" : "mind", "ess-ic")}<b class="ess-w">${word}</b><span class="ess-s">${sub}</span></header>
       <p>${rich(x.t)}</p>${foot ? `<footer>${foot}</footer>` : ""}</section>`;
   const soulFoot = pr.soul ? [pr.soul.trad, pr.soul.ref].filter(Boolean).map(esc).join(" · ") : "";
   return `<div class="essence">

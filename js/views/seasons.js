@@ -5,6 +5,12 @@ import { plate } from "../plates.js";
 import { foodImage } from "./foods.js";
 import { MONTHS_SHORT } from "../ui.js";
 import { patch } from "../route.js";
+import { icon, iconG } from "../plantviz.js";
+
+// צבע לכל חודש: כחולים בחורף, ירוקים באביב, זהב בקיץ, ענבר וחמרה בסתיו. גרדיאנט עם משמעות.
+export const MONTH_HUE = ["#3d6f9e", "#4f86a8", "#5f9a7a", "#6fae5a", "#93b84a", "#d9b23a", "#e39a2e", "#e0842a", "#c96a2c", "#a85a34", "#7f6a5a", "#4d6a8a"];
+export const SEASON_OF = (m) => ([12, 1, 2].includes(m) ? { he: "חורף", ic: "snow" } : [3, 4, 5].includes(m) ? { he: "אביב", ic: "bloom" } : [6, 7, 8].includes(m) ? { he: "קיץ", ic: "sun" } : { he: "סתיו", ic: "leaffall" });
+const today = () => new Date().toLocaleDateString("he-IL", { day: "numeric", month: "long", year: "numeric" });
 
 export const title = "עונות";
 
@@ -47,36 +53,55 @@ function gridHTML() {
   const now = nowMonth();
   const maxN = Math.max(...MONTHS.map((_, i) => SEASONAL.filter((f) => f.months.includes(i + 1)).length));
   return `<div class="yg" role="table" aria-label="מפה שנתית">
-    <span class="yg-h"></span>${MONTHS_SHORT.map((m, i) => `<button class="yg-m ${i + 1 === month ? "sel" : ""} ${i + 1 === now ? "now" : ""}" data-m="${i + 1}" aria-pressed="${i + 1 === month}" aria-label="${MONTHS[i]}"><span class="ml">${m}</span><span class="mn">${i + 1}</span></button>`).join("")}
+    <span class="yg-h"></span>${MONTHS_SHORT.map((m, i) => `<button class="yg-m ${i + 1 === month ? "sel" : ""} ${i + 1 === now ? "now" : ""}" style="--mh:${MONTH_HUE[i]}" data-m="${i + 1}" aria-pressed="${i + 1 === month}" aria-label="${MONTHS[i]}"><span class="ml">${m}</span><span class="mn">${i + 1}</span></button>`).join("")}
     <span class="yg-lab">עונה</span>${MONTHS.map((_, i) => { const k = rambamFor(i + 1).kind; return `<i class="yg-season ${k === "ימות החמה" ? "hot" : k === "ימות הגשמים" ? "rain" : "mid"}" title="${MONTHS[i]}: ${k}"></i>`; }).join("")}
-    <span class="yg-lab">בשדה</span>${MONTHS.map((_, i) => { const n = SEASONAL.filter((f) => f.months.includes(i + 1)).length; return `<span class="yg-bar" title="${MONTHS[i]}: ${n}"><i style="height:${Math.round(n / maxN * 100)}%"></i><b class="num">${n}</b></span>`; }).join("")}
+    <span class="yg-lab">בשדה</span>${MONTHS.map((_, i) => { const n = SEASONAL.filter((f) => f.months.includes(i + 1)).length; return `<span class="yg-bar" title="${MONTHS[i]}: ${n}" style="--mh:${MONTH_HUE[i]}"><i style="height:${Math.round(n / maxN * 100)}%"></i><b class="num">${n}</b></span>`; }).join("")}
     <span class="yg-legend">${rich("**חמה** · **גשמים** · מעבר, לפי הרמב\"ם. העמודה: כמה מזונות בשדה.")}</span>
-    ${LINEAR.map((f) => `<a class="yg-name" href="#/foods?id=${f.id}"><span class="yg-ph">${foodImage(f)}</span><b>${esc(f.he)}</b></a>${MONTHS.map((_, i) => `<i class="${f.months.includes(i + 1) ? "on" : ""} ${i + 1 === month ? "col" : ""}" title="${esc(f.he)}: ${MONTHS[i]}"></i>`).join("")}`).join("")}
+    ${LINEAR.map((f) => `<a class="yg-name" href="#/foods?id=${f.id}"><span class="yg-ph">${foodImage(f)}</span><b>${esc(f.he)}</b></a>${MONTHS.map((_, i) => `<i class="${f.months.includes(i + 1) ? "on" : ""} ${i + 1 === month ? "col" : ""}" style="--mh:${MONTH_HUE[i]}" title="${esc(f.he)}: ${MONTHS[i]}"></i>`).join("")}`).join("")}
   </div>`;
 }
 
 function wheelSVG() {
-  const now = nowMonth();
+  const now = nowMonth(), hue = MONTH_HUE[month - 1], sn = SEASON_OF(month);
+  let k = 0;
   const rings = SEASONAL.map((f, i) => {
     const r = R_MON - 10 - i * STEP;
     const on = f.months.includes(month);
-    const segs = runs(f.months).map(([s, e]) => `<path class="arc" d="${arc(r, ang(s) + .02, ang(e + 1) - .02)}" stroke="${on ? "#1A1A18" : "#D9D8D3"}" stroke-width="${Math.max(2.4, STEP - 2.2).toFixed(1)}"><title>${esc(f.he)}: ${esc(f.months.map((x) => MONTHS[x - 1]).join(", "))}</title></path>`).join("");
-    return `<circle cx="${C}" cy="${C}" r="${r}" fill="none" stroke="#F1F0EC" stroke-width=".6"/>${segs}`;
+    const segs = runs(f.months).map(([s0, e]) => `<path class="arc ${on ? "on" : ""}" pathLength="1" style="--i:${on ? k++ : 0}" d="${arc(r, ang(s0) + .02, ang(e + 1) - .02)}" stroke="${on ? `url(#wg-arc)` : "#E4E2DC"}" stroke-width="${Math.max(2.4, STEP - 2.2).toFixed(1)}"><title>${esc(f.he)}: ${esc(f.months.map((x) => MONTHS[x - 1]).join(", "))}</title></path>`).join("");
+    return segs;
   }).join("");
+  const grads = MONTHS.map((_, i) => `<radialGradient id="wg-${i + 1}" cx="${C}" cy="${C}" r="${R_OUT}" gradientUnits="userSpaceOnUse"><stop offset="${(R_MON / R_OUT).toFixed(3)}" stop-color="${MONTH_HUE[i]}" stop-opacity=".55"/><stop offset="1" stop-color="${MONTH_HUE[i]}"/></radialGradient>`).join("");
   const secs = MONTHS.map((name, i) => {
     const m = i + 1, mid = (ang(m) + ang(m + 1)) / 2, [tx, ty] = pt((R_OUT + R_MON) / 2, mid);
-    return `<g class="msec ${m === month ? "sel" : ""}" data-m="${m}" role="button" tabindex="0" aria-label="${name}" aria-pressed="${m === month}"><path d="${sector(m)}"/><text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" dominant-baseline="central">${name}</text></g>`;
+    return `<g class="msec ${m === month ? "sel" : ""} ${m === now ? "now" : ""}" data-m="${m}" role="button" tabindex="0" aria-label="${name}" aria-pressed="${m === month}"><path d="${sector(m)}" fill="url(#wg-${m})"/><text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" dominant-baseline="central">${name}</text></g>`;
   }).join("");
   const nowA0 = ang(now) + .03, nowA1 = ang(now + 1) - .03;
   const count = SEASONAL.filter((f) => f.months.includes(month)).length;
-  return `<svg class="wheel" viewBox="0 0 600 600" role="img" aria-label="גלגל עונות" style="direction:ltr">
-    ${rings}${secs}
-    <path class="now-tick" d="${arc(R_OUT + 5, nowA0, nowA1)}" fill="none"/>
-    <circle cx="${C}" cy="${C}" r="${R_IN - 6}" fill="#fff" stroke="#E5E4E0"/>
-    <text x="${C}" y="${C - 14}" text-anchor="middle" font-family="IBM Plex Sans Hebrew" font-size="20" font-weight="600" fill="#1A1A18">${MONTHS[month - 1]}</text>
-    <text x="${C}" y="${C + 14}" text-anchor="middle" font-family="IBM Plex Mono" font-size="22" font-weight="600" fill="#1A1A18">${count}</text>
-    <text x="${C}" y="${C + 34}" text-anchor="middle" font-family="IBM Plex Sans Hebrew" font-size="10.5" fill="#84837D">בעונה</text>
+  return `<svg class="wheel" viewBox="0 0 600 600" role="img" aria-label="גלגל עונות" style="direction:ltr;--mh:${hue}">
+    <defs>${grads}
+      <linearGradient id="wg-arc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${hue}"/><stop offset="1" stop-color="color-mix(in srgb, ${hue} 60%, #1a1a18)" style="stop-color:color-mix(in srgb, ${hue} 60%, #1a1a18)"/></linearGradient>
+      <radialGradient id="wg-bg" cx="${C}" cy="${C}" r="${R_MON}" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="${hue}" stop-opacity=".10"/></radialGradient>
+      <filter id="wg-sh" x="-10%" y="-10%" width="120%" height="120%"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity=".18"/></filter>
+    </defs>
+    <circle cx="${C}" cy="${C}" r="${R_MON}" fill="url(#wg-bg)"/>
+    <g class="wheel-season" transform="translate(${C - 120} ${C - 120}) scale(10)" style="color:${hue}">${iconG(sn.ic)}</g>
+    <g class="wheel-rot">${rings}<g filter="url(#wg-sh)">${secs}</g>
+    <path class="now-tick" d="${arc(R_OUT + 5, nowA0, nowA1)}" fill="none"/></g>
+    <circle cx="${C}" cy="${C}" r="${R_IN - 6}" fill="#fff" stroke="${hue}" stroke-opacity=".35" filter="url(#wg-sh)"/>
+    <text x="${C}" y="${C - 22}" text-anchor="middle" font-family="IBM Plex Sans Hebrew" font-size="19" font-weight="700" fill="${hue}">${MONTHS[month - 1]}</text>
+    <text x="${C}" y="${C + 8}" text-anchor="middle" font-family="IBM Plex Mono" font-size="24" font-weight="600" fill="#1A1A18">${count}</text>
+    <text x="${C}" y="${C + 27}" text-anchor="middle" font-family="IBM Plex Sans Hebrew" font-size="10.5" fill="#84837D">בעונה · ${sn.he}</text>
   </svg>`;
+}
+
+// זמן ומקום, ברור: היום, ישראל, העונה, ומה הרמב"ם אומר עליה.
+function nowPlaceHTML() {
+  const m = nowMonth(), sn = SEASON_OF(m), r = rambamFor(m);
+  return `<div class="now-place" style="--mh:${MONTH_HUE[m - 1]}">
+    <span>${icon("order")}<b>${today()}</b></span>
+    <span>${icon("local")}<b>ישראל</b> · אקלים ים־תיכוני</span>
+    <span>${icon(sn.ic)}<b>${sn.he}</b> · ${r.kind}</span>
+  </div>`;
 }
 
 function asideHTML() {
@@ -115,8 +140,8 @@ export function mount(el, params) {
   root.innerHTML = `<div class="view-in focus-aside">
     <section class="panel" aria-labelledby="w-title">
       <div class="gallery-tools"><div><h1 class="view-title" id="w-title">העונות</h1><p class="view-sub">${rich("**מפה שנתית** לקריאה לאורך השנה, או **גלגל** שבו כל טבעת היא מזון.")}</p></div>
-        <span class="chips" role="group" aria-label="תצוגה"><button class="chip" data-mode="grid">מפה שנתית</button><button class="chip" data-mode="wheel">גלגל</button></span>
-        <span class="legend" style="font-size:12px;color:var(--ink-soft)"><span><i class="layer-mark" style="border-color:#1A1A18"></i>בעונה</span><span><i class="layer-mark" style="border-color:#D9D8D3"></i>בחודש אחר</span><span><i class="layer-mark" style="border-color:var(--marker);border-top-width:6px"></i>היום</span></span></div>
+        <span class="seg" role="group" aria-label="תצוגה"><button class="seg-b" data-mode="grid">מפה שנתית</button><button class="seg-b" data-mode="wheel">גלגל</button></span></div>
+      ${nowPlaceHTML()}
       <div class="wheel-wrap" id="wheel" style="flex:1;border:0;box-shadow:none"></div>
     </section>
     <aside class="panel" id="m-aside" aria-labelledby="m-title"></aside>

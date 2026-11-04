@@ -94,6 +94,15 @@
 מזונות יומיומיים. לכל מזון במקום אחד: `food` (כמו ב-foods.js), `profile` ו-`science`. הם מצטרפים ל-`FOODS`, ל-`PROFILES`, ל-`SCIENCE` ולחלקי הצמח (`KITCHEN_PARTS`). הצילומים ב-`photos.js`, כמו כל השאר.
 - `alt`: שמות נוספים לחיפוש בלבד (רבים, כינויים, מנה מוכרת). לא מוצג.
 
+## רכיבים, `js/data/nutrients.js`
+`{id, kind: macro|vitamin|mineral, he, sym, ic, re, role: {t, src}}`. המזונות לכל רכיב נגזרים מ-`re` מול `PROFILES[id].body.t` (הרכב עם מקור). בלי כמויות ובלי מינונים.
+
+## צמח וגוף: `origin` ו-`DOCTRINES`
+לכל חלק `origin: {t, src}`: מאיפה ההשוואה. `DOCTRINES`: שלוש תורות, כל אחת בשכבה (`known`, `said`, `believed`).
+
+## שיטות: `ll` ו-`who`
+`ll: [אורך, רוחב]` למפה (null לשיטה עולמית). `who: {he, la, role}` לדמות. המפה: `js/data/worldmap.js`, נוצר, לא לערוך ידנית.
+
 ## מתכון (recipe), `js/data/recipes.js`
 - `foods`: מזהי מזונות מהגלריה. **האלרגנים נגזרים מהם**, לא נכתבים ידנית.
 - `extra`: מצרכים שאינם בגלריה (מים, מלח, אורז), כטקסט.
