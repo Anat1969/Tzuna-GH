@@ -481,7 +481,7 @@ mark.insight { background: linear-gradient(transparent 45%, var(--marker) 45%, v
 .ess { position: relative; padding: 14px 18px 14px 14px; border-inline-start: 5px solid; min-width: 0; }
 .ess header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-bottom: 8px; }
 .ess-s { white-space: nowrap; }
-.ess-w { font-size: clamp(26px, 2.3vw, 34px); font-weight: 700; line-height: 1; letter-spacing: -0.01em; }
+.ess-w { font-size: clamp(18px, 1.4vw, 21px); font-weight: 700; line-height: 1; letter-spacing: -0.01em; }
 .ess-s { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; color: var(--ink-mute); }
 .ess p { font-size: 17px; line-height: 1.55; margin: 0; color: var(--ink); }
 .ess p strong { font-weight: 700; }
@@ -1083,3 +1083,138 @@ q.qt::before { content: open-quote; } q.qt::after { content: close-quote; }
 .a4-haiku em { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--ink-mute); margin-top: 1mm; }
 @media (max-width: 920px) { .a4-end, .a4-stats { grid-template-columns: minmax(0, 1fr); } }
 .a4-fig.a4-strip { place-items: stretch; align-items: start; max-height: none; } .a4-strip > span b { font-size: 12px; }
+
+/* ===== מסגרת קבועה בשלוש רמות, סולם טיפוגרפי ורווח ===== */
+:root {
+  --fs-1: clamp(24px, 2.1vw, 32px);   /* כותרת דף */
+  --fs-2: clamp(17px, 1.3vw, 20px);   /* כותרת אזור */
+  --fs-3: 15px;                        /* טקסט */
+  --fs-4: 12px;                        /* תווית */
+  --gap: clamp(12px, 1.3vw, 20px);
+}
+.view-in.framed { grid-template-rows: auto minmax(0, 1fr); }
+.view-in.framed > .page-head { grid-column: 1 / -1; }
+.page-head { display: grid; grid-template-columns: minmax(220px, .9fr) minmax(0, 2.6fr); gap: 10px 28px; align-items: start; padding: 4px 4px 2px; direction: rtl; }
+.page-head .view-title { font-size: var(--fs-1); font-weight: 700; line-height: 1.12; letter-spacing: -0.015em; }
+.page-head .view-sub { font-size: 14px; line-height: 1.5; margin-top: 6px; color: var(--ink-soft); }
+.lens { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin: 0; border-top: 2px solid var(--ink); }
+.lens-c { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 8px; padding: 8px 12px 6px; border-inline-start: 1px solid var(--rule); }
+.lens-c:first-child { border-inline-start: 0; padding-inline-start: 0; }
+.lens-c .ic { grid-row: 1 / 3; width: 20px; height: 20px; color: var(--known); margin-top: 1px; }
+.lens dt { font-family: var(--font); font-size: var(--fs-4); font-weight: 600; color: var(--ink-mute); letter-spacing: .02em; }
+.lens dd { margin: 2px 0 0; font-size: 13.5px; line-height: 1.45; }
+/* רמה 2: רווח וקצב בפאנלים */
+.panel-body { padding: 18px 22px 22px; }
+.gallery-tools { padding: 12px 18px; gap: 10px 18px; }
+.sec { margin-top: 22px; }
+.sec-h { padding-bottom: 6px; margin-bottom: 12px; }
+.sec-h h3 { font-size: var(--fs-2); font-weight: 600; }
+.mt-main, .pl-main { gap: 22px !important; padding: 10px 20px 22px !important; }
+.disc-list { gap: 12px !important; } .disc-list li { padding: 12px 14px !important; line-height: 1.55 !important; }
+.tile p, .ess p { line-height: 1.6; }
+.sheet-name { font-size: clamp(24px, 2vw, 30px); }
+/* רמה 3: גוף ונפש, תמיד בתחתית הטור הצדדי */
+.bs-dock { flex: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 2px solid var(--ink); background: #fff; direction: rtl; }
+.bs-h { padding: 12px 16px 14px; min-height: 0; max-height: 26vh; overflow: auto; }
+.bs-h + .bs-h { border-inline-start: 1px solid var(--rule); }
+.bs-h header { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+.bs-h header .ic { width: 20px; height: 20px; }
+.bs-h header b { font-size: 20px; font-weight: 700; line-height: 1; }
+.bs-h header span { font-family: var(--font); font-size: 11.5px; color: var(--ink-mute); margin-inline-start: auto; text-align: left; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bs-h p { margin: 0; font-size: 14.5px; line-height: 1.55; }
+.bs-body { background: linear-gradient(180deg, var(--known-wash), #fff 85%); box-shadow: inset 0 3px 0 var(--known); }
+.bs-body header .ic, .bs-body header b { color: var(--known); }
+.bs-soul { background: linear-gradient(180deg, var(--said-wash), #fff 85%); background-image: linear-gradient(180deg, var(--said-wash), #fff 85%), radial-gradient(circle, var(--said) 1.2px, transparent 1.6px); background-size: auto, 8px 4px; background-repeat: no-repeat, repeat-x; background-position: 0 0, 0 0; }
+.bs-soul header .ic, .bs-soul header b { color: var(--said); }
+.bs-empty { color: var(--ink-mute); font-size: 13px; }
+@media (max-width: 1180px) { .page-head { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 920px) {
+  .lens { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lens-c:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+  .lens dd { font-size: 12.5px; }
+  .bs-h { max-height: none; padding: 10px 12px; }
+  .view-in.framed { grid-template-rows: auto; }
+}
+
+/* ===== גרפיקה מדעית: לוח וחתכים ===== */
+.pv-sci { background: #fcfbf8; border: 1px solid var(--rule); }
+.pv-sci .pv-h { font: 600 12px var(--font); fill: var(--ink-soft); letter-spacing: .06em; }
+.pv-sci .pv-t { font: 400 12px var(--font); fill: var(--ink-soft); }
+.pv-sci .pv-t.on { font-weight: 700; fill: var(--ink); font-size: 13px; }
+.pv-sci .pv-tn { font-family: var(--serif); font-style: italic; fill: var(--ink-mute); }
+.pv-sci .pv-n { font: italic 600 10.5px var(--serif); fill: var(--ink); }
+.pv-sci .pv-n.on { fill: #fff; }
+.pv-sci .pv-lead { stroke: var(--ink); stroke-width: .4; stroke-opacity: .5; fill: none; }
+.pv-sci .pv-cap { font: italic 10.5px var(--serif); fill: var(--ink-mute); }
+.pv-sci text.pv-cap { font-family: var(--font); font-style: normal; font-size: 10.5px; }
+.pv-sci .pv-line { stroke-width: .7; opacity: .35; stroke-dasharray: 3 3; }
+.pv-sci .pv-link.on .pv-line { opacity: .25; stroke-width: 4; stroke-dasharray: none; }
+.pv-sci .pv-link:hover .pv-line { opacity: .8; }
+.pv-sci .pv-flow { stroke-width: 1.6; }
+.pv-sci .pv-link:focus { outline: none; } .pv-sci .pv-link:focus-visible circle { stroke-width: 2.5; }
+.mv.mv-sci { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 0; background: none; border: 0; margin: 4px 0 18px; }
+.mv-sci figure { position: relative; border: 1px solid var(--rule); background: #fff; }
+.mv-sci svg { display: block; width: 100%; height: auto; max-height: none; }
+.mv-sci figcaption { display: block; padding: 8px 10px 10px; font-size: 13px; line-height: 1.5; color: var(--ink-soft); border-top: 1px solid var(--rule-soft); }
+.mv-sci figcaption b { color: var(--ink); }
+.mv-tag { position: absolute; top: 6px; right: 6px; display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; background: rgba(255,255,255,.88); font-size: 11.5px; font-weight: 600; color: var(--hue); z-index: 1; }
+.mv-tag .ic { width: 14px; height: 14px; }
+.mv-lb { font: 500 8.6px var(--font); fill: var(--ink); paint-order: stroke; stroke: rgba(255,255,255,.85); stroke-width: 2.5px; direction: rtl; }
+.mv-lead { stroke: var(--ink); stroke-width: .5; fill: none; }
+.ess-ic { width: 20px !important; height: 20px !important; } .ess { padding: 14px 16px 14px 14px; }
+
+/* ===== שיטות: מפה וגלובוס, ציר עם שנים, הרעיון ===== */
+.mt-stack { display: flex; flex-direction: column; gap: 22px; }
+.mt-geo { gap: 16px !important; }
+.mt-geo figure { padding: 0; }
+.mt-geo figcaption { position: static !important; background: none !important; padding: 10px 14px 0 !important; font-size: 12px !important; }
+.geo { display: grid; }
+.geo-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; padding: 6px 14px 8px; direction: rtl; }
+.geo-zoom { display: inline-flex; gap: 2px; }
+.geo-z { border: 0; background: none; font: inherit; font-size: 16px; line-height: 1; padding: 4px 8px; color: var(--ink-soft); cursor: pointer; box-shadow: none; }
+.geo-z[data-z="0"] { font-size: 12px; }
+.geo-z:hover { color: var(--ink); }
+.geo-hint { margin-inline-start: auto; font-size: 11.5px; color: var(--ink-mute); }
+.geo .geo-h-globe { display: none; }
+.geo:has([data-geo="globe"][aria-pressed="true"]) .geo-h-map { display: none; }
+.geo:has([data-geo="globe"][aria-pressed="true"]) .geo-h-globe { display: inline; }
+.geo-stage { cursor: grab; touch-action: none; user-select: none; overflow: hidden; display: grid; place-items: center; }
+.geo-stage.dragging { cursor: grabbing; }
+.mt-map { max-height: 420px !important; }
+.mt-globe { width: min(100%, 460px); height: auto; display: block; }
+.geo-legend { padding: 6px 14px 10px; gap: 6px 14px; font-size: 12px; flex-wrap: wrap; }
+.geo-legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-inline-end: 4px; vertical-align: -1px; }
+.tl { max-height: none !important; }
+.tl-y { font: 600 12px var(--mono); fill: var(--ink-soft); }
+.tl-y.big { font-size: 14px; font-weight: 700; fill: var(--ink); }
+.tl-y.on { font-size: 13.5px; font-weight: 700; fill: var(--ink); }
+.tl-bce { font: 500 9.5px var(--font); fill: var(--ink-mute); }
+.tl-n { font: 500 12px var(--font); fill: var(--ink); }
+.tl-n.on { font-size: 14px; font-weight: 700; }
+.tl-era { font: 600 11px var(--font); fill: var(--ink-soft); letter-spacing: .06em; }
+.tl-lane { font: 600 12.5px var(--font); }
+.tl-now { font: 600 11px var(--font); fill: #7A1F2B; }
+/* אין מסגרות לכפתורים סמויים: פוקוס נראה רק במקלדת */
+[role="button"]:focus, svg [tabindex]:focus, .tl-m:focus, .mp:focus, .msec:focus, .pv-link:focus { outline: none; }
+[role="button"]:focus-visible, svg [tabindex]:focus-visible { outline: 2px solid var(--known); outline-offset: 2px; }
+.tl-m:focus-visible rect, .mp:focus-visible circle { stroke: var(--known); stroke-width: 2.5; }
+.ess-idea { background: linear-gradient(180deg, #f7f4ec, #fff); border-inline-start: 5px solid var(--ink); margin: 0 0 14px; }
+.ess-idea .ess-w, .ess-idea .ess-ic { color: var(--ink); }
+.cs { display: block; width: 100%; max-width: 360px; margin: 12px auto 2px; }
+.cs-t { font: 600 11px var(--font); fill: var(--ink); direction: rtl; }
+.cs-s { font: 400 8.6px var(--font); fill: var(--ink-soft); direction: rtl; }
+.cs-a { font: 600 9px var(--font); fill: var(--ink-mute); letter-spacing: .04em; direction: rtl; }
+.mt-ideas { margin: 0 0 16px; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.mt-ideas > div { display: grid; grid-template-columns: 24px 90px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--rule-soft); }
+.mt-ideas .ic { width: 20px; height: 20px; color: var(--known); }
+.mt-ideas dt { font-weight: 700; font-size: 13.5px; }
+.mt-ideas dd { margin: 0; font-size: 14.5px; line-height: 1.55; }
+@media (max-width: 920px) { .mt-ideas > div { grid-template-columns: 22px minmax(0, 1fr); } .mt-ideas dd { grid-column: 2; } }
+.cs { max-width: 280px; }
+
+.a4-stage { gap: 28px; }
+.a4-slot { scroll-margin-top: 60px; display: grid; place-items: center; width: 100%; }
+.a4-bar { position: sticky; top: 0; z-index: 2; background: #ecebe6; padding: 8px 0; }
+.a4-strata { display: grid; gap: 6px; place-items: stretch; padding: 3mm 0; }
+.a4-strata .stratum { margin: 0; }
+@media print { .a4-slot { break-after: page; } .a4-stage { gap: 0; } }

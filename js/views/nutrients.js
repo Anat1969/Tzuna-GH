@@ -9,6 +9,7 @@ import { foodImage } from "./foods.js";
 import { patch } from "../route.js";
 import { icon, ORGAN_ICON } from "../plantviz.js";
 import { MONTH_HUE } from "./seasons.js";
+import { dock } from "../frame.js";
 
 export const title = "רכיבים";
 let root, sel;
@@ -70,7 +71,6 @@ function asideHTML() {
   return `<div class="panel-body scroll-in" style="flex:1">
     <h2 class="sheet-name pl-name" id="n-title">${badge(n, "lg")}${esc(n.he)}<span class="label">${esc(KIND_HE[n.kind])}</span></h2>
     <div class="essence pl-ess">
-      <section class="ess ess-body"><header>${icon("body", "ess-ic")}<b class="ess-w">בגוף</b><span class="ess-s">מה הוא עושה</span></header><p>${rich(n.role.t)}</p></section>
       <section class="ess ess-plant" style="--c:${parts[0]?.[0].hue || "#5a7a3a"}"><header>${icon(parts[0]?.[0].id || "plant", "ess-ic")}<b class="ess-w">בצמח</b><span class="ess-s">איפה הוא</span></header>
         <p>${parts.length ? parts.map(([p, k]) => `<b>${esc(p.he)}</b> <bdi class="num">${k}</bdi>`).join(" · ") : "אין מקור בגלריה."}</p></section>
     </div>
@@ -87,7 +87,10 @@ function render() {
       <ul class="disc-list">${discoveries().map((d) => `<li>${badge(d.n, "sm")}<span>${rich(d.t)}</span></li>`).join("")}</ul></section>
     <section><div class="sec-h"><h3>כמה מזונות לכל רכיב</h3><span class="label">גודל העיגול: מספר המקורות</span></div>${bubblesHTML()}</section>
     <section><div class="sec-h"><h3>באיזה חלק של הצמח</h3><span class="label">כהה יותר: יותר מקורות</span></div>${heatHTML()}</section>`;
-  root.querySelector("#n-aside").innerHTML = asideHTML();
+  const aside = root.querySelector("#n-aside"), n = NUTRIENTS.find((x) => x.id === sel);
+  aside.innerHTML = asideHTML();
+  const f = SOURCES_OF[n.id].find((x) => PROFILES[x.id]?.soul), so = f && PROFILES[f.id].soul;
+  dock(aside, { body: { t: n.role.t, sub: n.he }, soul: so ? { t: so.t, sub: `${f.he} · ${so.trad}` } : null });
 }
 function select(id) { sel = id; patch({ n: id }); render(); }
 

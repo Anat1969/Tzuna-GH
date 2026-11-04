@@ -6,6 +6,8 @@ import { foodImage } from "./foods.js";
 import { MONTHS_SHORT } from "../ui.js";
 import { patch } from "../route.js";
 import { icon, iconG } from "../plantviz.js";
+import { dock } from "../frame.js";
+import { PROFILES } from "../data/profiles.js";
 
 // צבע לכל חודש: כחולים בחורף, ירוקים באביב, זהב בקיץ, ענבר וחמרה בסתיו. גרדיאנט עם משמעות.
 export const MONTH_HUE = ["#3d6f9e", "#4f86a8", "#5f9a7a", "#6fae5a", "#93b84a", "#d9b23a", "#e39a2e", "#e0842a", "#c96a2c", "#a85a34", "#7f6a5a", "#4d6a8a"];
@@ -124,7 +126,10 @@ function render() {
   root.querySelector("#wheel").innerHTML = mode === "wheel" ? wheelSVG() : gridHTML();
   root.querySelector("#wheel").classList.toggle("is-grid", mode !== "wheel");
   root.querySelectorAll("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
-  root.querySelector("#m-aside").innerHTML = asideHTML();
+  const aside = root.querySelector("#m-aside"), r = rambamFor(month);
+  aside.innerHTML = asideHTML();
+  const inS = SEASONAL.filter((f) => f.months.includes(month)), f = inS.find((x) => /מקרא|תלמוד|משנה|שולחן|רמב/.test(PROFILES[x.id]?.soul?.trad || "")) || inS.find((x) => PROFILES[x.id]?.soul);
+  dock(aside, { body: { t: `**${r.kind}**: ${r.q}`, sub: "הרמב\"ם, הלכות דעות ד ח" }, soul: f ? { t: PROFILES[f.id].soul.t, sub: `${f.he} · ${PROFILES[f.id].soul.trad}` } : null });
 }
 
 function setMonth(m) {

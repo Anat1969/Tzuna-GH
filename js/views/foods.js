@@ -13,6 +13,7 @@ import { evMeter } from "../ui.js";
 import { medicineFor } from "../data/medicine.js";
 import { PARTS } from "../data/plant.js";
 import { icon, timeBadge } from "../plantviz.js";
+import { dock } from "../frame.js";
 import { EVIDENCE } from "../data/sources.js";
 
 export const title = "מזון";
@@ -155,19 +156,6 @@ function scienceHTML(f) {
       <ul class="practical">${sc.practical.map((t) => `<li>${rich(t)}</li>`).join("")}</ul></section>` : ""}`;
 }
 
-// גוף ונפש: שני לוחות עם נוכחות. גוף בקו רציף (הרכב, ידוע), נפש בקו נקודות (מסורת, נאמר).
-function essenceHTML(pr) {
-  if (!pr.body && !pr.soul) return "";
-  const panel = (cls, word, sub, x, foot) => `<section class="ess ${cls}" aria-label="${word}">
-      <header>${icon(cls === "ess-body" ? "body" : "mind", "ess-ic")}<b class="ess-w">${word}</b><span class="ess-s">${sub}</span></header>
-      <p>${rich(x.t)}</p>${foot ? `<footer>${foot}</footer>` : ""}</section>`;
-  const soulFoot = pr.soul ? [pr.soul.trad, pr.soul.ref].filter(Boolean).map(esc).join(" · ") : "";
-  return `<div class="essence">
-    ${pr.body ? panel("ess-body", "גוף", "מה יש בו", pr.body) : ""}
-    ${pr.soul ? panel("ess-soul", "נפש", "מה הוא מספר", pr.soul, soulFoot) : ""}
-  </div>`;
-}
-
 // הולך עם: המזונות מהגלריה שמוזכרים בהדגשה (לפני הנקודתיים) מופיעים בצילום ליד ההסבר.
 const STOP = ["פלפל שחור", "תה שחור", "תה ירוק", "עלים ירוקים", "דבש תמרים"];
 const NAME_INDEX = FOODS.flatMap((f) => [f.he, f.he.replace(/\s*\(.*\)/, ""), (f.he.match(/\((.*)\)/) || [])[1], ...(f.alt || [])]
@@ -216,7 +204,6 @@ function sheetHTML(f) {
       <h2 class="sheet-name" id="sheet-title">${esc(f.he)} <span class="latin">${esc(f.la)}</span></h2>
       <div class="sheet-tags"><span>${esc(catName(f.cat))}</span><span>משפחת ה<b>${esc(f.family)}</b></span><span>נאכל: <b>${esc(f.part)}</b></span></div>
       ${pr.unique ? `<p class="unique">${rich(pr.unique)}</p>` : ""}
-      ${essenceHTML(pr)}
       <div class="tiles">
         ${pr.with?.length ? tile("הולך עם", "t-with", withHTML(f, pr.with)) : ""}
         ${pr.without?.length ? tile("לא הולך עם", "t-without", lines(pr.without)) : ""}
@@ -250,6 +237,8 @@ function renderSheet({ scroll = false } = {}) {
     return;
   }
   aside.innerHTML = sheetHTML(f);
+  const pr = PROFILES[f.id] || {};
+  dock(aside, { body: pr.body && { t: pr.body.t, sub: f.he }, soul: pr.soul && { t: pr.soul.t, sub: [pr.soul.trad, pr.soul.ref].filter(Boolean).join(" · ") } });
   root.querySelectorAll(".food-card").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.id === state.id)));
   if (scroll) aside.querySelector(".scroll-in")?.scrollTo(0, 0);
 }

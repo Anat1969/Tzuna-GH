@@ -4,6 +4,7 @@ import { legendHTML } from "./ui.js";
 import { APP_MARK } from "./plates.js";
 import { classify, showSafety } from "./safety.js";
 import { initZoom } from "./zoom.js";
+import { frame } from "./frame.js";
 import * as home from "./views/home.js";
 import * as foods from "./views/foods.js";
 import * as plant from "./views/plant.js";
@@ -48,6 +49,7 @@ function render() {
   viewEl = fresh;
   viewEl.dataset.view = name;
   cleanup = VIEWS[name].mount(viewEl, params, { query: $("#q").value.trim() }) || null;
+  frame(viewEl, name);
   document.title = (VIEWS[name].title ? VIEWS[name].title + " · " : "") + "מזון, גוף ונפש";
 }
 

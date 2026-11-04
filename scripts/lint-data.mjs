@@ -11,6 +11,7 @@ import { SYNERGIES } from "../js/data/synergies.js";
 import { DISCOVERIES } from "../js/data/discoveries.js";
 import { PARTS, DOCTRINES } from "../js/data/plant.js";
 import { NUTRIENTS } from "../js/data/nutrients.js";
+import { IDEAS, CLIMATES } from "../js/data/method-ideas.js";
 import { METHODS } from "../js/data/methods.js";
 import { MEDICINE, MEDICINE_BASE } from "../js/data/medicine.js";
 import { existsSync } from "node:fs";
@@ -108,6 +109,7 @@ for (const pt of PARTS) {
   for (const k of ["plant", "body", "mind", "origin"]) { if (!pt[k]) { err(`part:${pt.id}`, `חסר ${k}`); continue; } checkText(`part:${pt.id}.${k}`, pt[k].t); if (pt[k].src) checkSrc(`part:${pt.id}.${k}`, pt[k].src); }
   for (const id of pt.foods) if (!ids.has(id)) err(`part:${pt.id}`, `מזון לא קיים "${id}"`);
 }
+for (const m of METHODS) { const x = IDEAS[m.id]; if (!x) { err(`idea:${m.id}`, "חסר הרעיון של השיטה"); continue; } for (const k of ["idea", "why", "choose", "when"]) checkText(`idea:${m.id}.${k}`, x[k]); if (!CLIMATES[x.climate]) err(`idea:${m.id}`, "אקלים לא מוכר"); }
 for (const n of NUTRIENTS) { checkText(`nutrient:${n.id}`, n.role.t); checkSrc(`nutrient:${n.id}`, n.role.src); }
 for (const d of DOCTRINES) { checkText(`doctrine:${d.he}`, d.t); checkSrc(`doctrine:${d.he}`, d.src); }
 for (const m of METHODS) {

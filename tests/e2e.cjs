@@ -84,7 +84,7 @@ function serve() {
   await p.click('.food-card[data-id="fig"]');
   ok((await hash()).includes('id=fig') && (await p.textContent('#sheet-title')).includes('תאנה'), 'בחירת כרטיס פותחת גיליון ושומרת בכתובת');
   ok(await p.locator('#sheet .stratum').count() >= 3, 'הגיליון מציג שלוש שכבות');
-  ok(await p.locator('#sheet .unique').count() === 1 && await p.locator('#sheet .ess-body').count() === 1 && await p.locator('#sheet .ess-soul').count() === 1, 'ייחודיות, גוף ונפש בגיליון');
+  ok(await p.locator('#sheet .unique').count() === 1 && await p.locator('#sheet .bs-dock .bs-body p').count() === 1 && await p.locator('#sheet .bs-dock .bs-soul p').count() === 1, 'ייחודיות, וגוף ונפש במקום הקבוע בתחתית');
   ok(!(await p.locator('#sheet .safety-line, #sheet .tone-red').count()), 'בלי אזהרות שימוש בגיליון');
   await go('#/foods?id=cucumber');
   ok(await p.locator('#sheet .t-with .with-f').count() === 3 && (await p.locator('#sheet .t-with .with-f > b').allInnerTexts()).join() === 'עגבנייה,זית,לימון', 'הולך עם: צילומי השותפים ליד ההסבר, בסדר הכתיבה');
@@ -168,7 +168,7 @@ function serve() {
   console.log('צמח וגוף');
   await go('#/plant');
   ok(await p.locator('.pv .pv-link').count() === 6 && await p.locator('.pl-tab').count() === 6, 'מפה: שישה זוגות של צמח וגוף, ושישה כפתורי חלק');
-  ok(await p.locator('#pl-aside .mv figure').count() === 2 && await p.locator('#pl-aside .ess').count() >= 5, 'תרשים מנגנון ולוחות בפורמט גוף ונפש');
+  ok(await p.locator('#pl-aside .mv figure').count() === 2 && await p.locator('#pl-aside .ess').count() >= 3 && await p.locator('#pl-aside .bs-dock').count() === 1, 'תרשים מנגנון, לוחות, וגוף ונפש בתחתית');
   ok(await p.locator('.doctrines .dc').count() === 3, 'מאיזו תורה צמח הקשר: שלוש תורות');
   for (const id of ['stem', 'leaf', 'flower', 'fruit', 'seed', 'root']) {
     await p.click(`.pl-tab[data-part="${id}"]`);
@@ -189,7 +189,19 @@ function serve() {
   ok(await p.locator('#mt-aside .ctx').count() === 1, 'הקשר תרבותי, גאוגרפי ואקלימי');
   await p.click('.mx tbody tr[data-m="ayurveda"]');
   ok((await p.textContent('#mt-title')).includes('איורוודה') && (await hash()).includes('m=ayurveda'), 'בחירת שיטה מהטבלה');
-  ok(await p.locator('.mt-map .mp').count() === 12 && await p.locator('.mt-figs .mt-fig').count() >= 6, 'מפה עם כל השיטות, ודמויות');
+  ok(await p.locator('.mt-map .mp').count() === 11 && await p.locator('.mt-figs .mt-fig').count() >= 6, 'מפה עם כל השיטות שיש להן מקום, ודמויות');
+  ok(await p.locator('#mt-aside .ess-idea').count() === 1 && await p.locator('#mt-aside .mt-ideas > div').count() === 3, 'הרעיון של השיטה: למה, איך בוחרים, מתי');
+  const vb0 = await p.locator('.mt-map').getAttribute('viewBox');
+  await p.locator('.geo-stage').scrollIntoViewIfNeeded();
+  const gb = await p.locator('.geo-stage').boundingBox();
+  await p.mouse.move(gb.x + gb.width / 2, gb.y + gb.height / 2); await p.mouse.wheel(0, -300); await p.waitForTimeout(100);
+  ok((await p.locator('.mt-map').getAttribute('viewBox')) !== vb0, 'גלגלת מקרבת את המפה');
+  await p.click('[data-geo="globe"]');
+  ok(await p.locator('.mt-globe').count() === 1, 'מעבר לגלובוס');
+  await p.click('[data-geo="map"]');
+  await p.click('.mt-sort[data-sort="climate"]');
+  ok(await p.locator('.geo-legend span').count() >= 5 && (await p.locator('.mt-trait').innerText()).includes('אקלים'), 'מיון לפי אקלים: מקרא ותובנה');
+  await p.click('.mt-all');
   await p.click('.mt-sort[data-sort="temp"]');
   ok((await hash()).includes('s=temp') && await p.locator('.mt-trait').count() === 1 && await p.locator('.mp.dim').count() >= 5, 'מיון לפי חם וקר: תובנה, והשאר מעומעמים');
   ok((await p.locator('.mx tbody tr').first().getAttribute('class')).indexOf('dim') === -1, 'מי שיש לו את הפרמטר עולה למעלה');
@@ -208,12 +220,12 @@ function serve() {
 
   console.log('כתבות');
   await go('#/articles');
-  ok(await p.locator('.a4').count() === 1 && await p.locator('.a4-q').count() === 1 && await p.locator('.a4-src').count() === 1, 'כתבה בעמוד A4: ציטוט ומקורות');
-  const a4 = await p.locator('.a4').boundingBox();
+  ok(await p.locator('.a4').count() === 4 && await p.locator('.a4-q').count() === 4 && await p.locator('.a4-src').count() === 4, 'כל הכתבות בדף אחד, כל אחת עמוד A4');
+  const a4 = await p.locator('.a4').first().boundingBox();
   ok(Math.abs(a4.height / a4.width - 297 / 210) < 0.02, 'יחס עמוד A4');
-  ok(/[\u05B0-\u05BC]/.test(await p.locator('.a4-q').innerText()), 'ציטוט מהתנ"ך בניקוד');
+  ok(/[\u05B0-\u05BC]/.test(await p.locator('.a4-q').first().innerText()), 'ציטוט מהתנ"ך בניקוד');
   await p.click('.seg-b[data-a="hot-cold"]');
-  ok((await p.textContent('.a4 h1')).includes('חם וקר'), 'מעבר בין כתבות');
+  ok((await hash()).includes('a=hot-cold'), 'קפיצה לכתבה');
 
   console.log('עונות');
   await go('#/seasons?m=6');
