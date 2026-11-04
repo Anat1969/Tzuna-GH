@@ -256,5 +256,13 @@ export const PHOTOS = {
   "credit": "no rights reserved, iNaturalist",
   "license": "CC0",
   "page": "https://www.inaturalist.org/photos/184849955"
+ },
+ "carrot": {
+  "src": "img/plant-root.jpg",
+  "w": 960,
+  "h": 720,
+  "credit": "Diogo Luiz, iNaturalist",
+  "license": "CC BY",
+  "page": ""
  }
 };

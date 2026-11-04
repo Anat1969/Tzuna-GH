@@ -28,21 +28,49 @@ export function foodImage(f, { big = false } = {}) {
 }
 export const photoCredit = (f) => { const p = PHOTOS[f.id]; return p ? `<span class="credit">${esc(p.credit)} · ${esc(p.license)}</span>` : ""; };
 
-// חיפוש עברי: התאמה בתחילת מילה אחרי אותיות שימוש. מילה עד 3 אותיות חייבת להיות שלמה.
-function matcher(q) {
-  const t = q.trim().toLowerCase().replace(/[^֐-׿a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
-  if (!t) return null;
-  const words = t.split(" ").map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+// חיפוש עברי. נרמול: בלי ניקוד, אותיות סופיות כרגילות, גרש וגרשיים אחידים.
+const FINAL = { "ך": "כ", "ם": "מ", "ן": "נ", "ף": "פ", "ץ": "צ" };
+const norm = (s) => String(s || "").toLowerCase().replace(/[\u0591-\u05C7]/g, "").replace(/[ךםןףץ]/g, (c) => FINAL[c]).replace(/[׳`’]/g, "'").replace(/[״“”]/g, '"');
+// לשם: בלי סימנים בכלל, כדי ש"ג'ינג'ר" ו"גינגר" ייפגשו.
+const bare = (s) => norm(s).replace(/[^\u05D0-\u05EAa-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+// גזע גס: יחיד ורבים ("עדשה" ו"עדשים", "עגבנייה" ו"עגבניות").
+const stem = (w) => (w.length > 3 ? w.replace(/(ים|ות|ה|ת)$/, "").replace(/י+$/, "") : w);
+const namesOf = (f) => [f.he, f.en, ...(f.alt || [])].map(bare).filter(Boolean);
+
+// ציון לכל מזון: שם מדויק, תחילת שם, מילה בשם, ואחר כך טקסט הגיליון.
+// בטקסט: התאמה בתחילת מילה אחרי אותיות שימוש. מילה עד 3 אותיות חייבת להיות שלמה.
+function scorer(q) {
+  const qb = bare(q).replace(/^ה(?=[\u05D0-\u05EA]{3})/, "");
+  if (!qb) return null;
+  const t = norm(q).replace(/[^\u05D0-\u05EAa-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+  const words = t.split(" ").filter(Boolean).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
   const res = words.map((w) => w.length <= 3
     ? new RegExp(`(^|[^\\u0590-\\u05FFa-z])[והשבכלמ]{0,2}${w}($|[^\\u0590-\\u05FFa-z])`, "i")
     : new RegExp(`(^|[^\\u0590-\\u05FFa-z])[והשבכלמ]{0,2}${w}`, "i"));
   return (f) => {
+    let best = 0;
+    for (const n of namesOf(f)) {
+      if (n === qb) best = Math.max(best, 100);
+      else if (stem(n) === stem(qb)) best = Math.max(best, 90);
+      else if (qb.length >= 2 && n.startsWith(qb)) best = Math.max(best, 80);
+      else if (qb.length >= 2 && n.split(" ").some((w) => w.startsWith(qb) || (qb.length >= 3 && stem(w) === stem(qb)))) best = Math.max(best, 60);
+      else if (qb.length >= 3 && qb.startsWith(n + " ")) best = Math.max(best, 50);
+    }
+    if (best) return best;
     const pr = PROFILES[f.id] || {};
-    const hay = [f.he, f.en, f.la, f.family, f.family_la, f.part, catName(f.cat), f.recognize.t, f.use.t, pr.unique, pr.body?.t, pr.soul?.t,
+    const hay = norm([f.he, f.en, f.la, ...(f.alt || []), f.family, f.family_la, f.part, catName(f.cat), f.recognize.t, f.use.t, pr.unique, pr.body?.t, pr.soul?.t,
       ...(pr.with || []).map((x) => x.t), ...(pr.without || []).map((x) => x.t),
-      ...LAYERS.flatMap((l) => f.layers[l.key].map((x) => `${x.t} ${x.trad || ""} ${x.ref || ""}`))].join(" ").replace(/\*\*|==/g, "").toLowerCase();
-    return res.every((r) => r.test(hay));
+      ...LAYERS.flatMap((l) => f.layers[l.key].map((x) => `${x.t} ${x.trad || ""} ${x.ref || ""}`))].join(" ").replace(/\*\*|==/g, ""));
+    return res.length && res.every((r) => r.test(hay)) ? 10 : 0;
   };
+}
+// המזון הכי מתאים לחיפוש, מכל הגלריה (לא רק מהקטגוריה שנבחרה).
+export function bestMatch(q) {
+  const sc = scorer(q || "");
+  if (!sc) return null;
+  let top = null, topScore = 0;
+  for (const f of FOODS) { const s = sc(f); if (s > topScore) { top = f; topScore = s; } }
+  return top;
 }
 
 const visible = () => FOODS.filter((f) => !state.cats.length || state.cats.includes(f.cat));
@@ -192,10 +220,16 @@ function select(id, opts) {
 }
 
 let applySearch = () => {};
-export function search(text) {
+export function search(text, { commit = false } = {}) {
   state.q = text;
-  patch({ q: text || undefined });
+  const top = bestMatch(text);
+  // ההתאמה מחוץ לקטגוריה שנבחרה: מבטלים את הסינון, כדי שהיא תופיע.
+  if (top && state.cats.length && !state.cats.includes(top.cat)) { state.cats = []; renderGallery(); }
+  if (top && top.id !== state.id) { state.id = top.id; renderSheet({ scroll: true }); }
+  patch({ q: text || undefined, id: state.id || undefined, cat: state.cats.join(",") || undefined });
   applySearch();
+  if (top) root.querySelector(`.food-card[data-id="${top.id}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  if (commit && top) document.querySelector("#q")?.blur();
 }
 
 export function mount(el, params, ctx) {
@@ -208,6 +242,9 @@ export function mount(el, params, ctx) {
   };
   const qInput = document.querySelector("#q");
   if (state.q && qInput && qInput.value !== state.q) qInput.value = state.q;
+  // חיפוש שהגיע ממסך אחר: הגיליון נפתח על ההתאמה הטובה.
+  const top = !params.id && bestMatch(state.q);
+  if (top) { state.id = top.id; if (state.cats.length && !state.cats.includes(top.cat)) state.cats = []; }
   if (!state.id) state.id = (visible()[0] || {}).id;
 
   root.innerHTML = `<div class="view-in focus-aside">
@@ -224,19 +261,20 @@ export function mount(el, params, ctx) {
   </div>`;
 
   applySearch = () => {
-    const m = matcher(state.q);
+    const m = scorer(state.q);
     let n = 0;
     root.querySelectorAll(".food-card").forEach((c) => {
-      const hit = !m || m(byId(c.dataset.id));
+      const hit = !m || m(byId(c.dataset.id)) > 0;
       if (hit && m) n++;
       c.classList.toggle("dim", !!m && !hit);
       c.classList.toggle("hit", !!m && hit);
     });
-    root.querySelector("#hits").innerHTML = m ? (n ? `<bdi class="num">${n}</bdi> תוצאות ל"${esc(state.q)}"` : `אין תוצאות ל"${esc(state.q)}"`) : `<bdi class="num">${visible().length}</bdi> מזונות`;
+    root.querySelector("#hits").innerHTML = m ? (n ? `<bdi class="num">${n}</bdi> תוצאות ל"${esc(state.q)}"` : `אין עדיין גיליון ל"${esc(state.q)}"`) : `<bdi class="num">${visible().length}</bdi> מזונות`;
   };
 
   renderGallery();
   renderSheet();
+  if (top) requestAnimationFrame(() => root.querySelector(`.food-card[data-id="${top.id}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" }));
 
   root.addEventListener("click", (e) => {
     const card = e.target.closest(".food-card");

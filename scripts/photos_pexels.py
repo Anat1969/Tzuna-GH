@@ -13,8 +13,13 @@ QUERIES = {
   "cucumber": "cucumbers", "onion": "onions", "garlic": "garlic bulbs", "tomato": "tomatoes", "zaatar": "zaatar spice",
   "sage": "sage leaves", "ginger": "ginger root", "turmeric": "turmeric root", "grapefruit": "grapefruit", "carob": "carob pods",
   "oat": "rolled oats", "apple": "apples", "pear": "pears", "mulberry": "mulberries", "quince": "quince fruit",
-  "cabbage": "cabbage", "chard": "swiss chard", "mustard": "mustard seeds", "fenugreek": "fenugreek seeds"
+  "cabbage": "cabbage", "chard": "swiss chard", "mustard": "mustard seeds", "fenugreek": "fenugreek seeds",
+  "pea": "green peas pods", "bean": "white beans", "lemon": "lemons", "orange": "oranges fruit", "potato": "potatoes",
+  "sweetpotato": "sweet potatoes", "eggplant": "eggplants", "pepper": "bell peppers", "zucchini": "zucchini", "spinach": "spinach leaves",
+  "parsley": "parsley bunch", "mint": "mint leaves", "coriander": "cilantro", "cumin": "cumin seeds", "rice": "rice grains",
+  "corn": "corn cobs", "avocado": "avocado halves", "banana": "bananas bunch"
 }
+# רק מזונות שעדיין אין להם צילום: python3 scripts/photos_pexels.py search missing
 def api(q):
     url = 'https://api.pexels.com/v1/search?' + urllib.parse.urlencode({'query': q, 'per_page': 8, 'orientation': 'landscape'})
     req = urllib.request.Request(url, headers={'Authorization': KEY, 'User-Agent': 'TzunaApp/1.0'})
@@ -27,7 +32,9 @@ os.makedirs(WORK + '/thumbs', exist_ok=True)
 if sys.argv[1] == 'search':
     from PIL import Image, ImageDraw
     cands = {}
-    for fid, q in QUERIES.items():
+    have = open(os.path.join(ROOT, 'js/data/photos.js'), encoding='utf-8').read()
+    todo = {f: q for f, q in QUERIES.items() if not (len(sys.argv) > 2 and sys.argv[2] == 'missing' and f'"{f}":' in have)}
+    for fid, q in todo.items():
         r = api(q); cands[fid] = r.get('photos', [])
         for k, p in enumerate(cands[fid]):
             open(f'{WORK}/thumbs/{fid}-{k}.jpg', 'wb').write(fetch(p['src']['small']))

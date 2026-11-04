@@ -4,6 +4,8 @@
 // soul: משמעות, טקס, זיכרון ותרבות. שכבת "נאמר", עם מקור.
 // with / without: שילובים. "without" רק להתנגשות אמיתית ברמת התוכן, עם מקור.
 
+import { KITCHEN_PROFILES } from "./kitchen.js";
+
 export const PROFILES = {
   olive: {
     unique: "פרי שאוכלים בעיקר **כשמן**.",
@@ -242,5 +244,6 @@ export const PROFILES = {
     soul: { t: "\"רוביא דהיינו **תלתן**\": \"שירבו זכיותינו\", בליל ראש השנה.", trad: "שולחן ערוך", ref: "אורח חיים תקפג א", src: "sa-oc-583" },
     with: [{ t: "**סחוג ולחם** במטבח התימני.", src: "culinary" }],
     without: []
-  }
+  },
+  ...KITCHEN_PROFILES
 };
