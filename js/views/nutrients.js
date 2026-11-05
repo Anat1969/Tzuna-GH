@@ -41,6 +41,12 @@ export function discoveries() {
   // ניגוד: ברזל מהצומח צריך ויטמין C, ושניהם מגיעים מחלקים שונים
   const fe = SOURCES_OF.iron.map((f) => f.he).join(" ו"), cc = SOURCES_OF.vC.length;
   out.push({ n: NUTRIENTS.find((n) => n.id === "iron"), t: `**ברזל** בגלריה רק ב${fe}, ו**ויטמין C** ב-**${cc}** מזונות. ==הצירוף הוא המפתח: קטנייה או עלה, עם פרי חמוץ.==` });
+  // מגנזיום: מהזרע, מהעלה, ומספירולינה שאינה צמח. והכלורופיל כמפתח.
+  const mg = SOURCES_OF.mg || [];
+  if (mg.length) {
+    const ps = [...new Set(mg.map((f) => partOf(f)?.he).filter(Boolean))], out2 = mg.filter((f) => !partOf(f)).map((f) => f.he);
+    out.push({ n: NUTRIENTS.find((n) => n.id === "mg"), t: `**מגנזיום** ב-**${mg.length}** מזונות: ב${ps.join(" וב")}${out2.length ? `, וגם ב**${out2.join(" וב")}**, שאינה צמח` : ""}. ==במרכז הכלורופיל יושב אטום מגנזיום.==` });
+  }
   return out;
 }
 
@@ -67,6 +73,9 @@ function asideHTML() {
   const n = NUTRIENTS.find((x) => x.id === sel), all = SOURCES_OF[n.id];
   const fs = part ? all.filter((f) => partOf(f)?.id === part) : all, P = PARTS.find((p) => p.id === part);
   const byPart = PARTS.map((p) => [p, fs.filter((f) => partOf(f) === p)]).filter(([, l]) => l.length);
+  // מזון בלי חלק בצמח (ספירולינה, ציאנובקטריה): קבוצת "אחר", כדי שהמונה והרשימה יתאימו.
+  const other = part ? [] : fs.filter((f) => !partOf(f));
+  if (other.length) byPart.push([{ id: "plant", he: "אחר", hue: "#7a7a7a" }, other]);
   return `<div class="panel-body scroll-in" style="flex:1">
     <h2 class="sheet-name pl-name" id="n-title">${badge(n, "lg")}${esc(n.he)}<span class="label">${esc(KIND_HE[n.kind])}</span></h2>
     <div class="sec-h"><h3>מקורות בגלריה${P ? `: ${esc(P.he)}` : ""}</h3><span class="label"><bdi class="num">${fs.length}</bdi></span>${P ? `<button class="chip-all" data-n="${n.id}" data-part="">הכול</button>` : ""}</div>
@@ -108,4 +117,8 @@ export function mount(el, params) {
     part = t.dataset.part || null; sel = t.dataset.n; patch({ n: sel, part: part || undefined }); render();
   });
 }
-export function update(params) { if (params.n && params.n !== sel) select(params.n); }
+// קישור נכנס (למשל #/nutrients?n=mg) קובע גם את סינון החלק בצמח, כדי שלא יישאר סינון ממסך קודם.
+export function update(params) {
+  const np = PARTS.some((p) => p.id === params.part) ? params.part : null;
+  if ((params.n && params.n !== sel) || np !== part) { part = np; if (NUTRIENTS.some((n) => n.id === params.n)) sel = params.n; render(); }
+}

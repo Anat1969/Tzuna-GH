@@ -93,6 +93,7 @@
 ## מזונות המטבח, `js/data/kitchen.js`
 מזונות יומיומיים. לכל מזון במקום אחד: `food` (כמו ב-foods.js), `profile` ו-`science`. הם מצטרפים ל-`FOODS`, ל-`PROFILES`, ל-`SCIENCE` ולחלקי הצמח (`KITCHEN_PARTS`). הצילומים ב-`photos.js`, כמו כל השאר.
 - `alt`: שמות נוספים לחיפוש בלבד (רבים, כינויים, מנה מוכרת). לא מוצג.
+- מזון שאינו צמח (ספירולינה, ציאנובקטריה, קטגוריה `algae`) לא נכנס ל-`KITCHEN_PARTS`. ברכיבים הוא מוצג בקבוצת "אחר".
 
 ## רכיבים, `js/data/nutrients.js`
 `{id, kind: macro|vitamin|mineral, he, sym, ic, re, role: {t, src}}`. המזונות לכל רכיב נגזרים מ-`re` מול `PROFILES[id].body.t` (הרכב עם מקור). בלי כמויות ובלי מינונים.
