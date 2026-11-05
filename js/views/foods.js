@@ -96,7 +96,7 @@ function groups() {
 // סדר התצוגה בפועל, גם לקודם והבא בגיליון.
 const ordered = () => groups().flatMap(([, l]) => l);
 // שפת הסימנים של המיון: אותו סימן בכפתור (מקרא חי), בכותרת הקבוצה ובאריח.
-const CAT_VIS = { seven: ["#7a5b2a", "fruit"], grains: ["#c09a3a", "seed"], legumes: ["#9a5a32", "seed"], nuts: ["#6f4f2f", "seed"], veg: ["#5f8f3a", "leaf"], herbs: ["#3f7f5a", "leaf"] };
+const CAT_VIS = { seven: ["#7a5b2a", "fruit"], grains: ["#c09a3a", "seed"], legumes: ["#9a5a32", "seed"], nuts: ["#6f4f2f", "seed"], veg: ["#5f8f3a", "leaf"], herbs: ["#3f7f5a", "leaf"], algae: ["#2f6f6a", "leaf"] };
 const SEASON_VIS = { "חורף": ["#3d6f9e", "snow"], "אביב": ["#6fae5a", "bloom"], "קיץ": ["#d9a12a", "sun"], "סתיו": ["#b8642c", "leaffall"], "כל השנה": ["#84837d", "allyear"] };
 const evBars = (i) => `<span class="evb" aria-hidden="true">${[0, 1, 2, 3, 4].map((j) => `<i class="${j < 5 - i ? "on" : ""}"></i>`).join("")}</span>`;
 function groupMark(g, k) {

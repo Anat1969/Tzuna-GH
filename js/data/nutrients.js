@@ -12,6 +12,7 @@ export const NUTRIENTS = [
   { id: "fol", kind: "vitamin", he: "חומצה פולית", sym: "B9", re: /חומצה פולית/, role: { t: "**יצירת תאים חדשים** ותאי דם.", src: "medlineplus-vitamins" } },
   { id: "iron", kind: "mineral", he: "ברזל", sym: "Fe", re: /ברזל/, role: { t: "**נשיאת חמצן** בדם. מהצומח הוא נספג טוב יותר עם ויטמין C.", src: "medlineplus-iron" } },
   { id: "ca", kind: "mineral", he: "סידן", sym: "Ca", re: /סידן/, role: { t: "**עצמות ושיניים**, ופעילות שרירים ועצבים.", src: "medlineplus-calcium" } },
+  { id: "mg", kind: "mineral", he: "מגנזיום", sym: "Mg", re: /מגנזיום/, role: { t: "**פעילות שרירים ועצבים**, עצם ויצירת חלבון. בצמח הוא יושב ב**מרכז הכלורופיל**, הפיגמנט הירוק של העלה. ==רוב המגנזיום שבעלה אינו קשור לכלורופיל.==", src: ["medlineplus-magnesium", "campbell", "bohn-2004"] } },
   { id: "k", kind: "mineral", he: "אשלגן", sym: "K", re: /אשלגן/, role: { t: "**פעילות שרירים ועצבים** ואיזון נוזלים.", src: "medlineplus-minerals" } }
 ];
 export const KIND_HE = { macro: "אבות מזון", vitamin: "ויטמינים", mineral: "מינרלים" };
@@ -19,5 +20,5 @@ export const KIND_HE = { macro: "אבות מזון", vitamin: "ויטמינים"
 export const KIND_INFO = {
   macro: { short: "מה שהגוף צורך **בכמות**: אנרגיה, בניין ומעי.", long: "**פחמימות ושומן** הם מקור האנרגיה. **חלבון** הוא חומר הבניין של שריר, עור ואנזימים. **סיבים** לא מתעכלים, ותומכים בפעילות המעי. בצומח הם נאגרים בעיקר ב**זרע** ובפקעת.", src: ["medlineplus-carbs", "medlineplus-protein", "medlineplus-fats", "medlineplus-fiber"] },
   vitamin: { short: "נדרשים **בכמות קטנה**, ומפעילים תהליכים.", long: "**ויטמינים** הם חומרים שהגוף לא מייצר בכמות מספקת, ולכן מגיעים מהמזון. כל אחד מפעיל תהליך אחר: **ראייה** (A), **בניית רקמות** וספיגת ברזל (C), **קרישת דם** (K), **הגנה על התא** (E) ו**יצירת תאים** (חומצה פולית).", src: "medlineplus-vitamins" },
-  mineral: { short: "יסודות **מהאדמה**, שהצמח סופג בשורש.", long: "**מינרלים** הם יסודות שהצמח סופג מהאדמה, ומשם מגיעים אלינו. **ברזל** נושא חמצן בדם, **סידן** בונה עצם ושן, ו**אשלגן** פועל בשריר ובעצב. הצירוף קובע את הספיגה: ויטמין C מגביר ספיגת ברזל מהצומח.", src: ["medlineplus-minerals", "medlineplus-iron", "medlineplus-calcium"] }
+  mineral: { short: "יסודות **מהאדמה**, שהצמח סופג בשורש.", long: "**מינרלים** הם יסודות שהצמח סופג מהאדמה, ומשם מגיעים אלינו. **ברזל** נושא חמצן בדם, **סידן** בונה עצם ושן, **אשלגן** פועל בשריר ובעצב, ו**מגנזיום** יושב במרכז הכלורופיל של העלה. הצירוף קובע את הספיגה: ויטמין C מגביר ספיגת ברזל מהצומח.", src: ["medlineplus-minerals", "medlineplus-iron", "medlineplus-calcium", "medlineplus-magnesium", "campbell"] }
 };

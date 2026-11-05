@@ -79,7 +79,7 @@ function serve() {
 
   console.log('מזון');
   await go('#/foods');
-  ok(await p.locator('.food-card').count() === 66, '66 גיליונות בגלריה');
+  ok(await p.locator('.food-card').count() === 67, '67 גיליונות בגלריה');
   ok(!(await p.locator('.food-card >> text=ג\'עדה').count()), 'צמח מהרשימה האדומה לא בגלריה');
   await p.click('.food-card[data-id="fig"]');
   ok((await hash()).includes('id=fig') && (await p.textContent('#sheet-title')).includes('תאנה'), 'בחירת כרטיס פותחת גיליון ושומרת בכתובת');
@@ -108,10 +108,10 @@ function serve() {
   await p.click('[data-rem="nuts"]');
   ok(await p.locator('.food-card').count() === 7, 'בורר: "−" מסיר');
   await p.click('[data-cat="legumes"]');
-  ok(await p.locator('.food-card').count() === 66, 'בורר: לחיצה על הבחירה היחידה מחזירה להכול');
+  ok(await p.locator('.food-card').count() === 67, 'בורר: לחיצה על הבחירה היחידה מחזירה להכול');
   await p.click('[data-cat="seven"]');
   await p.click('[data-cat=""]');
-  ok(await p.locator('.food-card').count() === 66, 'בורר: "הכול" מאפס');
+  ok(await p.locator('.food-card').count() === 67, 'בורר: "הכול" מאפס');
 
   console.log('חיפוש ובטיחות');
   await p.fill('#q', 'תאנה');
@@ -219,7 +219,7 @@ function serve() {
 
   console.log('רכיבים');
   await go('#/nutrients');
-  ok(await p.locator('.nt-row').count() === 12 && await p.locator('.nt-kind').count() === 3, 'רכיבים: טבלה אחת, כותרת לכל סוג');
+  ok(await p.locator('.nt-row').count() === 13 && await p.locator('.nt-kind').count() === 3, 'רכיבים: טבלה אחת, כותרת לכל סוג');
   await p.click('.nt-row[data-n="vK"] th');
   ok((await p.textContent('#n-title')).includes('ויטמין K') && await p.locator('#n-aside .pl-food').count() >= 3 && await p.locator('#n-aside .bs-dock .nseason span').count() === 12, 'בחירת ויטמין K: מקורות, ומתי בשנה קבוע בראש');
   await p.click('.nt-c[data-n="protein"][data-part="seed"]');
@@ -227,6 +227,13 @@ function serve() {
   await p.click('[data-kind="vitamin"]');
   ok(await p.locator('.nt-long').count() === 1, 'לחיצה על סוג מסבירה למה הוא חשוב');
   ok((await p.locator('.disc-list').innerText()).includes('עלה'), 'גילוי: ויטמין K בעלים');
+  await go('#/nutrients?n=mg');
+  ok((await p.textContent('#n-title')).includes('מגנזיום') && await p.locator('#n-aside .pl-food[href="#/foods?id=spirulina"]').count() === 1 && await p.locator('#n-aside .pl-food').count() >= 6, 'מגנזיום: מקורות מהגוף בפרופיל, כולל ספירולינה ב"אחר"');
+
+  console.log('גשר מארק ובינה');
+  await p.goto(base + '?ab_q=' + encodeURIComponent('למה דווקא מגנזיום?') + '&ab_back=' + encodeURIComponent('https://arc-and-bina.vercel.app/#/client/alga') + '#/foods?id=spirulina', { waitUntil: 'networkidle' });
+  await p.waitForTimeout(500);
+  ok((await p.textContent('.sheet-name')).includes('ספירולינה') && (await p.evaluate(() => location.search)).includes('ab_q'), 'פרמטרים לפני ה-hash: הגיליון נפתח, והפרמטרים נשמרים');
 
   console.log('כתבות');
   await go('#/articles');
