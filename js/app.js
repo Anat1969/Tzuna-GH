@@ -4,6 +4,7 @@ import { legendHTML } from "./ui.js";
 import { APP_MARK } from "./plates.js";
 import { classify, showSafety } from "./safety.js";
 import { initZoom } from "./zoom.js";
+import { initBackTrail } from "./backtrail.js";
 import { frame } from "./frame.js";
 import * as home from "./views/home.js";
 import * as foods from "./views/foods.js";
@@ -71,6 +72,7 @@ q.addEventListener("keydown", (e) => {
 q.addEventListener("focus", () => q.select());
 $("#q-x").addEventListener("click", () => { q.value = ""; q.dispatchEvent(new Event("input")); q.focus(); });
 
+initBackTrail(Object.fromEntries(Object.entries(VIEWS).map(([k, v]) => [k, v.title || (k === "home" ? "דף הבית" : k)])));
 addEventListener("hashchange", render);
 render();
 

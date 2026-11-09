@@ -749,7 +749,7 @@ mark.insight { background: linear-gradient(transparent 45%, var(--marker) 45%, v
 /* רשת הצירופים */
 .net-box { display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; height: 100%; padding: 6px 14px 10px; gap: 4px; }
 .net-ins { margin: 0; }
-.net { width: 100%; height: 100%; min-height: 300px; direction: ltr; }
+.net { width: 100%; height: 100%; min-height: 180px; direction: ltr; }
 .ne { cursor: pointer; }
 .ne-hit { stroke: transparent; stroke-width: 16; }
 .ne-l { stroke: #1D9E75; stroke-width: 2.5; transition: stroke-width .2s; }
@@ -1611,3 +1611,32 @@ q.qt::before { content: open-quote; } q.qt::after { content: close-quote; }
   [data-view="foods"] .view-in.f-main .gallery, [data-view="recipes"] .view-in.f-main .recipe-grid:not(.is-net) { grid-auto-flow: row !important; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)) !important; grid-auto-columns: auto !important; overflow: visible !important; }
   [data-view="recipes"] .view-in.f-main .recipe-grid:not(.is-net) { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important; }
 }
+/* דפדוף בתוך הפרק: הקודם, מיקום ושם הפרק, הבא */
+.page-head:has(.ph-pager:not([hidden])):has(.ph-focus) { grid-template-columns: minmax(0, 1fr) auto auto auto !important; }
+.page-head:has(.ph-pager:not([hidden])):not(:has(.ph-focus)) { grid-template-columns: minmax(0, 1fr) auto auto !important; }
+.ph-pager { display: inline-flex; align-items: center; gap: 4px; direction: rtl; }
+.ph-pager[hidden] { display: none; }
+.ph-pager button { display: grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 999px; background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.1), 0 3px 8px rgba(0,0,0,.08); cursor: pointer; transition: box-shadow .15s, background .15s; }
+.ph-pager button .ic { width: 18px; height: 18px; }
+.ph-pager button:hover:not(:disabled) { box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+.ph-pager button:disabled { opacity: .35; cursor: default; box-shadow: none; }
+.ph-pager button:focus-visible { outline: 2px solid var(--known); outline-offset: 2px; }
+.pg-pos { display: grid; justify-items: center; line-height: 1.15; min-width: 64px; padding: 0 4px; }
+.pg-pos .num { font-size: 13px; font-weight: 700; }
+.pg-pos span { font-size: 11.5px; color: var(--ink-soft); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 1180px) { .page-head:has(.ph-pager:not([hidden])):has(.ph-focus) { grid-template-columns: minmax(0, 1fr) auto auto !important; } }
+@media (max-width: 920px) {
+  .page-head:has(.ph-pager:not([hidden])) { grid-template-columns: auto minmax(0, 1fr) !important; }
+  .page-head:has(.ph-pager:not([hidden])) .ph-title { grid-column: 1 / -1; }
+  .page-head:has(.ph-pager:not([hidden])) .ph-tips { grid-column: 1 / -1; }
+}
+/* חזרה למקום שממנו הגעתי: תמיד באותו מקום, באמצע שורת המצב, בלי לכסות תוכן */
+.back-trail { margin-inline: auto; display: inline-flex; align-items: center; gap: 8px; max-width: min(460px, 60vw); padding: 5px 14px 5px 12px; border: 0; border-radius: 999px; background: var(--ink); color: #fff; font: inherit; font-size: 13px; direction: rtl; box-shadow: 0 3px 10px rgba(0,0,0,.22); cursor: pointer; transition: box-shadow .15s, background .15s; }
+.back-trail[hidden] { display: none; }
+.back-trail .ic { width: 16px; height: 16px; flex: none; }
+.back-trail .bt-l { opacity: .75; white-space: nowrap; }
+.back-trail b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.back-trail:hover { box-shadow: 0 5px 16px rgba(0,0,0,.32); background: #000; }
+.back-trail:focus-visible { outline: 3px solid var(--known); outline-offset: 2px; }
+@media (max-width: 920px) { .back-trail { order: -1; flex-basis: 100%; max-width: none; justify-content: center; } }
+@media print { .back-trail { display: none !important; } }

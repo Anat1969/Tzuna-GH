@@ -343,6 +343,29 @@ function serve() {
   await go('#/methods?f=side');
   ok(await p.locator('.view-in.f-side').count() === 1, 'קישור עם f=side פותח ישר את השיטה לבדה');
 
+  console.log('דפדוף בפרק וחזרה');
+  await go('#/foods?id=olive&g=season');
+  const pos = async () => (await p.innerText('.ph-pager .pg-pos')).replace(/\s+/g, ' ').trim();
+  const p0 = await pos();
+  ok(/^\d+\/\d+ סתיו$/.test(p0), `דפדוף: מיקום ושם הפרק (${p0})`);
+  await p.click('.ph-pager [data-pg="1"]');
+  await p.waitForTimeout(150);
+  const p1 = await pos();
+  ok(p1 !== p0 && p1.endsWith('סתיו') && !(await hash()).includes('id=olive'), `הבא בפרק: נשאר בפרק ובוחר את הבא (${p1})`);
+  await go('#/nutrients');
+  ok((await pos()).includes('אבות מזון'), 'רכיבים: הפרק הוא סוג הרכיב');
+  await go('#/');
+  await p.evaluate(() => { location.hash = '#/foods?id=olive'; });
+  await p.waitForTimeout(500);
+  ok(await p.locator('.back-trail:not([hidden])').count() === 1 && (await p.textContent('.back-trail')).includes('דף הבית'), 'חזרה: אחרי מעבר, הכפתור אומר לאן חוזרים');
+  await p.click('.food-card[data-id="fig"]');
+  await p.evaluate(() => { location.hash = '#/recipes'; });
+  await p.waitForTimeout(500);
+  ok((await p.textContent('.back-trail')).includes('תאנה'), 'חזרה: שם המקום כולל את הפריט שנבחר');
+  await p.click('.back-trail');
+  await p.waitForTimeout(500);
+  ok((await hash()).includes('id=fig') && (await p.textContent('.back-trail')).includes('דף הבית'), 'לחיצה מחזירה בדיוק לגיליון שממנו הגעתי, והצעד הקודם נשמר');
+
   console.log('השוואה');
   await go('#/compare');
   ok((await p.textContent('#shared')).includes('מפריד'), 'תאנה ורימון: הרמב"ם מפריד ביניהם');
