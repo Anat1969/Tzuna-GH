@@ -327,6 +327,22 @@ function serve() {
   ok(await p.locator('.hd-line mark').count() === 6, 'כל דלת: מספר עם תובנה');
   ok(/\d+\/(\d+)/.test(await p.textContent('#ht-disc')) && Number((await p.textContent('#ht-disc')).match(/\d+\/(\d+)/)[1]) >= 20, 'גילויים מכל האפליקציה מתחלפים, עם מונה');
 
+  console.log('מיקוד ברמת הדף');
+  for (const v of ['foods', 'nutrients', 'plant', 'methods', 'seasons', 'recipes', 'compare']) {
+    await go('#/' + v);
+    ok(await p.locator('.ph-focus [data-focus]').count() === 3 && await p.locator('.ph-focus [data-focus="all"][aria-pressed="true"]').count() === 1, `${v}: שלושה כפתורי מיקוד, "הכול" נבחר`);
+  }
+  await go('#/foods?id=olive');
+  await p.click('.ph-focus [data-focus="main"]');
+  ok(!(await p.locator('#sheet').isVisible()) && await p.locator('#gallery').isVisible() && (await hash()).includes('f=main'), 'רק גלריה: הגיליון מוסתר, והמצב בקישור');
+  await p.click('.food-card[data-id="fig"]');
+  await p.waitForTimeout(150);
+  ok(await p.locator('#sheet').isVisible() && !(await p.locator('#gallery').isVisible()) && (await hash()).includes('f=side'), 'בחירה בגלריה כשהיא לבד עוברת לגיליון שלה');
+  await p.click('.ph-focus [data-focus="all"]');
+  ok(await p.locator('#sheet').isVisible() && await p.locator('#gallery').isVisible() && !(await hash()).includes('f='), '"הכול" מחזיר את שני האזורים');
+  await go('#/methods?f=side');
+  ok(await p.locator('.view-in.f-side').count() === 1, 'קישור עם f=side פותח ישר את השיטה לבדה');
+
   console.log('השוואה');
   await go('#/compare');
   ok((await p.textContent('#shared')).includes('מפריד'), 'תאנה ורימון: הרמב"ם מפריד ביניהם');

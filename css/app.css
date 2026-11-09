@@ -1583,3 +1583,31 @@ q.qt::before { content: open-quote; } q.qt::after { content: close-quote; }
   [data-view="home"] .ht-disc > span:last-child { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .h-doors { height: 118px; }
 }
+/* מיקוד ברמת הדף: הכול, רק הכלי, רק הגיליון. מסילה אחת, הנבחר בשחור. */
+.page-head:has(.ph-focus) { grid-template-columns: minmax(0, 1fr) auto auto !important; }
+.ph-focus { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; background: var(--paper-2, #f1efe9); box-shadow: inset 0 1px 2px rgba(0,0,0,.08); direction: rtl; }
+.ph-focus button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border: 0; border-radius: 999px; background: transparent; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: background .15s, color .15s, box-shadow .15s, transform .15s; }
+.ph-focus button .ic { width: 16px; height: 16px; }
+.ph-focus button:hover { background: #fff; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,.12); transform: translateY(-1px); }
+.ph-focus button[aria-pressed="true"] { background: var(--ink); color: #fff; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+.ph-focus button:focus-visible { outline: 2px solid var(--known); outline-offset: 2px; }
+/* רק הכלי: ברוחב מלא. רק הגיליון: ברוחב קריא, במרכז. */
+.view-in.f-main, .view-in.f-side { grid-template-columns: minmax(0, 1fr) !important; }
+.view-in.f-main > aside.panel { display: none !important; }
+.view-in.f-side > section.panel { display: none !important; }
+.view-in.f-side > aside.panel { width: min(100%, 1040px); justify-self: center; }
+@media (max-width: 1180px) { .page-head:has(.ph-focus) { grid-template-columns: minmax(0, 1fr) auto !important; } .page-head:has(.ph-focus) .ph-tips { grid-column: 1 / -1; justify-content: flex-start; } }
+@media (max-width: 920px) {
+  .page-head:has(.ph-focus) { grid-template-columns: minmax(0, 1fr) !important; }
+  .ph-focus { justify-self: start; }
+  .ph-focus button { padding: 6px 11px; }
+  .view-in.f-main, .view-in.f-side { grid-template-rows: auto minmax(0, 1fr) !important; }
+  .view-in.f-side > aside.panel { order: 0 !important; max-height: none !important; }
+}
+@media (prefers-reduced-motion: reduce) { .ph-focus button { transition: none; } }
+/* בנייד, כשהכלי לבד: הרצועה האופקית חוזרת להיות גריד מלא */
+@media (max-width: 920px) {
+  .view-in.f-main .gallery-box, .view-in.f-main .scroll-in.gallery-box { flex: 1 1 auto !important; overflow: auto !important; }
+  [data-view="foods"] .view-in.f-main .gallery, [data-view="recipes"] .view-in.f-main .recipe-grid:not(.is-net) { grid-auto-flow: row !important; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)) !important; grid-auto-columns: auto !important; overflow: visible !important; }
+  [data-view="recipes"] .view-in.f-main .recipe-grid:not(.is-net) { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important; }
+}
