@@ -1586,9 +1586,9 @@ q.qt::before { content: open-quote; } q.qt::after { content: close-quote; }
 /* מיקוד ברמת הדף: הכול, רק הכלי, רק הגיליון. מסילה אחת, הנבחר בשחור. */
 .page-head:has(.ph-focus) { grid-template-columns: minmax(0, 1fr) auto auto !important; }
 .ph-focus { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; background: var(--paper-2, #f1efe9); box-shadow: inset 0 1px 2px rgba(0,0,0,.08); direction: rtl; }
-.ph-focus button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border: 0; border-radius: 999px; background: transparent; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: background .15s, color .15s, box-shadow .15s, transform .15s; }
+.ph-focus button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border: 0; border-radius: 999px; background: transparent; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: background .15s, color .15s, box-shadow .15s; }
 .ph-focus button .ic { width: 16px; height: 16px; }
-.ph-focus button:hover { background: #fff; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,.12); transform: translateY(-1px); }
+.ph-focus button:hover { background: #fff; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,.12); }
 .ph-focus button[aria-pressed="true"] { background: var(--ink); color: #fff; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
 .ph-focus button:focus-visible { outline: 2px solid var(--known); outline-offset: 2px; }
 /* רק הכלי: ברוחב מלא. רק הגיליון: ברוחב קריא, במרכז. */
