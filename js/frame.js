@@ -61,8 +61,38 @@ function pager(grid, name) {
   el.className = "ph-pager";
   el.setAttribute("role", "group");
   el.setAttribute("aria-label", "דפדוף בתוך הפרק");
+  // פירורי לחם: הדף › הפרק › הפריט. כל רמה לחיצה: הדף מאפס, הפרק והפריט גוללים אליהם.
+  const crumbs = document.createElement("nav");
+  crumbs.className = "ph-crumbs";
+  crumbs.setAttribute("aria-label", "איפה אני");
+  const itemName = () => {
+    const h = grid.querySelector("aside .sheet-name, aside .panel-head h2, aside h2");
+    if (!h) return "";
+    const c = h.cloneNode(true); c.querySelectorAll("i, em, small, .latin, [lang]").forEach((x) => x.remove());
+    return c.textContent.replace(/\s+/g, " ").trim().slice(0, 40);
+  };
+  let chapEl = null, curEl = null;
+  const drawCrumbs = (c) => {
+    const page = grid.querySelector(".view-title")?.textContent.trim() || "";
+    const item = itemName();
+    const parts = [`<a href="#/${name}">${page}</a>`];
+    if (c && c.label && c.label !== page) parts.push(`<button type="button" data-crumb="chap">${c.label}</button>`);
+    if (item) parts.push(`<button type="button" data-crumb="item" aria-current="page">${item}</button>`);
+    crumbs.hidden = parts.length < 2;
+    crumbs.innerHTML = parts.join(`<span class="cr-sep" aria-hidden="true">‹</span>`);
+  };
+  crumbs.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-crumb]"); if (!b) return;
+    const t = b.dataset.crumb === "chap" ? chapEl : curEl;
+    t?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+    if (t) { t.classList.add("cr-flash"); setTimeout(() => t.classList.remove("cr-flash"), 1200); }
+  });
+  el.crumbs = crumbs;
   const draw = () => {
     const c = chapter(grid, cfg);
+    curEl = c ? c.list[c.i] : null;
+    chapEl = c ? (cfg.head ? [...grid.querySelectorAll(cfg.head)].filter((h) => h.compareDocumentPosition(c.list[0]) & Node.DOCUMENT_POSITION_FOLLOWING).pop() || c.list[0] : c.list[0]) : null;
+    drawCrumbs(c);
     el.hidden = !c || c.list.length < 2;
     if (el.hidden) return;
     el.innerHTML = `<button type="button" data-pg="-1" aria-label="הקודם בפרק ${c.label}" ${c.i <= 0 ? "disabled" : ""}>${CHEV("M9 6l6 6-6 6")}</button><span class="pg-pos"><bdi class="num">${c.i + 1}/${c.list.length}</bdi><span>${c.label}</span></span><button type="button" data-pg="1" aria-label="הבא בפרק ${c.label}" ${c.i >= c.list.length - 1 ? "disabled" : ""}>${CHEV("M15 6l-6 6 6 6")}</button>`;
@@ -77,11 +107,21 @@ function pager(grid, name) {
     requestAnimationFrame(draw);
   });
   let queued = false;
-  new MutationObserver((recs) => { if (recs.every((r) => el.contains(r.target))) return; if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; draw(); }); })
+  new MutationObserver((recs) => { if (recs.every((r) => el.contains(r.target) || crumbs.contains(r.target))) return; if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; draw(); }); })
     .observe(grid, { subtree: true, childList: true, attributes: true, attributeFilter: ["aria-pressed", "class"] });
   requestAnimationFrame(draw);
+  currentPage = (d) => { if (!el.isConnected || el.hidden) return false; const b = el.querySelector(`[data-pg="${d}"]`); if (!b || b.disabled) return false; b.click(); return true; };
   return el;
 }
+// מקלדת: חץ שמאלה הבא וחץ ימינה הקודם (בכיוון הקריאה), Backspace חוזר למקום הקודם. לא בתוך שדה כתיבה.
+let currentPage = null;
+addEventListener("keydown", (e) => {
+  if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.defaultPrevented) return;
+  const t = e.target;
+  if (t.closest?.("input, textarea, select, [contenteditable=''], [contenteditable='true'], .lightbox, svg.geo")) return;
+  if (e.key === "ArrowLeft" || e.key === "ArrowRight") { if (currentPage?.(e.key === "ArrowLeft" ? 1 : -1)) e.preventDefault(); }
+  else if (e.key === "Backspace") { const b = document.querySelector(".back-trail:not([hidden])"); if (b) { e.preventDefault(); b.click(); } }
+});
 
 function focusBar(grid, name) {
   const cfg = FOCUS[name];
@@ -105,6 +145,16 @@ function focusBar(grid, name) {
   let before = "";
   grid.addEventListener("pointerdown", () => { before = selNow(); }, true);
   grid.addEventListener("click", (e) => {
+    // הכול: כשהגיליון של הבחירה מעל המסך, הדף גולל אליו.
+    if (!grid.classList.contains("f-main") && !grid.classList.contains("f-side") && e.target.closest(from === "main" ? "section.panel" : "aside.panel")) {
+      setTimeout(() => {
+        if (selNow() === before) return;
+        const aside = grid.querySelector(to === "side" ? "aside.panel" : "section.panel");
+        const top = aside?.getBoundingClientRect().top ?? 0, bar = document.querySelector(".topbar")?.offsetHeight || 0;
+        if (aside && (top < bar || top > innerHeight * .8)) scrollTo({ top: scrollY + top - bar - 8, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      }, 0);
+      return;
+    }
     if (!grid.classList.contains("f-" + from) || e.target.closest(".ph-focus")) return;
     const zone = from === "main" ? "section.panel" : "aside.panel";
     if (!e.target.closest(zone)) return;
@@ -141,6 +191,7 @@ export function frame(viewEl, name) {
     head.querySelector(".ph-title").append(titleBox);
     if (tools && tools.classList.contains("gallery-tools") && !tools.textContent.trim()) tools.remove();
   }
+  if (pg) head.querySelector(".ph-title").append(pg.crumbs);
   // חלון אחד פתוח בכל פעם, ולחיצה בחוץ סוגרת
   head.addEventListener("toggle", (e) => { if (e.target.open) head.querySelectorAll("details.tip[open]").forEach((d) => d !== e.target && (d.open = false)); }, true);
   document.addEventListener("click", (e) => { if (!e.target.closest(".tip")) head.querySelectorAll("details.tip[open]").forEach((d) => (d.open = false)); });

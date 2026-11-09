@@ -366,6 +366,20 @@ function serve() {
   await p.waitForTimeout(500);
   ok((await hash()).includes('id=fig') && (await p.textContent('.back-trail')).includes('דף הבית'), 'לחיצה מחזירה בדיוק לגיליון שממנו הגעתי, והצעד הקודם נשמר');
 
+  console.log('פירורי לחם ומקלדת');
+  await go('#/foods?id=lentil&g=cat');
+  const cr = (await p.innerText('.ph-crumbs')).replace(/\s+/g, ' ');
+  ok(/מזונות/.test(cr) && cr.includes('קטניות') && cr.includes('עדשים'), `פירורי לחם: דף › פרק › פריט (${cr})`);
+  const before = await p.innerText('.ph-pager .pg-pos');
+  await p.locator('body').press('ArrowLeft');
+  await p.waitForTimeout(150);
+  ok((await p.innerText('.ph-pager .pg-pos')) !== before && (await p.innerText('.ph-crumbs')).includes('קטניות'), 'חץ שמאלה: הבא באותו פרק');
+  await p.evaluate(() => { location.hash = '#/plant'; });
+  await p.waitForTimeout(500);
+  await p.locator('body').press('Backspace');
+  await p.waitForTimeout(500);
+  ok((await hash()).includes('foods') && (await hash()).includes('g=cat'), 'Backspace חוזר למקום הקודם');
+
   console.log('השוואה');
   await go('#/compare');
   ok((await p.textContent('#shared')).includes('מפריד'), 'תאנה ורימון: הרמב"ם מפריד ביניהם');
