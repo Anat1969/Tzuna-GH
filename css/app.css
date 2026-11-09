@@ -1640,3 +1640,27 @@ q.qt::before { content: open-quote; } q.qt::after { content: close-quote; }
 .back-trail:focus-visible { outline: 3px solid var(--known); outline-offset: 2px; }
 @media (max-width: 920px) { .back-trail { order: -1; flex-basis: 100%; max-width: none; justify-content: center; } }
 @media print { .back-trail { display: none !important; } }
+/* מסגרות לפי התוכן (ענת, 09.11.2026: "לא לקבע את המסגרות"). כל פאנל גדל לפי מה שיש בו, והדף נגלל כרגיל.
+   הסרגל העליון ושורת המצב נשארים גלויים בזמן הגלילה. */
+.app-shell { height: auto !important; min-height: 100dvh; overflow: visible !important; display: flex !important; flex-direction: column; }
+.app-shell > .view { flex: 1 0 auto; }
+.topbar { position: sticky !important; top: 0; z-index: 30; }
+.statusbar { position: sticky; bottom: 0; z-index: 30; background: rgba(255, 255, 255, .96); backdrop-filter: blur(8px); }
+.view { overflow: visible !important; min-height: auto !important; }
+.view-in { height: auto !important; grid-template-rows: none !important; align-items: start; }
+.view-in > .panel, .view-in > section, .view-in > aside { height: auto !important; max-height: none !important; }
+.scroll-in { overflow: visible !important; flex: none !important; max-height: none !important; }
+.panel-body { flex: none !important; }
+/* פירורי לחם: הדף › הפרק › הפריט */
+.ph-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; margin-top: 4px; font-size: 13px; direction: rtl; }
+.ph-crumbs[hidden] { display: none; }
+.ph-crumbs a, .ph-crumbs button { border: 0; background: none; padding: 2px 4px; font: inherit; color: var(--ink-soft); cursor: pointer; text-decoration: none; border-radius: 4px; }
+.ph-crumbs a:hover, .ph-crumbs button:hover { color: var(--ink); background: rgba(0,0,0,.05); }
+.ph-crumbs [aria-current="page"] { color: var(--ink); font-weight: 700; }
+.ph-crumbs .cr-sep { color: var(--ink-mute); }
+.cr-flash { outline: 3px solid #E8C400 !important; outline-offset: 3px; transition: outline-color .3s; }
+@media (max-width: 920px) {
+  .page-head:has(.ph-pager:not([hidden])), .page-head:has(.ph-pager:not([hidden])):has(.ph-focus) { grid-template-columns: minmax(0, 1fr) !important; }
+  .page-head .ph-pager { justify-self: stretch; justify-content: space-between; }
+  .page-head .ph-focus { justify-self: start; }
+}

@@ -370,9 +370,7 @@ export function mount(el, params, ctx) {
   const onKey = (e) => {
     if (e.target.closest("input, textarea, select") || document.getElementById("safety-overlay")) return;
     if (!state.id) return;
-    const list = ordered(); const i = list.findIndex((x) => x.id === state.id);
-    if (e.key === "ArrowLeft" && list[i + 1]) select(list[i + 1].id);
-    if (e.key === "ArrowRight" && list[i - 1]) select(list[i - 1].id);
+    // החצים עברו לדפדוף המשותף בתוך הפרק (js/frame.js). כאן נשאר רק Esc.
     if (e.key === "Escape") select(null);
   };
   addEventListener("keydown", onKey);

@@ -1,5 +1,5 @@
-// מדד "בגודל המסך" (סעיף 2.9 א), לפי templates/fit.cjs של Claude-GH, עם תוספת:
-// בנייד התצוגה גוללת בתוך #view, ולכן היחס נמדד גם על הגלילה הפנימית, כדי לא להסתיר גלילה.
+// מסגרות לפי התוכן (החלטת ענת, 09.11.2026: "לא לקבע את המסגרות"): הדף נגלל כרגיל.
+// הבדיקה: אין מסגרת עם גלילה אנכית פנימית, ואין גלילה אופקית. היחס לגובה המסך מדווח בלבד.
 // usage: node tests/fit.cjs <baseUrl> <outPrefix>
 const { chromium } = require('playwright');
 const path = require('path');
@@ -7,7 +7,7 @@ const SIZES = [['1920', 1920, 1080], ['1440', 1440, 900], ['1280', 1280, 720], [
 const ROUTES = ['', 'foods', 'plant', 'methods', 'seasons', 'recipes', 'compare'];
 const ARTICLE = ['method']; // כתבה: החריג שבסעיף 2.9 א, נקראת בגלילה
 (async () => {
-  const [base, out] = process.argv.slice(2);
+  const [base, out = require('os').tmpdir() + '/fit'] = process.argv.slice(2);
   const b = await chromium.launch({ args: ['--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist'] });
   let fail = 0;
   for (const [name, width, height] of SIZES) {
@@ -24,14 +24,14 @@ const ARTICLE = ['method']; // כתבה: החריג שבסעיף 2.9 א, נקר�
           const r = el.getBoundingClientRect();
           if (r.width > 4 && r.height > 4 && r.top < H && r.bottom > 0 && r.left < W && r.right > 0) seen++;
         }
-        return { ratio: +((document.documentElement.scrollHeight + extra) / H).toFixed(2), hscroll: document.documentElement.scrollWidth > W, seen };
+        const inner = [...v.querySelectorAll('*')].filter((el) => { const o = getComputedStyle(el).overflowY; return /(auto|scroll)/.test(o) && el.scrollHeight > el.clientHeight + 4 && el.clientHeight > 40; }).map((el) => el.className.toString().split(' ')[0] || el.tagName);
+        return { ratio: +((document.documentElement.scrollHeight + extra) / H).toFixed(2), hscroll: document.documentElement.scrollWidth > W, seen, inner };
       });
-      const limit = ARTICLE.includes(h) ? Infinity : name === 'mob' ? 1.5 : 1.0;
-      const bad = m.hscroll || m.ratio > limit;
+      const bad = m.hscroll || m.inner.length > 0;
       if (bad) fail++;
       const file = `${out}-${name}-${(h || 'home').replace(/\W/g, '')}.png`;
       await p.screenshot({ path: file });
-      console.log(`${bad ? 'FAIL' : 'ok  '} ${name.padEnd(5)} ${(h || 'home').padEnd(9)} scroll ${String(m.ratio).padEnd(4)} (max ${limit === Infinity ? 'כתבה' : limit})  hscroll ${m.hscroll}  info-in-view ${m.seen}`);
+      console.log(`${bad ? 'FAIL' : 'ok  '} ${name.padEnd(5)} ${(h || 'home').padEnd(9)} page ${String(m.ratio).padEnd(4)} hscroll ${m.hscroll}  inner-scroll ${m.inner.length ? m.inner.join(',') : 0}  info-in-view ${m.seen}`);
     }
     await p.close();
   }
