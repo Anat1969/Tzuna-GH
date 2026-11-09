@@ -22,6 +22,8 @@ let total = 0;
           const t = w.currentNode; if (!t.textContent.trim()) continue;
           const el = t.parentElement; const cs = getComputedStyle(el);
           if (cs.visibility === 'hidden' || +cs.opacity === 0 || el.closest('[aria-hidden="true"]:not(svg)')) continue;
+          // תוכן של details סגור לא נראה, ולכן לא נספר (תוספת Tzuna-GH)
+          { const dt = el.closest('details:not([open])'); if (dt && !el.closest('summary')) continue; }
           const r = document.createRange(); r.selectNodeContents(t);
           // טקסט שנחתך ע"י מיכל גלילה לא נראה, ולכן לא נספר (תוספת Tzuna-GH)
           const clips = []; for (let n = el.parentElement; n && n !== document.body; n = n.parentElement) { const o = getComputedStyle(n); if (/(auto|scroll|hidden|clip)/.test(o.overflow + o.overflowX + o.overflowY)) clips.push(n.getBoundingClientRect()); }
