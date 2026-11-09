@@ -21,6 +21,68 @@ const FOCUS = {
 const SVG = (d) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="${d}"/></svg>`;
 const F_ICON = { all: SVG("M3 5h18v14H3zM14 5v14"), main: SVG("M3 5h18v14H3z"), side: SVG("M7 4h10v16H7zM10 8h4M10 12h4M10 16h2") };
 
+// דפדוף בתוך אותו פרק: הקודם והבא בין הרשומות של אותה קבוצה, עם שם הקבוצה.
+// items: הרשומות. on: איך מזהים את הנבחרת. head: כותרות שמחלקות לפרקים. group: מיכל שמגדיר פרק (שמו ב-aria-label).
+const PAGER = {
+  foods: { items: ".food-card", on: '[aria-pressed="true"]', head: ".g-head", label: (g) => g.querySelector('#chips [aria-pressed="true"]:not([data-cat=""])')?.firstChild?.textContent?.trim() || "כל המזונות" },
+  nutrients: { items: "tr.nt-row", on: ".on", head: "tr.nt-kind", label: () => "רכיבים" },
+  plant: { items: ".pl-tab", on: '[aria-pressed="true"]', label: () => "חלקי הצמח" },
+  methods: { items: "g.tl-m", on: ".on", label: () => "ציר הזמן" },
+  seasons: { items: ".yg-m", on: '[aria-pressed="true"]', label: () => "חודשי השנה" },
+  recipes: { items: ".recipe-card, .net .ne", on: '[aria-pressed="true"], .on', label: (g) => (g.querySelector(".net") ? "צירופים" : "מתכונים") },
+  compare: { items: ".disc", on: '[aria-pressed="true"]', label: () => "גילויים" },
+  articles: { items: ".seg-b[data-a]", on: '[aria-pressed="true"]', group: '[role="group"][aria-label]', label: () => "כתבות" }
+};
+const CHEV = (d) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+function chapter(grid, cfg) {
+  const all = [...grid.querySelectorAll(cfg.items)].filter((el) => !el.closest(".page-head") && el.getClientRects().length);
+  const cur = all.find((el) => el.matches(cfg.on));
+  if (!cur) return null;
+  let list = all, label = cfg.label(grid);
+  if (cfg.head) {
+    const heads = [...grid.querySelectorAll(cfg.head)];
+    const before = (h, el) => h.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING;
+    const own = heads.filter((h) => before(h, cur)).pop();
+    if (own) {
+      const next = heads[heads.indexOf(own) + 1];
+      list = all.filter((el) => before(own, el) && (!next || !before(next, el)));
+      label = [...own.querySelectorAll("b, span")].map((x) => x.textContent.trim()).find(Boolean) || own.textContent.trim();
+    }
+  } else if (cfg.group) {
+    const box = cur.closest(cfg.group);
+    if (box) { list = all.filter((el) => box.contains(el)); label = box.getAttribute("aria-label"); }
+  }
+  return { list, i: list.indexOf(cur), label };
+}
+function pager(grid, name) {
+  const cfg = PAGER[name];
+  if (!cfg) return null;
+  const el = document.createElement("div");
+  el.className = "ph-pager";
+  el.setAttribute("role", "group");
+  el.setAttribute("aria-label", "דפדוף בתוך הפרק");
+  const draw = () => {
+    const c = chapter(grid, cfg);
+    el.hidden = !c || c.list.length < 2;
+    if (el.hidden) return;
+    el.innerHTML = `<button type="button" data-pg="-1" aria-label="הקודם בפרק ${c.label}" ${c.i <= 0 ? "disabled" : ""}>${CHEV("M9 6l6 6-6 6")}</button><span class="pg-pos"><bdi class="num">${c.i + 1}/${c.list.length}</bdi><span>${c.label}</span></span><button type="button" data-pg="1" aria-label="הבא בפרק ${c.label}" ${c.i >= c.list.length - 1 ? "disabled" : ""}>${CHEV("M15 6l-6 6 6 6")}</button>`;
+  };
+  el.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-pg]"); if (!b || b.disabled) return;
+    const c = chapter(grid, cfg); if (!c) return;
+    const target = c.list[c.i + Number(b.dataset.pg)];
+    if (!target) return;
+    target.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+    target.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+    requestAnimationFrame(draw);
+  });
+  let queued = false;
+  new MutationObserver((recs) => { if (recs.every((r) => el.contains(r.target))) return; if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; draw(); }); })
+    .observe(grid, { subtree: true, childList: true, attributes: true, attributeFilter: ["aria-pressed", "class"] });
+  requestAnimationFrame(draw);
+  return el;
+}
+
 function focusBar(grid, name) {
   const cfg = FOCUS[name];
   if (!cfg || !grid.classList.contains("focus-aside")) return null;
@@ -72,6 +134,8 @@ export function frame(viewEl, name) {
   head.innerHTML = `<div class="ph-title"></div><div class="ph-tips">${cells.map(([k, he, ic]) => `<details class="tip"><summary>${icon(ic)}<span>${he}</span></summary><div class="tip-pop">${rich(typeof lens[k] === "function" ? lens[k]() : lens[k])}</div></details>`).join("")}</div>`;
   const fb = focusBar(grid, name);
   if (fb) head.insertBefore(fb, head.querySelector(".ph-tips"));
+  const pg = pager(grid, name);
+  if (pg) head.insertBefore(pg, fb || head.querySelector(".ph-tips"));
   if (titleBox) {
     const tools = titleBox.parentElement;
     head.querySelector(".ph-title").append(titleBox);
