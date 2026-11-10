@@ -380,6 +380,13 @@ function serve() {
   await p.waitForTimeout(500);
   ok((await hash()).includes('foods') && (await hash()).includes('g=cat'), 'Backspace חוזר למקום הקודם');
 
+  console.log('תוכן הגיליון');
+  await go('#/foods?id=olive');
+  ok(await p.locator('#sheet .sheet-toc [data-toc]').count() >= 4, 'תוכן הגיליון: כפתור לכל סעיף');
+  await p.click('#sheet .sheet-toc [data-toc]:has-text("מקורות")');
+  await p.waitForTimeout(700);
+  ok(await p.locator('#sheet details.sources-box[open]').count() === 1 && await p.locator('#sheet .sheet-toc [aria-current="true"]').count() === 1, 'כפתור "מקורות" פותח אותם וגולל אליהם');
+
   console.log('השוואה');
   await go('#/compare');
   ok((await p.textContent('#shared')).includes('מפריד'), 'תאנה ורימון: הרמב"ם מפריד ביניהם');
