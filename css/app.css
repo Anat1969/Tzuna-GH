@@ -1664,3 +1664,10 @@ q.qt::before { content: open-quote; } q.qt::after { content: close-quote; }
   .page-head .ph-pager { justify-self: stretch; justify-content: space-between; }
   .page-head .ph-focus { justify-self: start; }
 }
+/* תוכן הגיליון: כפתור לכל סעיף, וחצים בין הסעיפים */
+.sheet-toc { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 10px 0 12px; margin-bottom: 4px; border-bottom: 1px solid var(--rule-soft); direction: rtl; }
+.sheet-toc button { border: 0; border-radius: 999px; padding: 5px 12px; background: #fff; font: inherit; font-size: 13px; font-weight: 600; color: var(--ink-soft); box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.06); cursor: pointer; transition: box-shadow .15s, background .15s, color .15s; }
+.sheet-toc button:hover { color: var(--ink); box-shadow: 0 4px 12px rgba(0,0,0,.14); }
+.sheet-toc button[aria-current="true"] { background: var(--ink); color: #fff; }
+.sheet-toc .toc-step { width: 30px; height: 30px; padding: 0; font-size: 18px; line-height: 1; }
+.sheet-toc button:focus-visible { outline: 2px solid var(--known); outline-offset: 2px; }

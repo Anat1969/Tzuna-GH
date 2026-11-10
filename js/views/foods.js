@@ -258,6 +258,32 @@ function renderGallery() {
   applySearch();
 }
 
+// תוכן הגיליון: כפתור לכל סעיף, וחצים שעוברים מסעיף לסעיף. הגיליון ארוך מאז שהמסגרות לפי התוכן.
+function sheetToc(aside) {
+  const body = aside.querySelector(".panel-body"); if (!body) return;
+  const parts = [...body.querySelectorAll(":scope > .pairs, :scope > section.sec, :scope > details.sources-box")].map((el) => ({
+    el, he: el.classList.contains("pairs") ? "עם ובלי" : el.matches("details") ? "מקורות" : (el.querySelector(".sec-h h3")?.textContent.trim() || "").replace("מה ידוע, מה נאמר, במה מאמינים", "שלוש שכבות")
+  })).filter((p) => p.he);
+  if (parts.length < 3) return;
+  const nav = document.createElement("nav");
+  nav.className = "sheet-toc";
+  nav.setAttribute("aria-label", "סעיפי הגיליון");
+  let at = -1;
+  const go = (i) => {
+    at = Math.max(0, Math.min(parts.length - 1, i));
+    const t = parts[at].el; if (t.matches("details")) t.open = true;
+    const bar = (document.querySelector(".topbar")?.offsetHeight || 0) + 8;
+    scrollTo({ top: scrollY + t.getBoundingClientRect().top - bar, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    nav.querySelectorAll("[data-toc]").forEach((b) => b.setAttribute("aria-current", String(Number(b.dataset.toc) === at)));
+  };
+  nav.innerHTML = `<button type="button" class="toc-step" data-toc-step="-1" aria-label="הסעיף הקודם">›</button>${parts.map((p, i) => `<button type="button" data-toc="${i}" aria-current="false">${esc(p.he)}</button>`).join("")}<button type="button" class="toc-step" data-toc-step="1" aria-label="הסעיף הבא">‹</button>`;
+  nav.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-toc]"); if (b) return go(Number(b.dataset.toc));
+    const st = e.target.closest("[data-toc-step]"); if (st) go(at + Number(st.dataset.tocStep));
+  });
+  body.prepend(nav);
+}
+
 function renderSheet({ scroll = false } = {}) {
   const aside = root.querySelector("#sheet");
   const f = byId(state.id);
@@ -266,6 +292,7 @@ function renderSheet({ scroll = false } = {}) {
     return;
   }
   aside.innerHTML = sheetHTML(f);
+  sheetToc(aside);
   // לחיצה על צירוף פותחת את המנגנון שלו, ומצניעה את האחרים.
   aside.querySelectorAll(".pi.has-more .pi-t").forEach((t) => {
     const go = () => { const on = t.getAttribute("aria-expanded") !== "true"; aside.querySelectorAll(".pi-t[aria-expanded]").forEach((o) => o.setAttribute("aria-expanded", "false")); t.setAttribute("aria-expanded", String(on)); aside.querySelector(".pairs").classList.toggle("focus", on); };
