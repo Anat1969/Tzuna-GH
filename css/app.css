@@ -1677,3 +1677,10 @@ q.qt::before { content: open-quote; } q.qt::after { content: close-quote; }
 @media (max-width: 920px) {
   .bs-dock, .statusbar { position: static !important; box-shadow: none; }
 }
+
+/* מחשב (ענת, 16.11.2026: "תעביר לצד שמאל של המסך את המסגרת הגדולה שבכל מסך"):
+   המסגרת הגדולה משמאל, טור הצד מימין. היחס הזהוב נשמר. בנייד אין שינוי (טור אחד). */
+@media (min-width: 921px) {
+  .focus-aside { direction: ltr; }
+  .focus-aside > * { direction: rtl; }
+}
