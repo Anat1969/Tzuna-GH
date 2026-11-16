@@ -1671,3 +1671,9 @@ q.qt::before { content: open-quote; } q.qt::after { content: close-quote; }
 .sheet-toc button[aria-current="true"] { background: var(--ink); color: #fff; }
 .sheet-toc .toc-step { width: 30px; height: 30px; padding: 0; font-size: 18px; line-height: 1; }
 .sheet-toc button:focus-visible { outline: 2px solid var(--known); outline-offset: 2px; }
+
+/* נייד (ענת, 08.11.2026: "מסגרות קבועות שלא מאפשרות לראות את הטקסט הנגלל"):
+   רק הסרגל העליון צמוד. גוף ונפש ושורת המקרא נגללים עם הדף, ולא מכסים את הטקסט. */
+@media (max-width: 920px) {
+  .bs-dock, .statusbar { position: static !important; box-shadow: none; }
+}
