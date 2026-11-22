@@ -338,3 +338,21 @@ export function mount(el, params) {
   });
 }
 export function update(params) { if (params.a && params.a !== sel) { sel = params.a; jump(sel); } }
+
+// הכתבות כנתונים, בלי HTML: המקור של articles.json, שהמגזין "חוט" (MaAmarim-GH) קורא.
+// הכתבה נשארת כאן, והמגזין לא מחזיק עותק. "החודש" לא נכללת: היא דף חי שמשתנה עם התאריך, ולא טקסט קבוע.
+export function articlesFeed() {
+  return ARTICLES.filter((a) => typeof a.head !== "function").map((a) => {
+    const q = a.quote ? a.quote() : null, pull = a.pull?.();
+    return {
+      id: a.id, zone: a.zone, kicker: a.kicker, title: a.head, sub: val(a.deck),
+      body: a.body(),
+      quote: q?.q ? { q: (String(q.q).match(/^(\\?"[^"]+")/) || [q.q])[0], who: q.who } : null,
+      pull: pull || null,
+      insight: a.insight,
+      stats: a.stats().map(([n, t]) => [String(n), t]),
+      haiku: a.haiku,
+      notes: a.src.map((id) => SOURCES[id]?.title).filter(Boolean)
+    };
+  });
+}

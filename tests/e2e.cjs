@@ -243,6 +243,12 @@ function serve() {
   ok(/[\u05B0-\u05BC]/.test(await p.locator('.a4-q').first().innerText()), 'ציטוט מהתנ"ך בניקוד');
   await p.click('.seg-b[data-a="hot-cold"]');
   ok((await hash()).includes('a=hot-cold'), 'קפיצה לכתבה');
+  // הכתבות כקובץ פתוח למגזין "חוט": הקובץ שבריפו זהה לכתבות שבדף. אם לא: node scripts/articles.mjs
+  const { withImages } = await import('../scripts/articles.mjs');
+  const liveFeed = withImages(await p.evaluate(() => import('/js/views/articles.js').then((m) => m.articlesFeed())));
+  const fileFeed = JSON.parse(fs.readFileSync(path.join(ROOT, 'articles.json'), 'utf8'));
+  ok(JSON.stringify(liveFeed) === JSON.stringify(fileFeed), `articles.json תואם את הכתבות שבדף (${fileFeed.articles.length} כתבות)`);
+  ok(fileFeed.articles.length === await p.locator('.a4').count() - 1 && fileFeed.articles.every((x) => x.title && x.body.length && x.url.endsWith('#/articles?a=' + x.id)), 'articles.json: כל כתבה קבועה, עם כותרת, גוף וכתובת ישירה ("החודש" נשארת דף חי)');
 
   console.log('עונות');
   await go('#/seasons?m=6');
